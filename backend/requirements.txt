@@ -1,0 +1,17 @@
+# Django and REST Framework
+Django>=4.2,<5.0
+djangorestframework>=3.14.0
+
+# CORS headers
+django-cors-headers>=4.3.0
+
+# Production server (optional)
+gunicorn>=21.2.0
+whitenoise>=6.6.0
+
+# Database (SQLite is built-in, but these are for other databases if needed)
+# psycopg2-binary>=2.9.9  # PostgreSQL
+
+# Development tools
+# python-dotenv>=1.0.0
+# ipython>=8.0.0
