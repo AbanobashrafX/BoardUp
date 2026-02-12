@@ -1,0 +1,123 @@
+.kanban-board {
+    height: calc(100vh - 140px);
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.kanban-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+.kanban-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-select {
+    width: auto;
+    min-width: 150px;
+}
+
+.kanban-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    flex: 1;
+    overflow-x: auto;
+}
+
+.kanban-column {
+    background: #f8fafc;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+}
+
+.column-header {
+    padding: 1rem;
+    border-top: 3px solid;
+    border-radius: 12px 12px 0 0;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.column-header h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.task-count {
+    background: #e5e7eb;
+    color: #6b7280;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.column-content {
+    padding: 0.75rem;
+    flex: 1;
+    overflow-y: auto;
+    transition: background-color 0.2s ease;
+}
+
+.column-content.dragging-over {
+    background: #f0f9ff;
+}
+
+.empty-column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .kanban-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .kanban-column {
+        min-height: 200px;
+    }
+}
+
+@media (max-width: 640px) {
+    .kanban-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .kanban-controls {
+        width: 100%;
+    }
+
+    .filter-select {
+        flex: 1;
+        min-width: 100px;
+    }
+}
