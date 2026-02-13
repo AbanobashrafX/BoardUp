@@ -2,7 +2,8 @@ import React from 'react';
 import './TaskCard.css';
 
 function TaskCard({ task, onEdit, onDelete }) {
-    const priorityClass = `priority-badge priority-${task.priority?.toLowerCase()}`;
+    const priority = task.priority || 'MEDIUM';
+    const priorityClass = `priority-badge priority-${priority.toLowerCase()}`;
 
     const formatDate = (dateString) => {
         if (!dateString) return '';
@@ -14,19 +15,19 @@ function TaskCard({ task, onEdit, onDelete }) {
     };
 
     return (
-        <div className="task-card">
+        <div className="task-card" data-priority={priority}>
             <div className="task-card-header">
-                <span className={priorityClass}>{task.priority}</span>
+                <span className={priorityClass}>{priority}</span>
                 <div className="task-actions">
                     <button
-                        className="task-action-btn"
+                        className="task-action-btn task-edit-btn"
                         onClick={() => onEdit(task)}
                         title="Edit"
                     >
                         ✏️
                     </button>
                     <button
-                        className="task-action-btn"
+                        className="task-action-btn task-delete-btn"
                         onClick={() => onDelete(task.id)}
                         title="Delete"
                     >
@@ -37,21 +38,19 @@ function TaskCard({ task, onEdit, onDelete }) {
 
             <h4 className="task-title">{task.title}</h4>
 
-            {
-                task.description && (
-                    <p className="task-description">
-                        {task.description.length > 100
-                            ? `${task.description.substring(0, 100)}...`
-                            : task.description}
-                    </p>
-                )
-            }
+            {task.description && (
+                <p className="task-description">
+                    {task.description.length > 100
+                        ? `${task.description.substring(0, 100)}...`
+                        : task.description}
+                </p>
+            )}
 
             <div className="task-card-footer">
                 {task.category && (
                     <span
                         className="category-tag"
-                        style={{ backgroundColor: task.category_color || '#e5e7eb' }}
+                        style={{ backgroundColor: task.category_color || '#6366f1' }}
                     >
                         {task.category_name || task.category}
                     </span>
@@ -61,7 +60,7 @@ function TaskCard({ task, onEdit, onDelete }) {
                     <span className="task-date">{formatDate(task.created_at)}</span>
                 )}
             </div>
-        </div >
+        </div>
     );
 }
 
