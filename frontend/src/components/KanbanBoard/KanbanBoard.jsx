@@ -41,7 +41,7 @@ function KanbanBoard() {
 
     useEffect(() => {
         fetchData();
-    }, [filter]);
+    }, []);
 
     const fetchData = async () => {
         try {
@@ -78,8 +78,12 @@ function KanbanBoard() {
         const destColumn = destination.droppableId;
         const destIndex = destination.index;
 
-        // Optimistic update
-        const newTasks = { ...tasks };
+        // Optimistic update - create proper deep copies of arrays
+        const newTasks = {
+            ...tasks,
+            [sourceColumn]: [...tasks[sourceColumn]],
+            [destColumn]: [...tasks[destColumn]],
+        };
 
         // Remove from source
         const [movedTask] = newTasks[sourceColumn].splice(source.index, 1);
