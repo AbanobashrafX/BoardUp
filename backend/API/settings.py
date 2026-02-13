@@ -141,6 +141,15 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
+    # Use URL path versioning (e.g., /api/v1/tasks/)
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    # Default version when none specified
+    "DEFAULT_VERSION": "v1",
+    # Allowed versions
+    "ALLOWED_VERSIONS": ["v1", "v2", "v3"],
+    # URL parameter name (matches regex group)
+    "VERSION_PARAM": "version",
+    # Pagination
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
 }
