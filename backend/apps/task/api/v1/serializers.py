@@ -32,5 +32,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskMoveSerializer(serializers.Serializer):
-    status = serializers.CharField(max_length=20, choices=Task.STATUS_CHOICES)
-    position = serializers.IntegerField(required=False, default=0)
+    """Serializer for moving tasks between columns"""
+
+    status = serializers.ChoiceField(choices=Task.STATUS_CHOICES)
+    position = serializers.IntegerField(required=False, min_value=0)
