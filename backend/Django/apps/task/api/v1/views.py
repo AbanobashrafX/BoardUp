@@ -9,7 +9,7 @@ from .serializers import CategorySerializer, TaskSerializer
 
 
 @api_view(["GET"])
-def api_root(request):
+def APIRoot(request):
     return Response(
         {
             "version 1": {
@@ -25,6 +25,11 @@ def get_task(pk):
         return Task.objects.get(pk=pk)
     except Task.DoesNotExist:
         return None
+
+
+# ------------------------------------------------------------
+# Categories endpoints
+# ------------------------------------------------------------
 
 
 @api_view(["GET", "POST"])
@@ -65,6 +70,11 @@ def CategoryDetail(request, pk):
     if request.method == "DELETE":
         category.delete()
         return Response(status=204)
+
+
+# ------------------------------------------------------------
+# Tasks endpoints
+# ------------------------------------------------------------
 
 
 @api_view(["GET", "PUT", "PATCH", "DELETE"])
@@ -159,17 +169,34 @@ def TaskMove(request, pk):
 
 
 @api_view(["GET"])
-def TaskByStatus(request):
-    tasks = Task.objects.select_related("category").all()
-    result = {
-        "TODO": TaskSerializer(
-            tasks.filter(status="TODO").order_by("position"), many=True
-        ).data,
-        "IN_PROGRESS": TaskSerializer(
-            tasks.filter(status="IN_PROGRESS").order_by("position"), many=True
-        ).data,
-        "DONE": TaskSerializer(
-            tasks.filter(status="DONE").order_by("position"), many=True
-        ).data,
-    }
-    return Response(result, status=200)
+def TaskByStatus(request, status=None):
+    """Get tasks grouped by status (for Kanban board)"""
+    # Validate status parameter
+    valid_statuses = ["TODO", "IN_PROGRESS", "DONE", "ALL"]
+    if status is None or status.upper() not in valid_statuses:
+        return Response(
+            {"error": f"Invalid status. Must be one of: {valid_statuses}"}, status=400
+        )
+
+    try:
+        tasks = Task.objects.select_related("category").all()
+        if status == "all":
+            result = {
+                "TODO": TaskSerializer(
+                    tasks.filter(status="TODO").order_by("position"), many=True
+                ).data,
+                "IN_PROGRESS": TaskSerializer(
+                    tasks.filter(status="IN_PROGRESS").order_by("position"), many=True
+                ).data,
+                "DONE": TaskSerializer(
+                    tasks.filter(status="DONE").order_by("position"), many=True
+                ).data,
+            }
+            return Response(result, status=200)
+        else:
+            serializer = TaskSerializer(
+                tasks.filter(status=status.upper()).order_by("position"), many=True
+            )
+            return Response(serializer.data)
+    except Exception as e:
+        return Response({"error": "Failed to retrieve tasks"}, status=500)
