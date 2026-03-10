@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -18,8 +18,8 @@ export const taskAPI = {
     },
 
     // Get tasks grouped by status (for Kanban board)
-    getByStatus: async () => {
-        const response = await api.get('/tasks/by_status/');
+    getByStatus: async (status = "all") => {
+        const response = await api.get(`/tasks/${status}/`);
         return response.data;
     },
 
