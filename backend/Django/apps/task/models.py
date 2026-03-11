@@ -1,7 +1,15 @@
 from django.db import models
 
 
-class Category(models.Model):
+class BaseModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class Category(BaseModel):
     """
     Category model for organizing tasks
     """
@@ -17,7 +25,7 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 
-class Task(models.Model):
+class Task(BaseModel):
     """
     Kanban Task model
     Represents a task in the task management system.
@@ -46,8 +54,10 @@ class Task(models.Model):
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="TODO")
     position = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+
+    # TASK dates
+    due_date = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["status", "position", "-created_at"]
