@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { taskAPI, categoryAPI } from '../../services/api';
 import TaskCard from '../TaskCard/TaskCard';
-import TaskForm from '../TaskForm/TaskForm';
 import TaskModal from '../TaskModal/TaskModal';
 import './KanbanBoard.css';
 
@@ -36,9 +35,8 @@ function KanbanBoard() {
     const [tasks, setTasks] = useState({ TODO: [], IN_PROGRESS: [], DONE: [] });
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [showTaskForm, setShowTaskForm] = useState(false);
-    const [editingTask, setEditingTask] = useState(null);
-    const [viewingTask, setViewingTask] = useState(null);
+    const [showTaskModal, setShowTaskModal] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null);
     const [filter, setFilter] = useState({ category: '', priority: '' });
 
     useEffect(() => {
@@ -105,26 +103,6 @@ function KanbanBoard() {
         }
     };
 
-    const handleCreateTask = async (taskData) => {
-        try {
-            await taskAPI.create(taskData);
-            fetchData();
-            setShowTaskForm(false);
-        } catch (error) {
-            console.error('Error creating task:', error);
-        }
-    };
-
-    const handleUpdateTask = async (taskData) => {
-        try {
-            await taskAPI.update(editingTask.id, taskData);
-            fetchData();
-            setEditingTask(null);
-        } catch (error) {
-            console.error('Error updating task:', error);
-        }
-    };
-
     const handleDeleteTask = async (taskId) => {
         try {
             await taskAPI.delete(taskId);
@@ -134,12 +112,14 @@ function KanbanBoard() {
         }
     };
 
-    const handleEditTask = (task) => {
-        setEditingTask(task);
+    const handleTaskClick = (task) => {
+        setSelectedTask(task);
     };
 
-    const handleViewTask = (task) => {
-        setViewingTask(task);
+    const handleCloseModal = () => {
+        setShowTaskModal(false);
+        setSelectedTask(null);
+        fetchData(); // Refresh after any modal close
     };
 
     const filteredTasks = (columnId) => {
@@ -196,7 +176,7 @@ function KanbanBoard() {
 
                     <button
                         className="btn btn-primary"
-                        onClick={() => setShowTaskForm(true)}
+                        onClick={() => setShowTaskModal(true)}
                     >
                         + Add Task
                     </button>
@@ -233,9 +213,9 @@ function KanbanBoard() {
                                                     >
                                                         <TaskCard
                                                             task={task}
-                                                            onEdit={handleEditTask}
+                                                            onEdit={handleTaskClick}
                                                             onDelete={handleDeleteTask}
-                                                            onView={handleViewTask}
+                                                            onView={handleTaskClick}
                                                         />
                                                     </div>
                                                 )}
@@ -256,31 +236,22 @@ function KanbanBoard() {
                 </div>
             </DragDropContext>
 
-            {showTaskForm && (
-                <TaskForm
-                    categories={categories}
-                    onSubmit={handleCreateTask}
-                    onClose={() => setShowTaskForm(false)}
-                />
-            )}
-
-            {editingTask && (
-                <TaskForm
-                    task={editingTask}
-                    categories={categories}
-                    onSubmit={handleUpdateTask}
-                    onClose={() => setEditingTask(null)}
-                />
-            )}
-
-            {viewingTask && (
+            {showTaskModal && (
                 <TaskModal
-                    task={viewingTask}
+                    mode="create"
                     categories={categories}
-                    onClose={() => setViewingTask(null)}
+                    onClose={handleCloseModal}
+                />
+            )}
+
+            {selectedTask && (
+                <TaskModal
+                    task={selectedTask}
+                    categories={categories}
+                    onClose={handleCloseModal}
                     onDelete={(taskId) => {
                         handleDeleteTask(taskId);
-                        setViewingTask(null);
+                        handleCloseModal();
                     }}
                 />
             )}

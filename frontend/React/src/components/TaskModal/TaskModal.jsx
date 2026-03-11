@@ -3,8 +3,17 @@ import { taskAPI } from '../../services/api';
 import BadgeSelect from '../BadgeSelect/BadgeSelect';
 import './TaskModal.css';
 
-function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
-    const [isEditing, setIsEditing] = useState(false);
+function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: propMode }) {
+    // Determine mode: 'create' | 'edit' | 'view' (default 'view')
+    // If task is provided but mode is not, assume 'view'
+    // If mode is explicitly provided, use that
+    // If no task and no mode, assume 'create' for new task
+    const mode = propMode || (task ? 'view' : 'create');
+    const isCreateMode = mode === 'create';
+    const isEditMode = mode === 'edit';
+    const isViewMode = mode === 'view' || (!isCreateMode && !isEditMode);
+
+    const [isEditing, setIsEditing] = useState(isCreateMode || isEditMode);
     const [fullTask, setFullTask] = useState(task);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -20,6 +29,20 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
     });
 
     useEffect(() => {
+        // Skip fetching for create mode
+        if (!task) {
+            // Create mode - use default form data
+            setFormData({
+                title: '',
+                description: '',
+                category: '',
+                priority: 'MEDIUM',
+                status: 'TODO',
+                due_date: '',
+            });
+            return;
+        }
+
         const fetchFullTask = async () => {
             if (task && task.id) {
                 setLoading(true);
@@ -76,10 +99,20 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
                 ...formData,
                 category: formData.category ? parseInt(formData.category) : null,
             };
-            await taskAPI.update(fullTask.id, submitData);
-            const updatedTask = await taskAPI.getOne(fullTask.id);
-            setFullTask(updatedTask);
-            setIsEditing(false);
+
+            if (isCreateMode) {
+                // Create new task
+                const newTask = await taskAPI.create(submitData);
+                if (onClose) {
+                    onClose(newTask); // Pass new task back to parent
+                }
+            } else {
+                // Update existing task
+                await taskAPI.update(fullTask.id, submitData);
+                const updatedTask = await taskAPI.getOne(fullTask.id);
+                setFullTask(updatedTask);
+                setIsEditing(false);
+            }
         } catch (err) {
             console.error('Error saving task:', err);
             setError('Failed to save task. Please try again.');
@@ -89,13 +122,19 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
     };
 
     const handleCancel = () => {
+        if (isCreateMode) {
+            // In create mode, cancel closes the modal
+            if (onClose) onClose();
+            return;
+        }
+
         setFormData({
-            title: fullTask.title || '',
-            description: fullTask.description || '',
-            category: fullTask.category || '',
-            priority: fullTask.priority || 'MEDIUM',
-            status: fullTask.status || 'TODO',
-            due_date: fullTask.due_date || '',
+            title: fullTask?.title || '',
+            description: fullTask?.description || '',
+            category: fullTask?.category || '',
+            priority: fullTask?.priority || 'MEDIUM',
+            status: fullTask?.status || 'TODO',
+            due_date: fullTask?.due_date || '',
         });
         setIsEditing(false);
     };
@@ -170,7 +209,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
 
     // Build category options from propCategories
     const categoryOptions = [
-        { value: '', label: 'No Category' },
+        { value: '', label: 'No Category', color: '#6366f1'},
         ...(propCategories || []).map(cat => ({ value: cat.id, label: cat.name, color: cat.color })),
     ];
 
@@ -199,23 +238,20 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
         return { backgroundColor: color, color: 'white' };
     };
 
-    const dueDateStatus = getDueDateStatus(isEditing ? formData.due_date : fullTask?.due_date);
-    const statusInfo = getStatusInfo(isEditing ? formData.status : fullTask?.status);
-    const priorityColor = getPriorityColor(isEditing ? formData.priority : fullTask?.priority);
+    const dueDateStatus = getDueDateStatus(isEditing || isCreateMode ? formData.due_date : fullTask?.due_date);
+    const statusInfo = getStatusInfo(isEditing || isCreateMode ? formData.status : fullTask?.status);
+    const priorityColor = getPriorityColor(isEditing || isCreateMode ? formData.priority : fullTask?.priority);
 
-    if (!task) return null;
+    if (!task && !isCreateMode) return null;
+
+    // In create mode, show loading state only if explicitly needed
+    const showLoading = loading && !isCreateMode;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="task-modal" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close-btn" onClick={onClose}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
 
-                {loading ? (
+                {showLoading ? (
                     <div className="task-modal-loading">
                         <div className="spinner"></div>
                     </div>
@@ -223,7 +259,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
                     <div className="task-modal-content">
                         {/* Header */}
                         <div className="task-modal-header">
-                            {isEditing ? (
+                            {isEditing || isCreateMode ? (
                                 <>
                                     <input
                                         type="text"
@@ -231,7 +267,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
                                         className={`task-modal-title-input ${error ? 'has-error' : ''}`}
                                         value={formData.title}
                                         onChange={handleChange}
-                                        placeholder="Task title"
+                                        placeholder={isCreateMode ? 'Enter task title...' : 'Task title'}
                                         autoFocus
                                     />
                                 </>
@@ -239,21 +275,21 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
                                 <h1 className="task-modal-title">{fullTask?.title}</h1>
                             )}
                             <div className="task-modal-actions">
-                                {isEditing ? (
+                                {isEditing || isCreateMode ? (
                                     <>
                                         <button
                                             className="task-modal-btn task-modal-btn-secondary"
                                             onClick={handleCancel}
                                             disabled={saving}
                                         >
-                                            Cancel
+                                            {isCreateMode ? 'Cancel' : 'Cancel'}
                                         </button>
                                         <button
                                             className="task-modal-btn task-modal-btn-primary"
                                             onClick={handleSave}
                                             disabled={saving}
                                         >
-                                            {saving ? 'Saving...' : 'Save'}
+                                            {saving ? (isCreateMode ? 'Creating...' : 'Saving...') : (isCreateMode ? 'Create Task' : 'Save')}
                                         </button>
                                     </>
                                 ) : (
@@ -296,7 +332,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
                             {/* Status */}
                             <div className="task-modal-property">
                                 <span className="task-modal-property-label">Status</span>
-                                {isEditing ? (
+                                {isEditing || isCreateMode ? (
                                     <BadgeSelect
                                         name="status"
                                         value={formData.status}
@@ -317,7 +353,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
                             {/* Priority */}
                             <div className="task-modal-property">
                                 <span className="task-modal-property-label">Priority</span>
-                                {isEditing ? (
+                                {isEditing || isCreateMode ? (
                                     <BadgeSelect
                                         name="priority"
                                         value={formData.priority}
@@ -344,7 +380,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
                             {/* Category */}
                             <div className="task-modal-property">
                                 <span className="task-modal-property-label">Category</span>
-                                {isEditing ? (
+                                {isEditing || isCreateMode ? (
                                     <BadgeSelect
                                         name="category"
                                         value={formData.category}
@@ -370,7 +406,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
                             {/* Due Date */}
                             <div className="task-modal-property">
                                 <span className="task-modal-property-label">Due Date</span>
-                                {isEditing ? (
+                                {isEditing || isCreateMode ? (
                                     <input
                                         type="date"
                                         name="due_date"
@@ -397,7 +433,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
                         {/* Description */}
                         <div className="task-modal-section">
                             <h3 className="task-modal-section-title">Description</h3>
-                            {isEditing ? (
+                            {isEditing || isCreateMode ? (
                                 <textarea
                                     name="description"
                                     className="task-modal-textarea"
@@ -415,13 +451,15 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories }) {
                             )}
                         </div>
 
-                        {/* Metadata */}
-                        <div className="task-modal-meta">
-                            <span>Created: {formatDateTime(fullTask?.created_at)}</span>
-                            {fullTask?.updated_at && (
-                                <span>Updated: {formatDateTime(fullTask?.updated_at)}</span>
-                            )}
-                        </div>
+                        {/* Metadata - Hide in create mode */}
+                        {!isCreateMode && fullTask && (
+                            <div className="task-modal-meta">
+                                <span>Created: {formatDateTime(fullTask?.created_at)}</span>
+                                {fullTask?.updated_at && (
+                                    <span>Updated: {formatDateTime(fullTask?.updated_at)}</span>
+                                )}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
