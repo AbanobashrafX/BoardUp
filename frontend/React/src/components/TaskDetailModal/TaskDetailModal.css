@@ -1,0 +1,241 @@
+/* Task Detail Modal - Notion-style */
+.task-detail-modal {
+    background: var(--color-surface, #ffffff);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    position: relative;
+    animation: modalSlideIn 0.2s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary, #64748b);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    z-index: 10;
+}
+
+.modal-close-btn:hover {
+    background: var(--color-bg-secondary, #f1f5f9);
+    color: var(--color-text, #1e293b);
+}
+
+.task-detail-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.task-detail-content {
+    padding: 32px 40px;
+}
+
+.task-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    gap: 16px;
+}
+
+.task-detail-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-text, #1e293b);
+    line-height: 1.3;
+    margin: 0;
+    flex: 1;
+    word-break: break-word;
+}
+
+.task-detail-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.task-detail-action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary, #64748b);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.task-detail-action-btn:hover {
+    background: var(--color-bg-secondary, #f1f5f9);
+    color: var(--color-text, #1e293b);
+}
+
+.task-detail-action-delete:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Properties Section */
+.task-detail-properties {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--color-border-light, #f1f5f9);
+}
+
+.task-detail-property {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.task-detail-property-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-text-muted, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.task-detail-property-value {
+    font-size: 0.9375rem;
+    color: var(--color-text, #1e293b);
+}
+
+/* Status Badge */
+.task-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: white;
+}
+
+/* Priority Badge */
+.task-priority-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+/* Category Badge */
+.task-category-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: white;
+}
+
+/* Due Date */
+.task-due-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.task-due-date.overdue {
+    color: #dc2626;
+}
+
+.task-due-date.due-soon {
+    color: #d97706;
+}
+
+.task-due-date.normal {
+    color: var(--color-text-secondary, #64748b);
+}
+
+/* Description Section */
+.task-detail-section {
+    margin-bottom: 24px;
+}
+
+.task-detail-section-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-muted, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+}
+
+.task-detail-description {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text, #1e293b);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Metadata */
+.task-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border-light, #f1f5f9);
+    font-size: 0.8125rem;
+    color: var(--color-text-muted, #94a3b8);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .task-detail-modal {
+        max-width: 100%;
+        margin: 16px;
+        max-height: calc(100vh - 32px);
+    }
+
+    .task-detail-content {
+        padding: 24px 20px;
+    }
+
+    .task-detail-title {
+        font-size: 1.5rem;
+    }
+
+    .task-detail-properties {
+        gap: 12px;
+    }
+}
