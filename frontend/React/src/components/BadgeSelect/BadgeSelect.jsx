@@ -1,0 +1,86 @@
+import React, { useState, useRef, useEffect } from 'react';
+import './BadgeSelect.css';
+
+function BadgeSelect({
+    name,
+    value,
+    onChange,
+    options,
+    getOptionStyle,
+    placeholder = 'Select...'
+}) {
+    const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef(null);
+
+    const selectedOption = options.find(opt => opt.value === value);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (containerRef.current && !containerRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleSelect = (optionValue) => {
+        onChange({ target: { name, value: optionValue } });
+        setIsOpen(false);
+    };
+
+    return (
+        <div className="badge-select-container" ref={containerRef}>
+            <button
+                type="button"
+                className={`badge-select-trigger ${isOpen ? 'open' : ''} ${selectedOption ? 'has-value' : ''}`}
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                {selectedOption ? (
+                    <span
+                        className="badge-select-value"
+                        style={getOptionStyle ? getOptionStyle(selectedOption) : {}}
+                    >
+                        {selectedOption.label}
+                    </span>
+                ) : (
+                    <span className="badge-select-placeholder">{placeholder}</span>
+                )}
+                <svg
+                    className={`badge-select-arrow ${isOpen ? 'open' : ''}`}
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                >
+                    <path d="M6 9l6 6 6-6" />
+                </svg>
+            </button>
+
+            {isOpen && (
+                <div className="badge-select-dropdown">
+                    {options.map((option) => (
+                        <button
+                            key={option.value}
+                            type="button"
+                            className={`badge-select-option ${option.value === value ? 'selected' : ''}`}
+                            onClick={() => handleSelect(option.value)}
+                        >
+                            <span
+                                className="badge-select-option-badge"
+                                style={getOptionStyle ? getOptionStyle(option) : {}}
+                            >
+                                {option.label}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default BadgeSelect;
