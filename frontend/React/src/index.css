@@ -73,6 +73,17 @@
     box-sizing: border-box;
 }
 
+/* Focus visible for accessibility */
+:focus-visible {
+    outline: 2px solid var(--color-primary, #6366f1);
+    outline-offset: 2px;
+}
+
+/* Remove focus for mouse users */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
         'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -82,6 +93,18 @@ body {
     background-color: var(--color-bg);
     color: var(--color-text);
     line-height: 1.5;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 /* Scrollbar Styling */
@@ -112,11 +135,31 @@ button {
     font-family: inherit;
 }
 
+/* Focus visible for buttons */
+button:focus-visible {
+    outline: 2px solid var(--color-primary, #6366f1);
+    outline-offset: 2px;
+}
+
+/* Disabled button */
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 /* Input Reset */
 input,
 textarea,
 select {
     font-family: inherit;
+}
+
+/* Focus visible for inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--color-primary, #6366f1);
+    outline-offset: 1px;
 }
 
 /* App-specific styles moved to App.css */
@@ -141,6 +184,26 @@ select {
     cursor: pointer;
     border: none;
     font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+}
+
+.btn:active::after {
+    width: 200%;
+    height: 200%;
 }
 
 .btn-primary {
@@ -151,7 +214,7 @@ select {
 
 .btn-primary:hover {
     background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary) 100%);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: 0 6px 20px 0 rgb(99 102 241 / 0.4);
 }
 
@@ -168,6 +231,7 @@ select {
 .btn-secondary:hover {
     background: var(--color-bg-secondary);
     border-color: var(--color-text-secondary);
+    transform: translateY(-1px);
 }
 
 .btn-danger {
@@ -178,6 +242,7 @@ select {
 
 .btn-danger:hover {
     background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+    transform: translateY(-1px);
 }
 
 .btn-sm {
