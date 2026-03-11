@@ -209,12 +209,15 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
 
     // Build category options from propCategories
     const categoryOptions = [
-        { value: '', label: 'No Category', color: '#6366f1'},
+        { value: '', label: 'No Category', color: '#6366f1' },
         ...(propCategories || []).map(cat => ({ value: cat.id, label: cat.name, color: cat.color })),
     ];
 
     const getCategoryOptionStyle = (option) => {
-        if (!option.value) return {};
+        if (!option.value) {
+            // No category - gray background with dark text
+            return { backgroundColor: '#e5e7eb', color: '#374151' };
+        }
         return { backgroundColor: option.color || '#6366f1' };
     };
 
