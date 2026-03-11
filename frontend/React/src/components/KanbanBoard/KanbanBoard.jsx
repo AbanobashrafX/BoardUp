@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { taskAPI, categoryAPI } from '../../services/api';
 import TaskCard from '../TaskCard/TaskCard';
 import TaskForm from '../TaskForm/TaskForm';
+import TaskModal from '../TaskModal/TaskModal';
 import './KanbanBoard.css';
 
 const COLUMNS = [
@@ -37,6 +38,7 @@ function KanbanBoard() {
     const [loading, setLoading] = useState(true);
     const [showTaskForm, setShowTaskForm] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
+    const [viewingTask, setViewingTask] = useState(null);
     const [filter, setFilter] = useState({ category: '', priority: '' });
 
     useEffect(() => {
@@ -136,6 +138,10 @@ function KanbanBoard() {
         setEditingTask(task);
     };
 
+    const handleViewTask = (task) => {
+        setViewingTask(task);
+    };
+
     const filteredTasks = (columnId) => {
         let columnTasks = tasks[columnId] || [];
 
@@ -229,6 +235,7 @@ function KanbanBoard() {
                                                             task={task}
                                                             onEdit={handleEditTask}
                                                             onDelete={handleDeleteTask}
+                                                            onView={handleViewTask}
                                                         />
                                                     </div>
                                                 )}
@@ -263,6 +270,18 @@ function KanbanBoard() {
                     categories={categories}
                     onSubmit={handleUpdateTask}
                     onClose={() => setEditingTask(null)}
+                />
+            )}
+
+            {viewingTask && (
+                <TaskModal
+                    task={viewingTask}
+                    categories={categories}
+                    onClose={() => setViewingTask(null)}
+                    onDelete={(taskId) => {
+                        handleDeleteTask(taskId);
+                        setViewingTask(null);
+                    }}
                 />
             )}
         </div>
