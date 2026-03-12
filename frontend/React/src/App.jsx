@@ -8,7 +8,7 @@ function App() {
             <header className="header">
                 <h1>📋 BoardUp</h1>
                 <div className="header-actions">
-                    <span className="version">v1.2.0</span>
+                    <span className="version">v1.4.1</span>
                 </div>
             </header>
 

@@ -23,7 +23,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
         title: '',
         description: '',
         category: '',
-        priority: 'MEDIUM',
+        priority: 'LOW',
         status: 'TODO',
         due_date: '',
     });
@@ -36,7 +36,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                 title: '',
                 description: '',
                 category: '',
-                priority: 'MEDIUM',
+                priority: 'LOW',
                 status: 'TODO',
                 due_date: '',
             });
@@ -53,7 +53,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                         title: data.title || '',
                         description: data.description || '',
                         category: data.category || '',
-                        priority: data.priority || 'MEDIUM',
+                        priority: data.priority || 'LOW',
                         status: data.status || 'TODO',
                         due_date: data.due_date || '',
                     });
@@ -64,7 +64,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                         title: task.title || '',
                         description: task.description || '',
                         category: task.category || '',
-                        priority: task.priority || 'MEDIUM',
+                        priority: task.priority || 'LOW',
                         status: task.status || 'TODO',
                         due_date: task.due_date || '',
                     });
@@ -132,7 +132,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
             title: fullTask?.title || '',
             description: fullTask?.description || '',
             category: fullTask?.category || '',
-            priority: fullTask?.priority || 'MEDIUM',
+            priority: fullTask?.priority || 'lOW',
             status: fullTask?.status || 'TODO',
             due_date: fullTask?.due_date || '',
         });
@@ -416,6 +416,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                                         className="task-modal-input"
                                         value={formData.due_date}
                                         onChange={handleChange}
+                                        lang="en-GB"
                                     />
                                 ) : (
                                     <span className={`task-modal-property-value task-due-date ${dueDateStatus}`}>
