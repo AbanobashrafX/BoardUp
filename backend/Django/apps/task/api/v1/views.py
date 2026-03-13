@@ -8,8 +8,6 @@ from rest_framework.response import Response
 from .serializers import (
     CategorySerializer,
     SubtaskSerializer,
-    SubtaskUpdateSerializer,
-    TaskMoveSerializer,
     TaskSerializer,
 )
 
@@ -110,6 +108,14 @@ def TaskDetail(request, pk):
 def TaskList(request):
     if request.method == "GET":
         tasks = Task.objects.select_related("category").all()
+
+        # Search functionality
+        search = request.query_params.get("search")
+        if search:
+            tasks = tasks.filter(
+                db_models.Q(title__icontains=search)
+                | db_models.Q(description__icontains=search)
+            )
 
         # Add filtering like v2
         status = request.query_params.get("status")
