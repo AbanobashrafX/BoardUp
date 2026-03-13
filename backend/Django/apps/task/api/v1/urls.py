@@ -4,6 +4,8 @@ from .views import (
     APIRoot,
     CategoryDetail,
     CategoryList,
+    SubtaskDetail,
+    SubtaskList,
     TaskByStatus,
     TaskDetail,
     TaskList,
@@ -18,4 +20,7 @@ urlpatterns = [
     path("tasks/<int:pk>/", TaskDetail, name="task-detail"),
     path("tasks/<int:pk>/move/", TaskMove, name="task-move"),
     path("tasks/<str:status>/", TaskByStatus, name="task-by-status"),
+    # Subtask endpoints (2 endpoints: list/create and detail/update/delete)
+    path("tasks/<int:task_pk>/subtasks/", SubtaskList, name="subtask-list"),
+    path("subtasks/<int:pk>/", SubtaskDetail, name="subtask-detail"),
 ]

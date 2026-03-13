@@ -1,11 +1,17 @@
 # function-based views
-from apps.task.models import Category, Task
+from apps.task.models import Category, Subtask, Task
 from django.db import models as db_models
 from django.db import transaction
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .serializers import CategorySerializer, TaskSerializer
+from .serializers import (
+    CategorySerializer,
+    SubtaskSerializer,
+    SubtaskUpdateSerializer,
+    TaskMoveSerializer,
+    TaskSerializer,
+)
 
 
 @api_view(["GET"])
@@ -199,4 +205,60 @@ def TaskByStatus(request, status=None):
             )
             return Response(serializer.data)
     except Exception as e:
-        return Response({"error": "Failed to retrieve tasks"}, status=500)
+        return Response(
+            {"error": "Failed to retrieve tasks", "Details": str(e)}, status=500
+        )
+
+
+# ------------------------------------------------------------
+# Subtasks endpoints
+# ------------------------------------------------------------
+
+
+@api_view(["GET", "POST"])
+def SubtaskList(request, task_pk):
+    """Get or create subtasks for a specific task"""
+    try:
+        task = Task.objects.get(pk=task_pk)
+    except Task.DoesNotExist:
+        return Response({"error": "Task not found"}, status=404)
+
+    if request.method == "GET":
+        subtasks = task.subtasks.all().order_by("position", "created_at")
+        serializer = SubtaskSerializer(subtasks, many=True)
+        return Response(serializer.data)
+
+    if request.method == "POST":
+        # Get the next position
+        max_position = task.subtasks.count()
+        serializer = SubtaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(task=task, position=max_position)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+@api_view(["GET", "PUT", "PATCH", "DELETE"])
+def SubtaskDetail(request, pk):
+    """Get, update, or delete a specific subtask"""
+    try:
+        subtask = Subtask.objects.get(pk=pk)
+    except Subtask.DoesNotExist:
+        return Response({"error": "Subtask not found"}, status=404)
+
+    if request.method == "GET":
+        serializer = SubtaskSerializer(subtask)
+        return Response(serializer.data)
+
+    if request.method in ["PUT", "PATCH"]:
+        serializer = SubtaskSerializer(
+            subtask, data=request.data, partial=(request.method == "PATCH")
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    if request.method == "DELETE":
+        subtask.delete()
+        return Response(status=204)
