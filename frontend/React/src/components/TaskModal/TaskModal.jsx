@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { taskAPI } from '../../services/api';
+import { taskAPI, subtaskAPI } from '../../services/api';
 import BadgeSelect from '../BadgeSelect/BadgeSelect';
 import './TaskModal.css';
 
@@ -19,6 +19,9 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
     const [categories] = useState(propCategories || []);
+    const [subtasks, setSubtasks] = useState([]);
+    const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
+    const [subtasksLoading, setSubtasksLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -40,6 +43,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                 status: 'TODO',
                 due_date: '',
             });
+            setSubtasks([]);
             return;
         }
 
@@ -47,8 +51,12 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
             if (task && task.id) {
                 setLoading(true);
                 try {
-                    const data = await taskAPI.getOne(task.id);
+                    const [data, subtasksData] = await Promise.all([
+                        taskAPI.getOne(task.id),
+                        subtaskAPI.getByTask(task.id).catch(() => [])
+                    ]);
                     setFullTask(data);
+                    setSubtasks(subtasksData);
                     setFormData({
                         title: data.title || '',
                         description: data.description || '',
@@ -60,6 +68,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                 } catch (error) {
                     console.error('Error fetching task:', error);
                     setFullTask(task);
+                    setSubtasks(task.subtasks || []);
                     setFormData({
                         title: task.title || '',
                         description: task.description || '',
@@ -137,6 +146,44 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
             due_date: fullTask?.due_date || '',
         });
         setIsEditing(false);
+    };
+
+    // Subtask handlers
+    const handleAddSubtask = async () => {
+        if (!newSubtaskTitle.trim() || !fullTask?.id) return;
+
+        setSubtasksLoading(true);
+        try {
+            const newSubtask = await subtaskAPI.create(fullTask.id, {
+                title: newSubtaskTitle.trim()
+            });
+            setSubtasks([...subtasks, newSubtask]);
+            setNewSubtaskTitle('');
+        } catch (error) {
+            console.error('Error adding subtask:', error);
+        } finally {
+            setSubtasksLoading(false);
+        }
+    };
+
+    const handleToggleSubtask = async (subtaskId) => {
+        try {
+            const updatedSubtask = await subtaskAPI.toggle(subtaskId);
+            setSubtasks(subtasks.map(st =>
+                st.id === subtaskId ? updatedSubtask : st
+            ));
+        } catch (error) {
+            console.error('Error toggling subtask:', error);
+        }
+    };
+
+    const handleDeleteSubtask = async (subtaskId) => {
+        try {
+            await subtaskAPI.delete(subtaskId);
+            setSubtasks(subtasks.filter(st => st.id !== subtaskId));
+        } catch (error) {
+            console.error('Error deleting subtask:', error);
+        }
     };
 
     const formatDate = (dateString) => {
@@ -454,6 +501,60 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                                 </div>
                             )}
                         </div>
+
+                        {/* Subtasks Section - Only show when not in create mode */}
+                        {!isCreateMode && fullTask && (
+                            <div className="task-modal-section">
+                                <h3 className="task-modal-section-title">
+                                    Checklist
+                                    <span className="subtasks-count">
+                                        ({subtasks.filter(st => st.is_completed).length}/{subtasks.length})
+                                    </span>
+                                </h3>
+
+                                {/* Subtask list */}
+                                <div className="subtasks-list">
+                                    {subtasks.map((subtask) => (
+                                        <div key={subtask.id} className={`subtask-item ${subtask.is_completed ? 'completed' : ''}`}>
+                                            <label className="subtask-checkbox">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={subtask.is_completed}
+                                                    onChange={() => handleToggleSubtask(subtask.id)}
+                                                />
+                                                <span className="subtask-title">{subtask.title}</span>
+                                            </label>
+                                            <button
+                                                className="subtask-delete-btn"
+                                                onClick={() => handleDeleteSubtask(subtask.id)}
+                                                title="Delete subtask"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Add subtask input */}
+                                <div className="subtask-add-form">
+                                    <input
+                                        type="text"
+                                        className="subtask-add-input"
+                                        placeholder="Add an item..."
+                                        value={newSubtaskTitle}
+                                        onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleAddSubtask()}
+                                    />
+                                    <button
+                                        className="subtask-add-btn"
+                                        onClick={handleAddSubtask}
+                                        disabled={!newSubtaskTitle.trim() || subtasksLoading}
+                                    >
+                                        {subtasksLoading ? '...' : '+'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Metadata - Hide in create mode */}
                         {!isCreateMode && fullTask && (

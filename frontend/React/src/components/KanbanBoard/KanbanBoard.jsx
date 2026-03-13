@@ -175,10 +175,11 @@ function KanbanBoard() {
                     </select>
 
                     <button
-                        className="btn btn-primary"
+                        // className="btn btn-primary"
+                        className='new-task-btn'
                         onClick={() => setShowTaskModal(true)}
                     >
-                        + Add Task
+                        New
                     </button>
                 </div>
             </div>

@@ -54,6 +54,42 @@ export const taskAPI = {
     },
 };
 
+// Subtask API
+export const subtaskAPI = {
+    // Get all subtasks for a task
+    getByTask: async (taskId) => {
+        const response = await api.get(`/tasks/${taskId}/subtasks/`);
+        return response.data;
+    },
+
+    // Create subtask
+    create: async (taskId, subtaskData) => {
+        const response = await api.post(`/tasks/${taskId}/subtasks/`, subtaskData);
+        return response.data;
+    },
+
+    // Update subtask (including toggle via PATCH)
+    update: async (id, subtaskData) => {
+        const response = await api.patch(`/subtasks/${id}/`, subtaskData);
+        return response.data;
+    },
+
+    // Delete subtask
+    delete: async (id) => {
+        const response = await api.delete(`/subtasks/${id}/`);
+        return response.data;
+    },
+
+    // Toggle subtask completion (using PATCH to set is_completed)
+    toggle: async (id) => {
+        // First get current state, then toggle
+        const response = await api.get(`/subtasks/${id}/`);
+        const current = response.data;
+        const updated = await api.patch(`/subtasks/${id}/`, { is_completed: !current.is_completed });
+        return updated.data;
+    },
+};
+
 // Category API
 export const categoryAPI = {
     // Get all categories

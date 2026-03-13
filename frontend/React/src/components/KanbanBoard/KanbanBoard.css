@@ -99,6 +99,23 @@
     font-size: 14px;
 }
 
+.new-task-btn {
+    width: 55%;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    color: white;
+    box-shadow: var(--shadow-primary);
+    border-radius: 6px;
+    padding: 9px 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.new-task-btn:hover {
+    background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary) 100%);
+}
+
 @media (max-width: 1024px) {
     .kanban-columns {
         grid-template-columns: repeat(2, 1fr);

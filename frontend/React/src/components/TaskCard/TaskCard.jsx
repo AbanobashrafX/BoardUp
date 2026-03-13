@@ -45,16 +45,6 @@ function TaskCard({ task, onEdit, onDelete, onView }) {
                 <span className={priorityClass}>{priority}</span>
                 <div className="task-actions">
                     <button
-                        className="task-action-btn task-edit-btn"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onEdit(task);
-                        }}
-                        title="Edit"
-                    >
-                        ✏️
-                    </button>
-                    <button
                         className="task-action-btn task-delete-btn"
                         onClick={(e) => {
                             e.stopPropagation();
@@ -98,6 +88,12 @@ function TaskCard({ task, onEdit, onDelete, onView }) {
                         {dueDateStatus === 'due-soon' && '⏰ '}
                         {dueDateStatus === 'normal' && '🟢 '}
                         {formatDate(task.due_date)}
+                    </span>
+                )}
+                {/* Subtask progress */}
+                {task.subtasks_count > 0 && (
+                    <span className={`task-subtasks ${task.completed_subtasks_count === task.subtasks_count ? 'all-complete' : ''}`}>
+                        ☑️ {task.completed_subtasks_count}/{task.subtasks_count}
                     </span>
                 )}
             </div>
