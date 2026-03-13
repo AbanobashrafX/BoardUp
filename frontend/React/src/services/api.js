@@ -11,7 +11,7 @@ const api = axios.create({
 
 // Task API
 export const taskAPI = {
-    // Get all tasks
+    // Get all tasks (supports search, status, priority, category filters)
     getAll: async (params = {}) => {
         const response = await api.get('/tasks/', { params });
         return response.data;
