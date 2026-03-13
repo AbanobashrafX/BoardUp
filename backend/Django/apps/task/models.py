@@ -66,3 +66,30 @@ class Task(BaseModel):
 
     def __str__(self):
         return self.title
+
+    @property
+    def subtasks_count(self):
+        return self.subtasks.count()
+
+    @property
+    def completed_subtasks_count(self):
+        return self.subtasks.filter(is_completed=True).count()
+
+
+class Subtask(BaseModel):
+    """
+    Subtask model for checklist items within a task
+    """
+
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="subtasks")
+    title = models.CharField(max_length=255)
+    is_completed = models.BooleanField(default=False)
+    position = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ["position", "created_at"]
+        verbose_name = "Subtask"
+        verbose_name_plural = "Subtasks"
+
+    def __str__(self):
+        return f"{self.title} ({'completed' if self.is_completed else 'pending'})"
