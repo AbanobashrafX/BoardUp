@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { taskAPI, categoryAPI } from '../../services/api';
 import TaskCard from '../TaskCard/TaskCard';
@@ -39,17 +39,24 @@ function KanbanBoard() {
     const [selectedTask, setSelectedTask] = useState(null);
     const [filter, setFilter] = useState({ category: '', priority: '' });
     const [searchQuery, setSearchQuery] = useState('');
+    const isInitialized = useRef(false);
 
+    // Single effect that handles initial load and filter/search changes with debounce
     useEffect(() => {
+        // Skip if not yet initialized (first render)
+        if (!isInitialized.current) {
+            isInitialized.current = true;
+            fetchData();
+            return;
+        }
+
+        // Debounce search queries
         const timer = setTimeout(() => {
             fetchData();
-        }, 300);
-        return () => clearTimeout(timer);
-    }, [searchQuery]);
+        }, searchQuery ? 300 : 0);
 
-    useEffect(() => {
-        fetchData();
-    }, [filter]);
+        return () => clearTimeout(timer);
+    }, [searchQuery, filter]);
 
     const fetchData = async () => {
         try {
