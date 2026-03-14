@@ -34,7 +34,8 @@ const SAMPLE_CATEGORIES = [
 function KanbanBoard() {
     const [tasks, setTasks] = useState({ TODO: [], IN_PROGRESS: [], DONE: [] });
     const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);  // Initial loading state
+    const [isFetching, setIsFetching] = useState(false);  // Search/filter loading state
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [filter, setFilter] = useState({ category: '', priority: '' });
@@ -46,74 +47,59 @@ function KanbanBoard() {
         // Skip if not yet initialized (first render)
         if (!isInitialized.current) {
             isInitialized.current = true;
-            fetchData();
+            fetchData(true, true);  // Initial load - show spinner, fetch categories
             return;
         }
 
-        // Debounce search queries
+        // Debounce search queries - no spinner for search
         const timer = setTimeout(() => {
-            fetchData();
+            fetchData(false, false);
         }, searchQuery ? 300 : 0);
 
         return () => clearTimeout(timer);
     }, [searchQuery, filter]);
 
-    const fetchData = async () => {
+    const fetchData = async (showLoader = true, fetchCategories = false) => {
         try {
-            setLoading(true);
-            const [tasksData, categoriesData] = await Promise.all([
-                taskAPI.getByStatus(),
-                categoryAPI.getAll(),
-            ]);
+            if (showLoader) setIsFetching(true);
 
-            let filteredTasks = tasksData || SAMPLE_TASKS;
+            // Build query params for backend filtering
+            const params = {};
+            if (searchQuery) params.search = searchQuery;
+            if (filter.category) params.category = filter.category;
+            if (filter.priority) params.priority = filter.priority;
 
-            if (searchQuery) {
-                const query = searchQuery.toLowerCase();
-                filteredTasks = {
-                    TODO: (filteredTasks.TODO || []).filter(t =>
-                        t.title.toLowerCase().includes(query) ||
-                        (t.description && t.description.toLowerCase().includes(query))
-                    ),
-                    IN_PROGRESS: (filteredTasks.IN_PROGRESS || []).filter(t =>
-                        t.title.toLowerCase().includes(query) ||
-                        (t.description && t.description.toLowerCase().includes(query))
-                    ),
-                    DONE: (filteredTasks.DONE || []).filter(t =>
-                        t.title.toLowerCase().includes(query) ||
-                        (t.description && t.description.toLowerCase().includes(query))
-                    ),
+            let tasksData;
+
+            // Use getAll with params for backend filtering, fallback to getByStatus
+            if (params.search || params.category || params.priority) {
+                // API returns flat array - need to group by status
+                const flatTasks = await taskAPI.getAll(params);
+                tasksData = {
+                    TODO: (flatTasks || []).filter(t => t.status === 'TODO'),
+                    IN_PROGRESS: (flatTasks || []).filter(t => t.status === 'IN_PROGRESS'),
+                    DONE: (flatTasks || []).filter(t => t.status === 'DONE'),
                 };
+            } else {
+                // No filters - use grouped endpoint
+                tasksData = await taskAPI.getByStatus();
             }
 
-            if (filter.category || filter.priority) {
-                filteredTasks = {
-                    TODO: (filteredTasks.TODO || []).filter(t => {
-                        if (filter.category && t.category !== parseInt(filter.category)) return false;
-                        if (filter.priority && t.priority !== filter.priority) return false;
-                        return true;
-                    }),
-                    IN_PROGRESS: (filteredTasks.IN_PROGRESS || []).filter(t => {
-                        if (filter.category && t.category !== parseInt(filter.category)) return false;
-                        if (filter.priority && t.priority !== filter.priority) return false;
-                        return true;
-                    }),
-                    DONE: (filteredTasks.DONE || []).filter(t => {
-                        if (filter.category && t.category !== parseInt(filter.category)) return false;
-                        if (filter.priority && t.priority !== filter.priority) return false;
-                        return true;
-                    }),
-                };
+            // Only fetch categories on initial load
+            if (fetchCategories) {
+                const categoriesData = await categoryAPI.getAll();
+                setCategories(Array.isArray(categoriesData) ? categoriesData : SAMPLE_CATEGORIES);
             }
+            // Categories are cached - don't re-fetch on every search/filter
 
-            setTasks(filteredTasks);
-            setCategories(Array.isArray(categoriesData) ? categoriesData : SAMPLE_CATEGORIES);
+            setTasks(tasksData || { TODO: [], IN_PROGRESS: [], DONE: [] });
         } catch (error) {
             console.log('API not available, using sample data for demo');
             setTasks(SAMPLE_TASKS);
             setCategories(SAMPLE_CATEGORIES);
         } finally {
-            setLoading(false);
+            setIsLoading(false);
+            setIsFetching(false);
         }
     };
 
@@ -163,7 +149,8 @@ function KanbanBoard() {
 
     const filteredTasks = (columnId) => tasks[columnId] || [];
 
-    if (loading) {
+    // Show loading spinner only on initial load
+    if (isLoading) {
         return (
             <div className="loading">
                 <div className="spinner"></div>
@@ -183,13 +170,15 @@ function KanbanBoard() {
                             <circle cx="11" cy="11" r="8"></circle>
                             <path d="m21 21-4.35-4.35"></path>
                         </svg>
-                        <input
-                            type="text"
-                            className="search-input"
-                            placeholder="Search..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
+                        <form onSubmit={(e) => e.preventDefault()}>
+                            <input
+                                type="text"
+                                className="search-input"
+                                placeholder="Search..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </form>
                         {searchQuery && (
                             <button className="search-clear" onClick={() => setSearchQuery('')}>×</button>
                         )}
