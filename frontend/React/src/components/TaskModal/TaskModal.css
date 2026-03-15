@@ -236,7 +236,7 @@
     color: var(--color-text);
 }
 
-/* Form Inputs */
+/* Form Inputs - extends shared styles */
 .task-modal-select,
 .task-modal-input,
 .task-modal-textarea {

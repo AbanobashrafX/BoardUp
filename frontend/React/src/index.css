@@ -3,9 +3,15 @@
  * Import theme system first
  */
 
-/* Theme System */
+/* Theme System - Import order matters! */
 @import './styles/theme.css';
+/* CSS variables */
+@import './styles/forms.css';
+/* form inputs */
+@import './styles/cards.css';
+/* card styles */
 @import './styles/components.css';
+/* buttons, modal, etc */
 
 /* ============================================
    GLOBAL STYLES

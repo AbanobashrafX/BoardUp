@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Card Styles - Shared card component styles
+   ========================================================================== */
+
+/* Base Card */
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Card Header */
+.card-header {
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+}
+
+/* Card Body */
+.card-body {
+    padding: var(--space-lg);
+}
+
+/* Card Footer */
+.card-footer {
+    padding: var(--space-md) var(--space-lg);
+    border-top: 1px solid var(--color-border-light);
+    background: var(--color-background-alt);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* Card Hover Effect */
+.card-hover {
+    transition: all var(--transition-fast);
+}
+
+.card-hover:hover {
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+/* Card Flat (no shadow) */
+.card-flat {
+    box-shadow: none;
+    border: 1px solid var(--color-border-light);
+}
+
+/* Card Outlined */
+.card-outlined {
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+}
+
+/* Task Card Specific */
+.task-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    transition: all var(--transition-fast);
+}
+
+.task-card:hover {
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-md);
+}

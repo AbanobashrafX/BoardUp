@@ -2,10 +2,21 @@
  * BoardUp Component Styles
  * Theme-aware standardized component styles
  * Uses CSS variables from theme.css
+ * 
+ * Import order:
+ * - theme.css (variables)
+ * - forms.css (form inputs)
+ * - buttons.css (button styles)
+ * - cards.css (card styles)
+ * - components.css (this file)
  */
 
 /* ============================================
-   BUTTONS
+   BUTTONS - see buttons.css
+   ============================================ */
+
+/* ============================================
+   FORM ELEMENTS - see forms.css
    ============================================ */
 
 /* Base button */
@@ -164,39 +175,10 @@
     color: var(--color-text);
 }
 
-/* Form input */
-.form-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    font-size: 0.9375rem;
-    transition: all var(--transition-base);
-    background: var(--color-surface);
-    color: var(--color-text);
-}
+/* Form styles - see forms.css for full definitions */
+/* .form-input, .form-textarea, .form-select */
 
-.form-input::placeholder {
-    color: var(--color-text-tertiary);
-}
-
-.form-input:hover {
-    border-color: var(--color-border-strong);
-}
-
-.form-input:focus {
-    outline: none;
-    border-color: transparent;
-    /* box-shadow: 0 0 0 3px var(--color-focus-ring); */
-}
-
-.form-input:disabled {
-    background: var(--color-background-alt);
-    color: var(--color-text-disabled);
-    cursor: not-allowed;
-}
-
-/* Form textarea */
+/* Form textarea override */
 .form-textarea {
     min-height: 100px;
     resize: vertical;
@@ -240,39 +222,8 @@
 }
 
 /* ============================================
-   CARDS
+   CARDS - see cards.css
    ============================================ */
-
-.card {
-    background: var(--color-card);
-    border-radius: var(--radius-lg);
-    padding: var(--space-lg);
-    /* box-shadow: var(--shadow-sm); */
-    /* border: 1px solid var(--color-border-light); */
-    transition: all var(--transition-base);
-}
-
-/* .card:hover {
-    box-shadow: var(--shadow-md);
-} */
-
-.card-elevated {
-    background: var(--color-card-elevated);
-    /* box-shadow: var(--shadow-md); */
-}
-
-.card-interactive {
-    cursor: pointer;
-}
-
-.card-interactive:hover {
-    transform: translateY(-2px);
-    /* border-color: var(--color-primary); */
-}
-
-.card-interactive:hover::before {
-    opacity: 1;
-}
 
 /* ============================================
    MODAL / DIALOG

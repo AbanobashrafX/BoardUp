@@ -1,0 +1,125 @@
+/* ==========================================================================
+   Form Styles - Shared input, select, textarea styles
+   ========================================================================== */
+
+/* Form Input Base */
+.form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    transition: all var(--transition-fast);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+}
+
+.form-input::placeholder {
+    color: var(--color-text-tertiary);
+}
+
+.form-input:hover {
+    border-color: var(--color-border-strong);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.form-input:disabled {
+    background: var(--color-background-alt);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+}
+
+/* Error state for inputs */
+.form-input.has-error {
+    border-color: var(--color-error);
+    background-color: var(--color-error-bg);
+}
+
+.form-input.has-error:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Form Select */
+.form-select {
+    width: 100%;
+    padding: 10px 12px;
+    padding-right: 36px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    transition: all var(--transition-fast);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+}
+
+.form-select:hover {
+    border-color: var(--color-border-strong);
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+/* Form Textarea */
+.form-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    transition: all var(--transition-fast);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-textarea::placeholder {
+    color: var(--color-text-tertiary);
+}
+
+.form-textarea:hover {
+    border-color: var(--color-border-strong);
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+/* Form Label */
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 16px;
+}
+
+/* Form Help Text */
+.form-help {
+    margin-top: 4px;
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+}
