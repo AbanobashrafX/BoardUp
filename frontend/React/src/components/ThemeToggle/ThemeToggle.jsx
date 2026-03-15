@@ -1,7 +1,7 @@
 import React from 'react';
 import './ThemeToggle.css';
 
-function ThemeToggle() {
+const ThemeToggle = React.forwardRef(function ThemeToggle(props, ref) {
     const [theme, setTheme] = React.useState(() => {
         return localStorage.getItem('theme') || 'light';
     });
@@ -11,15 +11,17 @@ function ThemeToggle() {
         localStorage.setItem('theme', theme);
     }, [theme]);
 
-    const toggleTheme = () => {
+    const toggleTheme = (e) => {
         setTheme(prev => prev === 'light' ? 'dark' : 'light');
+        props.onClick?.(e);
     };
 
     return (
         <button
+            ref={ref}
             className="theme-toggle"
             onClick={toggleTheme}
-            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode (t)`}
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
         >
             {theme === 'light' ? (
@@ -41,6 +43,6 @@ function ThemeToggle() {
             )}
         </button>
     );
-}
+});
 
 export default ThemeToggle;

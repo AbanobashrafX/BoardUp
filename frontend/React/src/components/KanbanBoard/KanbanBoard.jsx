@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { taskAPI, categoryAPI } from '../../services/api';
 import TaskCard from '../TaskCard/TaskCard';
 import TaskModal from '../TaskModal/TaskModal';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import './KanbanBoard.css';
 
 const COLUMNS = [
@@ -41,6 +42,17 @@ function KanbanBoard() {
     const [filter, setFilter] = useState({ category: '', priority: '' });
     const [searchQuery, setSearchQuery] = useState('');
     const isInitialized = useRef(false);
+    const searchInputRef = useRef(null);
+    const themeToggleRef = useRef(null);
+
+    // Keyboard shortcuts
+    useKeyboardShortcuts({
+        onNewTask: useCallback(() => setShowTaskModal(true), []),
+        onSearch: useCallback(() => searchInputRef.current?.focus(), []),
+        onToggleTheme: useCallback(() => themeToggleRef.current?.click(), []),
+        onClearFilters: useCallback(() => setFilter({ category: '', priority: '' }), []),
+        onStatusFilter: useCallback((status) => setFilter(prev => ({ ...prev, status })), []),
+    });
 
     // Single effect that handles initial load and filter/search changes with debounce
     useEffect(() => {
@@ -172,9 +184,10 @@ function KanbanBoard() {
                         </svg>
                         <form onSubmit={(e) => e.preventDefault()}>
                             <input
+                                ref={searchInputRef}
                                 type="text"
                                 className="search-input"
-                                placeholder="Search..."
+                                placeholder="Search... (f)"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -203,7 +216,7 @@ function KanbanBoard() {
                         <button className="filter-btn" onClick={() => setFilter({ category: '', priority: '' })} style={{ color: '#eb5757' }}>Clear</button>
                     )}
 
-                    <ThemeToggle />
+                    <ThemeToggle ref={themeToggleRef} />
 
                     <button className="new-btn" onClick={() => setShowTaskModal(true)}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
