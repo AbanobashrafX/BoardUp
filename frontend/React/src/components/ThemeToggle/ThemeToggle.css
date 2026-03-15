@@ -2,29 +2,55 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: var(--radius-md);
-    background: transparent;
-    color: var(--color-text-secondary);
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
     transition: all var(--transition-fast);
     cursor: pointer;
     border: none;
+    backdrop-filter: blur(4px);
 }
 
 .theme-toggle:hover {
-    background: var(--color-bg-secondary);
-    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
 }
 
 .theme-toggle:active {
     transform: scale(0.95);
 }
 
+.theme-toggle:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
 .theme-toggle svg {
-    transition: transform var(--transition-fast);
+    transition: transform var(--transition-spring);
 }
 
 .theme-toggle:hover svg {
-    transform: rotate(15deg);
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* Dark theme specific - lighter icon on dark header */
+[data-theme="dark"] .theme-toggle {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--color-text);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+    background: var(--color-hover-bg);
+}
+
+/* When header is styled differently based on theme context */
+.header:has([data-theme="dark"]) .theme-toggle {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--color-text);
+}
+
+.header:has([data-theme="dark"]) .theme-toggle:hover {
+    background: var(--color-hover-bg);
 }
