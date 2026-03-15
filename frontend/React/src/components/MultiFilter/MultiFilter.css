@@ -1,0 +1,336 @@
+/* Filters - Shopify Polaris Style Unified Component */
+.filters-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+/* Main Filters Button */
+.filters-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--bg-secondary, #f1f2f4);
+    border: 1px solid var(--border-color, #d4d5d8);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary, #202223);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+}
+
+.filters-button:hover {
+    background: var(--bg-hover, #e8e9eb);
+    border-color: #c4c5c8;
+}
+
+.filters-button-active {
+    background: var(--primary-light, #f1f5ff);
+    border-color: var(--primary-color, #0066cc);
+    color: var(--primary-color, #0066cc);
+}
+
+.filters-button svg {
+    flex-shrink: 0;
+}
+
+.filters-chevron {
+    transition: transform 0.2s ease;
+}
+
+.filters-chevron-open {
+    transform: rotate(180deg);
+}
+
+.filters-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: var(--primary-color, #0066cc);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 9px;
+}
+
+/* Popover */
+.filters-popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 280px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: var(--bg-primary, #ffffff);
+    border: 1px solid var(--border-color, #d4d5d8);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    animation: popoverIn 0.2s ease;
+}
+
+@keyframes popoverIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.filters-section {
+    padding: 12px;
+}
+
+.filters-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary, #6d7175);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.filters-divider {
+    height: 1px;
+    background: var(--border-color, #e4e5e7);
+    margin: 0;
+}
+
+.filters-options {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.filters-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.1s ease;
+    font-size: 14px;
+    color: var(--text-primary, #202223);
+}
+
+.filters-option:hover {
+    background: var(--bg-hover, #f1f2f4);
+}
+
+.filters-option input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color, #0066cc);
+    cursor: pointer;
+}
+
+.filters-empty {
+    padding: 8px;
+    font-size: 13px;
+    color: var(--text-muted, #8c9196);
+    font-style: italic;
+}
+
+/* Sort Options */
+.filters-sort-options {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.filters-sort-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-primary, #202223);
+    transition: background 0.1s ease;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+}
+
+.filters-sort-option:hover {
+    background: var(--bg-hover, #f1f2f4);
+}
+
+.filters-sort-option-active {
+    color: var(--primary-color, #0066cc);
+    font-weight: 500;
+}
+
+.filters-sort-option-active svg {
+    color: var(--primary-color, #0066cc);
+}
+
+/* Actions */
+.filters-actions {
+    padding: 8px 12px 12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.filters-clear {
+    padding: 6px 12px;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary-color, #0066cc);
+    cursor: pointer;
+    transition: color 0.1s ease;
+    font-family: inherit;
+    border-radius: 4px;
+}
+
+.filters-clear:hover {
+    background: var(--primary-light, #f1f5ff);
+    color: var(--primary-hover, #0043a8);
+}
+
+/* Tags */
+.filters-tags {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.filters-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 4px 4px 10px;
+    background: var(--bg-secondary, #f1f2f4);
+    border: 1px solid var(--border-color, #d4d5d8);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary, #202223);
+    animation: tagIn 0.15s ease;
+}
+
+.filters-tag-priority {
+    background: transparent;
+}
+
+@keyframes tagIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.filters-tag-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--text-muted, #8c9196);
+    transition: all 0.1s ease;
+}
+
+.filters-tag-remove:hover {
+    background: var(--bg-hover, #e8e9eb);
+    color: var(--text-primary, #202223);
+}
+
+/* Dark mode */
+[data-theme="dark"] .filters-button {
+    background: #202223;
+    border-color: #454545;
+    color: #c4cdd5;
+}
+
+[data-theme="dark"] .filters-button:hover {
+    background: #2d3038;
+    border-color: #5c6ac4;
+}
+
+[data-theme="dark"] .filters-button-active {
+    background: #1a1f2e;
+    border-color: #5c6ac4;
+    color: #9bbcf7;
+}
+
+[data-theme="dark"] .filters-count {
+    background: #5c6ac4;
+    color: white;
+}
+
+[data-theme="dark"] .filters-popover {
+    background: #202223;
+    border-color: #454545;
+}
+
+[data-theme="dark"] .filters-divider {
+    background: #333;
+}
+
+[data-theme="dark"] .filters-section-title {
+    color: #8c9196;
+}
+
+[data-theme="dark"] .filters-option {
+    color: #c4cdd5;
+}
+
+[data-theme="dark"] .filters-option:hover {
+    background: #2d3038;
+}
+
+[data-theme="dark"] .filters-sort-option {
+    color: #c4cdd5;
+}
+
+[data-theme="dark"] .filters-sort-option:hover {
+    background: #2d3038;
+}
+
+[data-theme="dark"] .filters-sort-option-active {
+    color: #9bbcf7;
+}
+
+[data-theme="dark"] .filters-tag {
+    background: #2d3038;
+    border-color: #454545;
+    color: #c4cdd5;
+}
+
+[data-theme="dark"] .filters-tag-remove:hover {
+    background: #454545;
+}
+
+[data-theme="dark"] .filters-clear:hover {
+    background: #1a1f2e;
+    color: #9bbcf7;
+}
