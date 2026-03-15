@@ -4,6 +4,7 @@ import { taskAPI, categoryAPI } from '../../services/api';
 import TaskCard from '../TaskCard/TaskCard';
 import TaskModal from '../TaskModal/TaskModal';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
+import MultiFilter from '../MultiFilter/MultiFilter';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import './KanbanBoard.css';
 
@@ -39,7 +40,8 @@ function KanbanBoard() {
     const [isFetching, setIsFetching] = useState(false);  // Search/filter loading state
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-    const [filter, setFilter] = useState({ category: '', priority: '' });
+    const [filter, setFilter] = useState({ categories: [], priorities: [] });
+    const [sortBy, setSortBy] = useState('newest');
     const [searchQuery, setSearchQuery] = useState('');
     const isInitialized = useRef(false);
     const searchInputRef = useRef(null);
@@ -50,7 +52,7 @@ function KanbanBoard() {
         onNewTask: useCallback(() => setShowTaskModal(true), []),
         onSearch: useCallback(() => searchInputRef.current?.focus(), []),
         onToggleTheme: useCallback(() => themeToggleRef.current?.click(), []),
-        onClearFilters: useCallback(() => setFilter({ category: '', priority: '' }), []),
+        onClearFilters: useCallback(() => setFilter({ categories: [], priorities: [] }), []),
         onStatusFilter: useCallback((status) => setFilter(prev => ({ ...prev, status })), []),
     });
 
@@ -78,8 +80,8 @@ function KanbanBoard() {
             // Build query params for backend filtering
             const params = {};
             if (searchQuery) params.search = searchQuery;
-            if (filter.category) params.category = filter.category;
-            if (filter.priority) params.priority = filter.priority;
+            if (filter.categories?.length > 0) params.category = filter.categories.join(',');
+            if (filter.priorities?.length > 0) params.priority = filter.priorities.join(',');
 
             let tasksData;
 
@@ -159,7 +161,32 @@ function KanbanBoard() {
         fetchData();
     };
 
-    const filteredTasks = (columnId) => tasks[columnId] || [];
+    // Sort function based on sortBy state
+    const sortTasks = (tasksArray) => {
+        const priorityOrder = { 'URGENT': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3 };
+
+        switch (sortBy) {
+            case 'oldest':
+                return [...tasksArray].sort((a, b) => (a.id || 0) - (b.id || 0));
+            case 'priority-high':
+                return [...tasksArray].sort((a, b) =>
+                    (priorityOrder[a.priority] ?? 4) - (priorityOrder[b.priority] ?? 4)
+                );
+            case 'priority-low':
+                return [...tasksArray].sort((a, b) =>
+                    (priorityOrder[b.priority] ?? 4) - (priorityOrder[a.priority] ?? 4)
+                );
+            case 'alphabetical':
+                return [...tasksArray].sort((a, b) =>
+                    (a.title || '').localeCompare(b.title || '')
+                );
+            case 'newest':
+            default:
+                return [...tasksArray].sort((a, b) => (b.id || 0) - (a.id || 0));
+        }
+    };
+
+    const filteredTasks = (columnId) => sortTasks(tasks[columnId] || []);
 
     // Show loading spinner only on initial load
     if (isLoading) {
@@ -199,22 +226,13 @@ function KanbanBoard() {
 
                     <div className="filter-divider"></div>
 
-                    <select className="filter-btn" value={filter.category} onChange={(e) => setFilter({ ...filter, category: e.target.value })}>
-                        <option value="">Category</option>
-                        {categories.map((cat) => (<option key={cat.id} value={cat.id}>{cat.name}</option>))}
-                    </select>
-
-                    <select className="filter-btn" value={filter.priority} onChange={(e) => setFilter({ ...filter, priority: e.target.value })}>
-                        <option value="">Priority</option>
-                        <option value="LOW">Low</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="HIGH">High</option>
-                        <option value="URGENT">Urgent</option>
-                    </select>
-
-                    {(filter.category || filter.priority) && (
-                        <button className="filter-btn" onClick={() => setFilter({ category: '', priority: '' })} style={{ color: '#eb5757' }}>Clear</button>
-                    )}
+                    <MultiFilter
+                        categories={categories}
+                        filters={filter}
+                        onFilterChange={setFilter}
+                        sortBy={sortBy}
+                        onSortChange={setSortBy}
+                    />
 
                     <ThemeToggle ref={themeToggleRef} />
 
@@ -225,7 +243,7 @@ function KanbanBoard() {
                 </div>
             </div>
 
-            {(filter.category || filter.priority || searchQuery) && (
+            {(filter.categories?.length > 0 || filter.priorities?.length > 0 || searchQuery) && (
                 <div className="task-stats">
                     <span className="stat-item">Showing <strong>{filteredTasks('TODO').length + filteredTasks('IN_PROGRESS').length + filteredTasks('DONE').length}</strong> tasks</span>
                 </div>
