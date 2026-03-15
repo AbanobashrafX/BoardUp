@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { taskAPI, subtaskAPI } from '../../services/api';
 import BadgeSelect from '../BadgeSelect/BadgeSelect';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 import './TaskModal.css';
 
 function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: propMode }) {
@@ -457,14 +461,27 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                             <div className="task-modal-property">
                                 <span className="task-modal-property-label">Due Date</span>
                                 {isEditing || isCreateMode ? (
-                                    <input
-                                        type="date"
-                                        name="due_date"
-                                        className="task-modal-input"
-                                        value={formData.due_date}
-                                        onChange={handleChange}
-                                        lang="en-GB"
-                                    />
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DatePicker
+                                            name="due_date"
+                                            value={formData.due_date ? dayjs(formData.due_date) : null}
+                                            onChange={(newValue) => {
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    due_date: newValue ? newValue.format('YYYY-MM-DD') : ''
+                                                }));
+                                            }}
+                                            slotProps={{
+                                                textField: {
+                                                    className: 'task-modal-input',
+                                                    size: 'small',
+                                                    placeholder: 'Select due date',
+                                                },
+                                            }}
+                                            disablePast
+                                            format="YYYY-MM-DD"
+                                        />
+                                    </LocalizationProvider>
                                 ) : (
                                     <span className={`task-modal-property-value task-due-date ${dueDateStatus}`}>
                                         {fullTask?.due_date ? (
