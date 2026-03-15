@@ -13,24 +13,26 @@
     gap: 6px;
     padding: 8px 14px;
     background: transparent;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 13px;
     font-weight: 500;
-    color: #37352f;
+    color: var(--color-text);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all var(--transition-fast);
     font-family: inherit;
+    border: 1px solid transparent;
 }
 
 .filter-main-btn:hover {
-    background: var(--bg-hover, #e8e9eb);
-    border-color: #c4c5c8;
+    background: var(--color-hover-bg);
+    border-color: var(--color-border);
 }
 
-.filter-main-btn-active {
-    background: var(--primary-light, #f1f5ff);
-    border-color: var(--primary-color, #0066cc);
-    color: var(--primary-color, #0066cc);
+.filter-main-btn-active,
+.filter-main-btn.active {
+    background: var(--color-primary-surface);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .filter-main-btn svg {
@@ -38,7 +40,7 @@
 }
 
 .filter-chevron {
-    transition: transform 0.2s ease;
+    transition: transform var(--transition-base);
 }
 
 .filter-chevron-open {
@@ -52,11 +54,11 @@
     min-width: 18px;
     height: 18px;
     padding: 0 5px;
-    background: #37352f;
-    color: white;
+    background: var(--color-text);
+    color: var(--color-surface);
     font-size: 11px;
     font-weight: 600;
-    border-radius: 9px;
+    border-radius: var(--radius-full);
 }
 
 /* Popover */
@@ -65,11 +67,11 @@
     top: calc(100% + 8px);
     left: 0;
     width: 200px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    z-index: var(--z-dropdown);
     padding: 8px;
 }
 
@@ -78,13 +80,13 @@
 }
 
 .filter-section+.filter-section {
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--color-divider);
 }
 
 .filter-title {
     font-size: 11px;
     font-weight: 600;
-    color: #6b7280;
+    color: var(--color-text-tertiary);
     text-transform: uppercase;
     margin-bottom: 8px;
 }
@@ -98,31 +100,31 @@
 
 .filter-badge {
     padding: 5px 12px;
-    background: #f7f6f3;
+    background: var(--color-background-alt);
     border: 1px solid transparent;
-    border-radius: 100px;
+    border-radius: var(--radius-full);
     font-size: 12px;
     font-weight: 500;
-    color: #6b7280;
+    color: var(--color-text-secondary);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all var(--transition-fast);
     font-family: inherit;
 }
 
 .filter-badge:hover {
-    background: #efefef;
-    color: #37352f;
+    background: var(--color-hover-bg);
+    color: var(--color-text);
 }
 
 .filter-badge.selected {
-    background: #eef2ff;
-    border-color: #6366f1;
-    color: #6366f1;
+    background: var(--color-primary-surface);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .filter-empty {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--color-text-tertiary);
     font-style: italic;
 }
 
@@ -134,15 +136,16 @@
     border: none;
     font-size: 12px;
     font-weight: 500;
-    color: #eb5757;
+    color: var(--color-error);
     cursor: pointer;
     text-align: center;
     font-family: inherit;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--color-divider);
+    transition: background var(--transition-fast);
 }
 
 .filter-clear:hover {
-    background: #fdf2f2;
+    background: var(--color-error-bg);
 }
 
 /* Filter Tags - Circular Buttons */
@@ -159,98 +162,22 @@
     width: 28px;
     height: 28px;
     padding: 0;
-    background: #f7f6f3;
-    border: 1px solid #e2e8f0;
-    border-radius: 50%;
+    background: var(--color-background-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
     font-size: 11px;
     font-weight: 500;
-    color: #37352f;
+    color: var(--color-text);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all var(--transition-fast);
 }
 
 .filter-tag:hover {
-    background: #efefef;
+    background: var(--color-hover-bg);
 }
 
 .filter-tag.sort-tag {
-    background: #eef2ff;
-    border-color: #6366f1;
-    color: #6366f1;
-}
-
-/* Dark mode */
-[data-theme="dark"] .filter-main-btn {
-    background: transparent;
-    border-color: #334155;
-    color: #c4cdd5;
-}
-
-[data-theme="dark"] .filter-main-btn:hover {
-    background: #2d3038;
-    border-color: #454545;
-}
-
-[data-theme="dark"] .filter-main-btn.active {
-    background: #2d3038;
-    border-color: #c4cdd5;
-}
-
-[data-theme="dark"] .filter-count {
-    background: #c4cdd5;
-    color: #1e293b;
-}
-
-[data-theme="dark"] .filter-popover {
-    background: #1e293b;
-    border-color: #334155;
-}
-
-[data-theme="dark"] .filter-section+.filter-section {
-    border-color: #334155;
-}
-
-[data-theme="dark"] .filter-title {
-    color: #94a3b8;
-}
-
-[data-theme="dark"] .filter-badge {
-    background: #2d3038;
-    color: #94a3b8;
-}
-
-[data-theme="dark"] .filter-badge:hover {
-    background: #3d424d;
-    color: #c4cdd5;
-}
-
-[data-theme="dark"] .filter-badge.selected {
-    background: rgba(99, 102, 241, 0.15);
-    border-color: #6366f1;
-    color: #a5b4fc;
-}
-
-[data-theme="dark"] .filter-clear {
-    color: #f87171;
-    border-color: #334155;
-}
-
-[data-theme="dark"] .filter-clear:hover {
-    background: rgba(248, 113, 113, 0.1);
-}
-
-[data-theme="dark"] .filter-tag {
-    background: #2d3038;
-    border-color: #334155;
-    color: #c4cdd5;
-}
-
-[data-theme="dark"] .filter-tag:hover {
-    background: #3d424d;
-}
-
-[data-theme="dark"] .filter-tag.sort-tag {
-    background: rgba(99, 102, 241, 0.15);
-    border-color: #6366f1;
-    color: #a5b4fc;
+    background: var(--color-primary-surface);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }

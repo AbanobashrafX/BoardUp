@@ -34,9 +34,9 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: var(--color-bg-secondary);
+    background: var(--color-background-alt);
     padding: 4px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     flex-wrap: wrap;
 }
 
@@ -51,15 +51,15 @@
     width: 180px;
     padding: 6px 8px 6px 28px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-size: 14px;
     background: transparent;
     color: var(--color-text);
-    transition: all 0.15s ease;
+    transition: all var(--transition-fast);
 }
 
 .search-input:hover {
-    background: var(--color-border-light);
+    background: var(--color-hover-bg);
 }
 
 .search-input:focus {
@@ -69,13 +69,13 @@
 }
 
 .search-input::placeholder {
-    color: var(--color-text-muted);
+    color: var(--color-text-tertiary);
 }
 
 .search-icon {
     position: absolute;
     left: 8px;
-    color: var(--color-text-muted);
+    color: var(--color-text-tertiary);
     pointer-events: none;
 }
 
@@ -84,7 +84,7 @@
     right: 6px;
     background: none;
     border: none;
-    color: var(--color-text-muted);
+    color: var(--color-text-tertiary);
     cursor: pointer;
     font-size: 16px;
     padding: 2px;
@@ -95,7 +95,7 @@
 }
 
 .search-clear:hover {
-    background: var(--color-bg-secondary);
+    background: var(--color-hover-bg);
     color: var(--color-text);
 }
 
@@ -106,26 +106,26 @@
     padding: 6px 10px;
     background: transparent;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-size: 14px;
     color: var(--color-text);
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: background var(--transition-fast);
     white-space: nowrap;
 }
 
 .filter-btn:hover {
-    background: var(--color-border-light);
+    background: var(--color-hover-bg);
 }
 
 .filter-btn.active {
-    background: var(--color-border);
+    background: var(--color-active-bg);
 }
 
 .filter-btn svg {
     width: 14px;
     height: 14px;
-    color: var(--color-text-muted);
+    color: var(--color-text-tertiary);
 }
 
 .filter-btn-text {
@@ -147,12 +147,12 @@
     margin-top: 4px;
     min-width: 180px;
     background: var(--color-surface);
-    border-radius: 4px;
-    box-shadow: 0 0 0 1px rgba(15, 15, 15, 0.1), 0 3px 6px rgba(15, 15, 15, 0.1), 0 9px 24px rgba(15, 15, 15, 0.2);
-    z-index: 100;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xl);
+    z-index: var(--z-dropdown);
     overflow: hidden;
     padding: 4px;
-    animation: DropdownFade 0.15s ease;
+    animation: DropdownFade var(--transition-fast);
 }
 
 @keyframes DropdownFade {
@@ -176,15 +176,15 @@
     color: var(--color-text);
     border-radius: 3px;
     cursor: pointer;
-    transition: background 0.1s ease;
+    transition: background var(--transition-fast);
 }
 
 .filter-option:hover {
-    background: var(--color-bg-secondary);
+    background: var(--color-hover-bg);
 }
 
 .filter-option.selected {
-    background: var(--color-border);
+    background: var(--color-active-bg);
 }
 
 .filter-option-color {
@@ -199,19 +199,19 @@
     align-items: center;
     gap: 4px;
     padding: 6px 10px;
-    background: #2383e2;
+    background: var(--color-primary);
     border: none;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-size: 14px;
     font-weight: 500;
-    color: white;
+    color: var(--color-on-primary);
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: background var(--transition-fast);
     margin-left: 4px;
 }
 
 .new-btn:hover {
-    background: #1a73cd;
+    background: var(--color-primary-hover);
 }
 
 .new-btn svg {
@@ -234,8 +234,8 @@
     align-items: center;
     gap: 4px;
     padding: 3px 8px;
-    background: var(--color-bg-secondary);
-    border-radius: 4px;
+    background: var(--color-background-alt);
+    border-radius: var(--radius-sm);
     font-size: 12px;
     color: var(--color-text);
 }
@@ -243,7 +243,7 @@
 .filter-tag-remove {
     background: none;
     border: none;
-    color: var(--color-text-muted);
+    color: var(--color-text-tertiary);
     cursor: pointer;
     padding: 0;
     font-size: 14px;
@@ -266,7 +266,7 @@
 
 .stat-item {
     font-size: 13px;
-    color: var(--color-text-muted);
+    color: var(--color-text-tertiary);
     display: flex;
     align-items: center;
     gap: 4px;
@@ -287,8 +287,8 @@
 }
 
 .kanban-column {
-    background: var(--color-bg-secondary);
-    border-radius: 8px;
+    background: var(--color-background-alt);
+    border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
     min-height: 300px;
@@ -298,7 +298,7 @@
 .column-header {
     padding: 12px 14px;
     border-top: none;
-    border-radius: 8px 8px 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     background: transparent;
     display: flex;
     justify-content: space-between;
@@ -329,7 +329,7 @@
 }
 
 .column-content.dragging-over {
-    background: var(--color-border);
+    background: var(--color-active-bg);
 }
 
 .empty-column {
@@ -337,7 +337,7 @@
     justify-content: center;
     align-items: center;
     height: 80px;
-    color: var(--color-text-muted);
+    color: var(--color-text-tertiary);
     font-size: 13px;
 }
 

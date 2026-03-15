@@ -1,13 +1,13 @@
 /* Task Card - Enhanced Interactive Styles */
 .task-card {
-    background: var(--color-surface);
-    border-radius: 8px;
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
     padding: 16px;
     margin-bottom: 12px;
     box-shadow: var(--shadow-sm);
     cursor: grab;
-    transition: all 0.2s ease;
-    /* border: 1px solid var(--color-border); */
+    transition: all var(--transition-base);
+    border: 1px solid var(--color-border-light);
     position: relative;
     overflow: hidden;
 }
@@ -28,7 +28,7 @@
 .task-card:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
-    border-color: var(--color-primary);
+    /* border-color: var(--color-primary); */
 }
 
 .task-card:hover::before {
@@ -80,8 +80,8 @@
     cursor: pointer;
     font-size: 14px;
     opacity: 0.5;
-    transition: all 0.15s ease;
-    border-radius: 4px;
+    transition: all var(--transition-fast);
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -90,7 +90,7 @@
 
 .task-action-btn:hover {
     opacity: 1;
-    background-color: var(--color-bg-secondary);
+    background-color: var(--color-hover-bg);
     color: var(--color-text);
 }
 
@@ -109,14 +109,9 @@
 }
 
 /* Delete button */
-[data-theme="light"] .task-delete-btn:hover {
-    color: #dc2626;
-    background-color: #fee2e2;
-}
-
-[data-theme="dark"] .task-delete-btn:hover {
-    color: #f87171;
-    background-color: rgba(239, 68, 68, 0.15);
+.task-delete-btn:hover {
+    color: var(--color-error);
+    background-color: var(--color-error-bg);
 }
 
 /* Task Title */
@@ -126,7 +121,7 @@
     color: var(--color-text);
     margin-bottom: 8px;
     line-height: 1.4;
-    transition: color 0.15s ease;
+    transition: color var(--transition-fast);
 }
 
 .task-card:hover .task-title {
@@ -148,7 +143,7 @@
     align-items: center;
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 /* Additional Features Container */
@@ -177,7 +172,7 @@
 /* Date */
 .task-date {
     font-size: 12px;
-    color: var(--color-text-muted);
+    color: var(--color-text-tertiary);
 }
 
 /* Due Date */
@@ -188,37 +183,22 @@
     align-items: center;
     gap: 4px;
     padding: 4px 8px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 
-[data-theme="light"] .task-due-date.overdue {
-    color: #dc2626;
-    background-color: #fee2e2;
+.task-due-date.overdue {
+    color: var(--color-error);
+    background-color: var(--color-error-bg);
 }
 
-[data-theme="light"] .task-due-date.due-soon {
-    color: #b45309;
-    background-color: #fef3c7;
+.task-due-date.due-soon {
+    color: var(--color-warning);
+    background-color: var(--color-warning-bg);
 }
 
-[data-theme="light"] .task-due-date.normal {
-    color: #6b7280;
-    background-color: #f3f4f6;
-}
-
-[data-theme="dark"] .task-due-date.overdue {
-    color: #fca5a5;
-    background-color: rgba(239, 68, 68, 0.15);
-}
-
-[data-theme="dark"] .task-due-date.due-soon {
-    color: #fcd34d;
-    background-color: rgba(245, 158, 11, 0.15);
-}
-
-[data-theme="dark"] .task-due-date.normal {
-    color: #94a3b8;
-    background-color: rgba(148, 163, 184, 0.1);
+.task-due-date.normal {
+    color: var(--color-text-secondary);
+    background-color: var(--color-hover-bg);
 }
 
 /* Subtasks Progress */
@@ -229,93 +209,55 @@
     align-items: center;
     gap: 4px;
     padding: 4px 8px;
-    border-radius: 4px;
-    transition: background-color 0.15s ease;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast);
+    color: var(--color-text-secondary);
+    background-color: var(--color-hover-bg);
 }
 
-[data-theme="light"] .task-subtasks {
-    color: #6b7280;
-    background-color: #f3f4f6;
+.task-subtasks:hover {
+    background-color: var(--color-active-bg);
 }
 
-[data-theme="light"] .task-subtasks:hover {
-    background-color: #e5e7eb;
-}
-
-[data-theme="light"] .task-subtasks.all-complete {
-    color: #16a34a;
-    background-color: #dcfce7;
-}
-
-[data-theme="dark"] .task-subtasks {
-    color: #94a3b8;
-    background-color: rgba(148, 163, 184, 0.1);
-}
-
-[data-theme="dark"] .task-subtasks:hover {
-    background-color: rgba(148, 163, 184, 0.2);
-}
-
-[data-theme="dark"] .task-subtasks.all-complete {
-    color: #4ade80;
-    background-color: rgba(34, 197, 94, 0.15);
+.task-subtasks.all-complete {
+    color: var(--color-success);
+    background-color: var(--color-success-bg);
 }
 
 /* Priority Badge */
 .priority-badge {
     font-size: 10px;
     padding: 3px 8px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.025em;
-    transition: transform 0.15s ease;
+    transition: transform var(--transition-fast);
 }
 
 .priority-badge:hover {
     transform: translateY(-1px);
 }
 
-/* Light mode priority badges */
-[data-theme="light"] .priority-low {
-    background: #dcfce7;
-    color: #16a34a;
+/* Priority badges - theme aware */
+.priority-low {
+    background: var(--color-priority-low-bg);
+    color: var(--color-priority-low-on-bg);
 }
 
-[data-theme="light"] .priority-medium {
-    background: #fef3c7;
-    color: #b45309;
+.priority-medium {
+    background: var(--color-priority-medium-bg);
+    color: var(--color-priority-medium-on-bg);
 }
 
-[data-theme="light"] .priority-high {
-    background: #fee2e2;
-    color: #dc2626;
+.priority-high {
+    background: var(--color-priority-high-bg);
+    color: var(--color-priority-high-on-bg);
 }
 
-[data-theme="light"] .priority-urgent {
-    background: #fce7f3;
-    color: #db2777;
-}
-
-/* Dark mode priority badges - refined */
-[data-theme="dark"] .priority-low {
-    background: rgba(34, 197, 94, 0.15);
-    color: #4ade80;
-}
-
-[data-theme="dark"] .priority-medium {
-    background: rgba(245, 158, 11, 0.15);
-    color: #fbbf24;
-}
-
-[data-theme="dark"] .priority-high {
-    background: rgba(239, 68, 68, 0.15);
-    color: #f87171;
-}
-
-[data-theme="dark"] .priority-urgent {
-    background: rgba(236, 72, 153, 0.15);
-    color: #f472b6;
+.priority-urgent {
+    background: var(--color-priority-urgent-bg);
+    color: var(--color-priority-urgent-on-bg);
 }
 
 /* Responsive */

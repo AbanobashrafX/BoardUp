@@ -3,7 +3,6 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { taskAPI, categoryAPI } from '../../services/api';
 import TaskCard from '../TaskCard/TaskCard';
 import TaskModal from '../TaskModal/TaskModal';
-import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import './KanbanBoard.css';
@@ -41,7 +40,7 @@ function KanbanBoard() {
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [filter, setFilter] = useState({ categories: [], priorities: [] });
-    const [sortBy, setSortBy] = useState('newest');
+    const [sortBy, setSortBy] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const isInitialized = useRef(false);
     const searchInputRef = useRef(null);
@@ -163,6 +162,7 @@ function KanbanBoard() {
 
     // Sort function based on sortBy state
     const sortTasks = (tasksArray) => {
+        if (!sortBy) return tasksArray;
         const priorityOrder = { 'URGENT': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3 };
 
         switch (sortBy) {
@@ -233,8 +233,6 @@ function KanbanBoard() {
                         sortBy={sortBy}
                         onSortChange={setSortBy}
                     />
-
-                    <ThemeToggle ref={themeToggleRef} />
 
                     <button className="new-btn" onClick={() => setShowTaskModal(true)}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
