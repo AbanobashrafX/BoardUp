@@ -1,0 +1,447 @@
+/**
+ * BoardUp Theme System
+ * Based on Material Design 2 Dark Theme Guidelines
+ * https://m2.material.io/design/color/dark-theme.html
+ * 
+ * Color System:
+ * - Primary: Indigo (#6366f1) - Brand identity
+ * - Secondary: Purple (#8b5cf6) - Accent actions
+ * - Surface elevations for dark theme
+ * - WCAG AA compliant contrast ratios
+ */
+
+/* ============================================
+   CSS CUSTOM PROPERTIES - THEME VARIABLES
+   ============================================ */
+
+:root {
+    /* ============================================
+       PRIMARY COLORS - Brand Identity
+       ============================================ */
+    --color-primary: #6366f1;
+    --color-primary-hover: #4f46e5;
+    --color-primary-light: #818cf8;
+    --color-primary-dark: #4338ca;
+    --color-primary-surface: rgba(99, 102, 241, 0.12);
+    --color-primary-on-surface: #312e81;
+
+    /* Primary text on primary color */
+    --color-on-primary: #ffffff;
+    --color-on-primary-hover: #eef2ff;
+
+    /* ============================================
+       SECONDARY COLORS - Accent/Complementary
+       ============================================ */
+    --color-secondary: #8b5cf6;
+    --color-secondary-hover: #7c3aed;
+    --color-secondary-light: #a78bfa;
+    --color-secondary-dark: #6d28d9;
+    --color-secondary-surface: rgba(139, 92, 246, 0.12);
+    --color-on-secondary: #ffffff;
+    --color-on-secondary-hover: #f5f3ff;
+
+    /* ============================================
+       TERTIARY COLORS - Additional Accent
+       ============================================ */
+    --color-tertiary: #06b6d4;
+    --color-tertiary-hover: #0891b2;
+    --color-tertiary-light: #22d3ee;
+    --color-tertiary-surface: rgba(6, 182, 212, 0.12);
+    --color-on-tertiary: #ffffff;
+
+    /* ============================================
+       SURFACE COLORS - Backgrounds & Elevations
+       Material Design 2 uses tonal surfaces
+       ============================================ */
+    --color-surface-base: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-elevated: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-surface-overlay: #ffffff;
+
+    /* Background */
+    --color-background: #f8fafc;
+    --color-background-alt: #f1f5f9;
+
+    /* Card/Panel surfaces */
+    --color-card: #ffffff;
+    --color-card-elevated: #ffffff;
+
+    /* ============================================
+       TEXT COLORS - With proper contrast ratios
+       WCAG AA: 4.5:1 for body, 3:1 for large
+       ============================================ */
+    --color-text: #1e293b;
+    /* 15.3:1 contrast - Primary */
+    --color-text-secondary: #475569;
+    /* 7.3:1 contrast - Secondary */
+    --color-text-tertiary: #64748b;
+    /* 5.4:1 contrast - Disabled/hint */
+    --color-text-disabled: #94a3b8;
+    /* 3.2:1 contrast - Disabled */
+    --color-text-inverse: #ffffff;
+    --color-text-link: #6366f1;
+    --color-text-link-hover: #4f46e5;
+
+    /* ============================================
+       BORDER COLORS
+       ============================================ */
+    --color-border: #e2e8f0;
+    --color-border-light: #f8fafc;
+    --color-border-strong: #cbd5e1;
+    --color-border-focus: #6366f1;
+
+    /* Divider - lighter than border-light for subtle separators */
+    --color-divider: #f1f5f9;
+
+    /* ============================================
+       STATUS COLORS - Semantic
+       ============================================ */
+    --color-success: #10b981;
+    --color-success-light: #34d399;
+    --color-success-bg: rgba(16, 185, 129, 0.12);
+    --color-success-on-surface: #065f46;
+    --color-on-success: #ffffff;
+
+    --color-warning: #f59e0b;
+    --color-warning-light: #fbbf24;
+    --color-warning-bg: rgba(245, 158, 11, 0.12);
+    --color-warning-on-surface: #92400e;
+    --color-on-warning: #ffffff;
+
+    --color-error: #ef4444;
+    --color-error-light: #f87171;
+    --color-error-bg: rgba(239, 68, 68, 0.12);
+    --color-error-on-surface: #991b1b;
+    --color-on-error: #ffffff;
+
+    --color-info: #3b82f6;
+    --color-info-light: #60a5fa;
+    --color-info-bg: rgba(59, 130, 246, 0.12);
+    --color-info-on-surface: #1e40af;
+    --color-on-info: #ffffff;
+
+    /* ============================================
+       PRIORITY COLORS
+       ============================================ */
+    --color-priority-low: #22c55e;
+    --color-priority-low-bg: #dcfce7;
+    --color-priority-low-on-bg: #16a34a;
+
+    --color-priority-medium: #f59e0b;
+    --color-priority-medium-bg: #fef3c7;
+    --color-priority-medium-on-bg: #d97706;
+
+    --color-priority-high: #ef4444;
+    --color-priority-high-bg: #fee2e2;
+    --color-priority-high-on-bg: #dc2626;
+
+    --color-priority-urgent: #ec4899;
+    --color-priority-urgent-bg: #fce7f3;
+    --color-priority-urgent-on-bg: #db2777;
+
+    /* ============================================
+       INTERACTIVE STATES
+       ============================================ */
+    --color-focus-ring: rgba(99, 102, 241, 0.4);
+    --color-focus-ring-dark: rgba(129, 140, 248, 0.4);
+    --color-overlay: rgba(15, 23, 42, 0.4);
+    --color-overlay-light: rgba(0, 0, 0, 0.04);
+    --color-overlay-dark: rgba(255, 255, 255, 0.04);
+
+    /* Hover backgrounds */
+    --color-hover-bg: rgba(0, 0, 0, 0.04);
+    --color-active-bg: rgba(0, 0, 0, 0.08);
+    --color-selected-bg: rgba(99, 102, 241, 0.12);
+
+    /* ============================================
+       SHADOWS - Elevation system
+       ============================================ */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    --shadow-primary: 0 4px 14px 0 rgb(99 102 241 / 0.25);
+    --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.06);
+
+    /* ============================================
+       BORDER RADIUS
+       ============================================ */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 24px;
+    --radius-full: 9999px;
+
+    /* ============================================
+       TRANSITIONS
+       ============================================ */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* ============================================
+       SPACING
+       ============================================ */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+
+    /* ============================================
+       Z-INDEX SCALE
+       ============================================ */
+    --z-base: 0;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-fixed: 300;
+    --z-modal-backdrop: 400;
+    --z-modal: 500;
+    --z-popover: 600;
+    --z-tooltip: 700;
+    --z-toast: 800;
+
+    /* ============================================
+       SCROLLBAR - Light theme
+       ============================================ */
+    --scrollbar-track: #f1f5f9;
+    --scrollbar-thumb: #cbd5e1;
+    --scrollbar-thumb-hover: #94a3b8;
+
+    /* ============================================
+       BACKDROP
+       ============================================ */
+    --backdrop-blur: blur(8px);
+    --backdrop-color: rgba(15, 23, 42, 0.6);
+
+    /* ============================================
+       DIVIDER
+       ============================================ */
+    --color-divider: rgba(0, 0, 0, 0.08);
+    --color-divider-light: rgba(0, 0, 0, 0.04);
+
+    /* ============================================
+       RIPPLE EFFECT
+       ============================================ */
+    --ripple-bg: rgba(0, 0, 0, 0.12);
+}
+
+
+/* ============================================
+   DARK THEME
+   Material Design 2 Dark Theme Guidelines:
+   - Use surface color #121212 as baseline
+   - Use tonal palette for elevation (surface-1, surface-2, etc.)
+   - Ensure 4.5:1 minimum contrast ratio
+   - Use 70% white for secondary text
+   ============================================ */
+
+[data-theme="dark"] {
+    /* ============================================
+       PRIMARY COLORS - Adjusted for dark bg
+       ============================================ */
+    --color-primary: #818cf8;
+    --color-primary-hover: #a5b4fc;
+    --color-primary-light: #6366f1;
+    --color-primary-dark: #4f46e5;
+    --color-primary-surface: rgba(129, 140, 248, 0.16);
+    --color-primary-on-surface: #c7d2fe;
+
+    --color-on-primary: #1e1b4b;
+    --color-on-primary-hover: #312e81;
+
+    /* ============================================
+       SECONDARY COLORS
+       ============================================ */
+    --color-secondary: #a78bfa;
+    --color-secondary-hover: #c4b5fd;
+    --color-secondary-light: #8b5cf6;
+    --color-secondary-dark: #7c3aed;
+    --color-secondary-surface: rgba(167, 139, 250, 0.16);
+    --color-on-secondary: #1e1b4b;
+    --color-on-secondary-hover: #312e81;
+
+    /* ============================================
+       TERTIARY COLORS
+       ============================================ */
+    --color-tertiary: #22d3ee;
+    --color-tertiary-hover: #67e8f9;
+    --color-tertiary-light: #06b6d4;
+    --color-tertiary-surface: rgba(34, 211, 238, 0.16);
+    --color-on-tertiary: #083344;
+
+    /* ============================================
+       SURFACE COLORS - MD2 Dark Theme Elevation
+       Base: #121212
+       ============================================ */
+    --color-surface-base: #121212;
+    --color-surface: #1e1e24;
+    --color-surface-elevated: #25252d;
+    --color-surface-raised: #2a2a32;
+    --color-surface-overlay: #2d2d36;
+
+    /* Background - slightly lighter than surface for depth */
+    --color-background: #0f0f13;
+    --color-background-alt: #18181f;
+
+    /* Card surfaces */
+    --color-card: #1a1a21;
+    --color-card-elevated: #232329;
+
+    /* ============================================
+       TEXT COLORS - High contrast on dark
+       ============================================ */
+    --color-text: #f1f5f9;
+    /* 15.5:1 contrast */
+    --color-text-secondary: #cbd5e1;
+    /* 9.5:1 contrast */
+    --color-text-tertiary: #94a3b8;
+    /* 6.2:1 contrast */
+    --color-text-disabled: #64748b;
+    /* 4.4:1 contrast */
+    --color-text-inverse: #0f172a;
+    --color-text-link: #818cf8;
+    --color-text-link-hover: #a5b4fc;
+
+    /* ============================================
+       BORDER COLORS
+       ============================================ */
+    --color-border: #2e2e3a;
+    --color-border-light: #18181f;
+    --color-border-strong: #3f3f4a;
+    --color-border-focus: #818cf8;
+
+    /* Divider - lighter for subtle separators */
+    --color-divider: rgba(255, 255, 255, 0.06);
+
+    /* ============================================
+       STATUS COLORS - Adjusted for dark bg
+       ============================================ */
+    --color-success: #34d399;
+    --color-success-light: #6ee7b7;
+    --color-success-bg: rgba(52, 211, 153, 0.16);
+    --color-success-on-surface: #a7f3d0;
+    --color-on-success: #022c22;
+
+    --color-warning: #fbbf24;
+    --color-warning-light: #fcd34d;
+    --color-warning-bg: rgba(251, 191, 36, 0.16);
+    --color-warning-on-surface: #fef3c7;
+    --color-on-warning: #451a03;
+
+    --color-error: #f87171;
+    --color-error-light: #fca5a5;
+    --color-error-bg: rgba(248, 113, 113, 0.16);
+    --color-error-on-surface: #fee2e2;
+    --color-on-error: #450a0a;
+
+    --color-info: #60a5fa;
+    --color-info-light: #93c5fd;
+    --color-info-bg: rgba(96, 165, 250, 0.16);
+    --color-info-on-surface: #dbeafe;
+    --color-on-info: #1e3a8a;
+
+    /* ============================================
+       PRIORITY COLORS - Brighter for dark bg
+       ============================================ */
+    --color-priority-low: #4ade80;
+    --color-priority-low-bg: rgba(74, 222, 128, 0.16);
+    --color-priority-low-on-bg: #86efac;
+
+    --color-priority-medium: #fbbf24;
+    --color-priority-medium-bg: rgba(251, 191, 36, 0.16);
+    --color-priority-medium-on-bg: #fcd34d;
+
+    --color-priority-high: #f87171;
+    --color-priority-high-bg: rgba(248, 113, 113, 0.16);
+    --color-priority-high-on-bg: #fca5a5;
+
+    --color-priority-urgent: #f472b6;
+    --color-priority-urgent-bg: rgba(244, 114, 182, 0.16);
+    --color-priority-urgent-on-bg: #f9a8d4;
+
+    /* ============================================
+       INTERACTIVE STATES
+       ============================================ */
+    --color-focus-ring: rgba(129, 140, 248, 0.5);
+    --color-focus-ring-dark: rgba(129, 140, 248, 0.3);
+    --color-overlay: rgba(0, 0, 0, 0.6);
+    --color-overlay-light: rgba(255, 255, 255, 0.04);
+    --color-overlay-dark: rgba(255, 255, 255, 0.08);
+
+    /* Hover backgrounds - inverted for dark */
+    --color-hover-bg: rgba(255, 255, 255, 0.06);
+    --color-active-bg: rgba(255, 255, 255, 0.1);
+    --color-selected-bg: rgba(129, 140, 248, 0.2);
+
+    /* ============================================
+       SHADOWS - Adjusted for dark mode
+       More pronounced shadows for depth
+       ============================================ */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.6);
+    --shadow-primary: 0 4px 14px 0 rgb(129 140 248 / 0.3);
+    --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.3);
+
+    /* ============================================
+       SCROLLBAR - Dark theme
+       ============================================ */
+    --scrollbar-track: #1a1a21;
+    --scrollbar-thumb: #3f3f4a;
+    --scrollbar-thumb-hover: #52525b;
+
+    /* ============================================
+       BACKDROP
+       ============================================ */
+    --backdrop-blur: blur(12px);
+    --backdrop-color: rgba(0, 0, 0, 0.75);
+
+    /* ============================================
+       DIVIDER
+       ============================================ */
+    --color-divider: rgba(255, 255, 255, 0.08);
+    --color-divider-light: rgba(255, 255, 255, 0.04);
+
+    /* ============================================
+       RIPPLE EFFECT
+       ============================================ */
+    --ripple-bg: rgba(255, 255, 255, 0.12);
+}
+
+
+/* ============================================
+   THEME TRANSITION
+   Smooth transitions when switching themes
+   ============================================ */
+
+[data-theme="light"],
+[data-theme="dark"] {
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        color 0.2s ease,
+        /* box-shadow 0.3s ease; */
+}
+
+
+/* ============================================
+   ACCESSIBILITY - REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    :root,
+    [data-theme="light"],
+    [data-theme="dark"] {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
