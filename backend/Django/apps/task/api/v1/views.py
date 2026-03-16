@@ -1,5 +1,5 @@
 # function-based views
-from apps.task.models import Category, Subtask, Task
+from apps.task.models import Category, Project, Subtask, Task
 from django.db import models as db_models
 from django.db import transaction
 from rest_framework.decorators import api_view
@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 from .serializers import (
     CategorySerializer,
+    ProjectSerializer,
     SubtaskSerializer,
     TaskSerializer,
 )
@@ -18,6 +19,7 @@ def APIRoot(request):
         {
             "version 1": {
                 "categories": request.build_absolute_uri("categories/"),
+                "projects": request.build_absolute_uri("projects/"),
                 "tasks": request.build_absolute_uri("tasks/"),
             }
         }
@@ -29,6 +31,53 @@ def get_task(pk):
         return Task.objects.get(pk=pk)
     except Task.DoesNotExist:
         return None
+
+
+# ------------------------------------------------------------
+# Projects endpoints
+# ------------------------------------------------------------
+
+
+@api_view(["GET", "POST"])
+def ProjectList(request):
+    """List all projects or create a new project"""
+    if request.method == "GET":
+        projects = Project.objects.filter(is_active=True)
+        serializer = ProjectSerializer(projects, many=True)
+        return Response(serializer.data)
+
+    if request.method == "POST":
+        serializer = ProjectSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+@api_view(["GET", "PUT", "PATCH", "DELETE"])
+def ProjectDetail(request, pk):
+    """Get, update, or delete a specific project"""
+    try:
+        project = Project.objects.get(pk=pk)
+    except Project.DoesNotExist:
+        return Response(status=404)
+
+    if request.method == "GET":
+        serializer = ProjectSerializer(project)
+        return Response(serializer.data)
+
+    if request.method in ["PUT", "PATCH"]:
+        serializer = ProjectSerializer(
+            project, data=request.data, partial=(request.method == "PATCH")
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    if request.method == "DELETE":
+        project.delete()
+        return Response(status=204)
 
 
 # ------------------------------------------------------------
@@ -117,6 +166,11 @@ def TaskList(request):
                 | db_models.Q(description__icontains=search)
             )
 
+        # Project filter
+        project = request.query_params.get("project")
+        if project:
+            tasks = tasks.filter(project_id=project)
+
         # Add filtering like v2
         status = request.query_params.get("status")
         if status:
@@ -185,14 +239,24 @@ def TaskByStatus(request, status=None):
     """Get tasks grouped by status (for Kanban board)"""
     # Validate status parameter
     valid_statuses = ["TODO", "IN_PROGRESS", "DONE", "ALL"]
-    if status is None or status.upper() not in valid_statuses:
+
+    # Convert status to uppercase for comparison
+    status = status.upper() if status else None
+
+    if status is None or status not in valid_statuses:
         return Response(
             {"error": f"Invalid status. Must be one of: {valid_statuses}"}, status=400
         )
 
     try:
-        tasks = Task.objects.select_related("category").all()
-        if status == "all":
+        tasks = Task.objects.select_related("category", "project").all()
+
+        # Project filter
+        project = request.query_params.get("project")
+        if project:
+            tasks = tasks.filter(project_id=project)
+
+        if status == "ALL":
             result = {
                 "TODO": TaskSerializer(
                     tasks.filter(status="TODO").order_by("position"), many=True
@@ -207,12 +271,12 @@ def TaskByStatus(request, status=None):
             return Response(result, status=200)
         else:
             serializer = TaskSerializer(
-                tasks.filter(status=status.upper()).order_by("position"), many=True
+                tasks.filter(status=status).order_by("position"), many=True
             )
             return Response(serializer.data)
     except Exception as e:
         return Response(
-            {"error": "Failed to retrieve tasks", "Details": str(e)}, status=500
+            {"error": "Failed to retrieve tasks", "details": str(e)}, status=500
         )
 
 
