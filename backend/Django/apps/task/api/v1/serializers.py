@@ -1,5 +1,26 @@
-from apps.task.models import Category, Subtask, Task
+from apps.task.models import Category, Project, Subtask, Task
 from rest_framework import serializers
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    tasks_count = serializers.IntegerField(read_only=True)
+    completed_tasks_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Project
+        fields = [
+            "id",
+            "name",
+            "description",
+            "color",
+            "icon",
+            "is_active",
+            "tasks_count",
+            "completed_tasks_count",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
 
 
 class SubtaskSerializer(serializers.ModelSerializer):
@@ -42,6 +63,8 @@ class CategorySerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="category.name", read_only=True)
     category_color = serializers.CharField(source="category.color", read_only=True)
+    project_name = serializers.CharField(source="project.name", read_only=True)
+    project_color = serializers.CharField(source="project.color", read_only=True)
     subtasks = SubtaskSerializer(many=True, read_only=True)
     subtasks_count = serializers.IntegerField(read_only=True)
     completed_subtasks_count = serializers.IntegerField(read_only=True)
@@ -53,6 +76,9 @@ class TaskSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "description",
+            "project",
+            "project_name",
+            "project_color",
             "category",
             "category_name",
             "category_color",
@@ -71,6 +97,7 @@ class TaskSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "title": {"required": True},
             "description": {"required": False, "allow_null": True, "allow_blank": True},
+            "project": {"required": False, "allow_null": True},
             "category": {"required": False, "allow_null": True},
             "priority": {"required": False},
             "status": {"required": False},

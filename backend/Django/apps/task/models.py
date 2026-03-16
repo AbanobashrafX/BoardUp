@@ -9,6 +9,34 @@ class BaseModel(models.Model):
         abstract = True
 
 
+class Project(BaseModel):
+    """
+    Project model for organizing tasks into collections
+    """
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    color = models.CharField(max_length=7, default="#6366f1")
+    icon = models.CharField(max_length=50, default="📋")
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Project"
+        verbose_name_plural = "Projects"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def tasks_count(self):
+        return self.tasks.count()
+
+    @property
+    def completed_tasks_count(self):
+        return self.tasks.filter(status="DONE").count()
+
+
 class Category(BaseModel):
     """
     Category model for organizing tasks
@@ -46,6 +74,9 @@ class Task(BaseModel):
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+    project = models.ForeignKey(
+        Project, on_delete=models.SET_NULL, null=True, blank=True, related_name="tasks"
+    )
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="tasks"
     )
