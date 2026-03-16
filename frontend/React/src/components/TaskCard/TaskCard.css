@@ -143,6 +143,7 @@
     align-items: center;
     margin-top: 12px;
     padding-top: 12px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--color-border-light);
 }
 

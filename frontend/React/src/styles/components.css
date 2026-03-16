@@ -12,6 +12,23 @@
  */
 
 /* ============================================
+   APP LAYOUT
+   ============================================ */
+
+.app-layout {
+    display: flex;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+.app-layout .main-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================
    BUTTONS - see buttons.css
    ============================================ */
 
