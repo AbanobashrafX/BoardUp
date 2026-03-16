@@ -11,15 +11,15 @@ const api = axios.create({
 
 // Task API
 export const taskAPI = {
-    // Get all tasks (supports search, status, priority, category filters)
+    // Get all tasks (supports search, status, priority, category, project filters)
     getAll: async (params = {}) => {
         const response = await api.get('/tasks/', { params });
         return response.data;
     },
 
     // Get tasks grouped by status (for Kanban board)
-    getByStatus: async (status = "all") => {
-        const response = await api.get(`/tasks/${status}/`);
+    getByStatus: async (status = 'all', params = {}) => {
+        const response = await api.get(`/tasks/${status}/`, { params });
         return response.data;
     },
 
@@ -119,6 +119,39 @@ export const categoryAPI = {
     // Delete category
     delete: async (id) => {
         const response = await api.delete(`/categories/${id}/`);
+        return response.data;
+    },
+};
+
+// Project API
+export const projectAPI = {
+    // Get all projects
+    getAll: async () => {
+        const response = await api.get('/projects/');
+        return response.data;
+    },
+
+    // Get single project
+    getOne: async (id) => {
+        const response = await api.get(`/projects/${id}/`);
+        return response.data;
+    },
+
+    // Create project
+    create: async (projectData) => {
+        const response = await api.post('/projects/', projectData);
+        return response.data;
+    },
+
+    // Update project
+    update: async (id, projectData) => {
+        const response = await api.patch(`/projects/${id}/`, projectData);
+        return response.data;
+    },
+
+    // Delete project
+    delete: async (id) => {
+        const response = await api.delete(`/projects/${id}/`);
         return response.data;
     },
 };
