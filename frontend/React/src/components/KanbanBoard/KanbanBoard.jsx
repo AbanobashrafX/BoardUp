@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { taskAPI, categoryAPI } from '../../services/api';
+import { taskAPI } from '../../services/api';
 import TaskCard from '../TaskCard/TaskCard';
 import TaskModal from '../TaskModal/TaskModal';
-import MultiFilter from '../MultiFilter/MultiFilter';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import './KanbanBoard.css';
 
@@ -15,78 +14,78 @@ const COLUMNS = [
 
 const SAMPLE_TASKS = {
     TODO: [
-        { id: 1, title: 'Welcome to BoardUp!', description: 'This is a sample task. Start by adding your own tasks.', priority: 'MEDIUM', category: 1 },
-        { id: 2, title: 'Try drag and drop', description: 'Drag tasks between columns to organize your workflow.', priority: 'LOW', category: 1 },
     ],
     IN_PROGRESS: [
-        { id: 3, title: 'Explore the features', description: 'BoardUp helps you manage tasks with a Kanban board.', priority: 'HIGH', category: 2 },
     ],
     DONE: [
-        { id: 4, title: 'BoardUp is ready!', description: 'Your personal Kanban task manager is set up.', priority: 'URGENT', category: 1 },
     ],
 };
 
 const SAMPLE_CATEGORIES = [
-    { id: 1, name: 'Personal' },
-    { id: 2, name: 'Work' },
-    { id: 3, name: 'Shopping' },
+
 ];
 
-function KanbanBoard() {
+function KanbanBoard({
+    selectedProject = null,
+    searchQuery = '',
+    filter = { categories: [], priorities: [] },
+    sortBy = '',
+    categories: propCategories = []
+}) {
     const [tasks, setTasks] = useState({ TODO: [], IN_PROGRESS: [], DONE: [] });
-    const [categories, setCategories] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);  // Initial loading state
-    const [isFetching, setIsFetching] = useState(false);  // Search/filter loading state
+    const [categories, setCategories] = useState(propCategories);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isFetching, setIsFetching] = useState(false);
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-    const [filter, setFilter] = useState({ categories: [], priorities: [] });
-    const [sortBy, setSortBy] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
+
+    // Track initialization to avoid duplicate fetches on mount
     const isInitialized = useRef(false);
-    const searchInputRef = useRef(null);
-    const themeToggleRef = useRef(null);
+
+    // Sync prop categories to state
+    useEffect(() => {
+        if (propCategories.length > 0) {
+            setCategories(propCategories);
+        }
+    }, [propCategories]);
 
     // Keyboard shortcuts
     useKeyboardShortcuts({
         onNewTask: useCallback(() => setShowTaskModal(true), []),
-        onSearch: useCallback(() => searchInputRef.current?.focus(), []),
-        onToggleTheme: useCallback(() => themeToggleRef.current?.click(), []),
-        onClearFilters: useCallback(() => setFilter({ categories: [], priorities: [] }), []),
-        onStatusFilter: useCallback((status) => setFilter(prev => ({ ...prev, status })), []),
+        onClearFilters: useCallback(() => { }, []),
+        onStatusFilter: useCallback((status) => { }, []),
     });
 
-    // Single effect that handles initial load and filter/search changes with debounce
+    // Single effect for initial load and all changes (with proper initialization)
     useEffect(() => {
         // Skip if not yet initialized (first render)
         if (!isInitialized.current) {
             isInitialized.current = true;
-            fetchData(true, true);  // Initial load - show spinner, fetch categories
+            fetchData(true);
             return;
         }
 
-        // Debounce search queries - no spinner for search
+        // Debounce search queries for subsequent updates
         const timer = setTimeout(() => {
-            fetchData(false, false);
+            fetchData(false);
         }, searchQuery ? 300 : 0);
 
         return () => clearTimeout(timer);
-    }, [searchQuery, filter]);
+    }, [searchQuery, filter, sortBy, selectedProject]);
 
-    const fetchData = async (showLoader = true, fetchCategories = false) => {
+    const fetchData = async (showLoader = true) => {
         try {
             if (showLoader) setIsFetching(true);
 
-            // Build query params for backend filtering
             const params = {};
             if (searchQuery) params.search = searchQuery;
             if (filter.categories?.length > 0) params.category = filter.categories.join(',');
             if (filter.priorities?.length > 0) params.priority = filter.priorities.join(',');
+            if (selectedProject) params.project = selectedProject.id;
 
             let tasksData;
 
-            // Use getAll with params for backend filtering, fallback to getByStatus
-            if (params.search || params.category || params.priority) {
-                // API returns flat array - need to group by status
+            if (params.search || params.category || params.priority || params.project) {
                 const flatTasks = await taskAPI.getAll(params);
                 tasksData = {
                     TODO: (flatTasks || []).filter(t => t.status === 'TODO'),
@@ -94,20 +93,22 @@ function KanbanBoard() {
                     DONE: (flatTasks || []).filter(t => t.status === 'DONE'),
                 };
             } else {
-                // No filters - use grouped endpoint
                 tasksData = await taskAPI.getByStatus();
             }
 
-            // Only fetch categories on initial load
-            if (fetchCategories) {
-                const categoriesData = await categoryAPI.getAll();
-                setCategories(Array.isArray(categoriesData) ? categoriesData : SAMPLE_CATEGORIES);
-            }
-            // Categories are cached - don't re-fetch on every search/filter
+            const hasTasks = tasksData && (
+                (tasksData.TODO && tasksData.TODO.length > 0) ||
+                (tasksData.IN_PROGRESS && tasksData.IN_PROGRESS.length > 0) ||
+                (tasksData.DONE && tasksData.DONE.length > 0)
+            );
 
-            setTasks(tasksData || { TODO: [], IN_PROGRESS: [], DONE: [] });
+            if (!hasTasks) {
+                setTasks(SAMPLE_TASKS);
+            } else {
+                setTasks(tasksData);
+            }
         } catch (error) {
-            console.log('API not available, using sample data for demo');
+            console.log('API error, using sample data');
             setTasks(SAMPLE_TASKS);
             setCategories(SAMPLE_CATEGORIES);
         } finally {
@@ -160,7 +161,7 @@ function KanbanBoard() {
         fetchData();
     };
 
-    // Sort function based on sortBy state
+    // Sort function
     const sortTasks = (tasksArray) => {
         if (!sortBy) return tasksArray;
         const priorityOrder = { 'URGENT': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3 };
@@ -188,7 +189,7 @@ function KanbanBoard() {
 
     const filteredTasks = (columnId) => sortTasks(tasks[columnId] || []);
 
-    // Show loading spinner only on initial load
+    // Show loading
     if (isLoading) {
         return (
             <div className="loading">
@@ -197,56 +198,9 @@ function KanbanBoard() {
         );
     }
 
+    // Render only the columns - no header
     return (
         <div className="kanban-board">
-            <div className="kanban-header">
-                <div className="kanban-header-left">
-                    <h2>Your Tasks</h2>
-                </div>
-                <div className="kanban-controls">
-                    <div className="search">
-                        <svg className="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                        <form onSubmit={(e) => e.preventDefault()}>
-                            <input
-                                ref={searchInputRef}
-                                type="text"
-                                className="search-input"
-                                placeholder="Search... (f)"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </form>
-                        {searchQuery && (
-                            <button className="search-clear" onClick={() => setSearchQuery('')}>×</button>
-                        )}
-                    </div>
-
-                    <div className="filter-divider"></div>
-
-                    <MultiFilter
-                        categories={categories}
-                        filters={filter}
-                        onFilterChange={setFilter}
-                        sortBy={sortBy}
-                        onSortChange={setSortBy}
-                    />
-
-                    <button className="new-btn" onClick={() => setShowTaskModal(true)}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
-                        New
-                    </button>
-                </div>
-            </div>
-
-            {(filter.categories?.length > 0 || filter.priorities?.length > 0 || searchQuery) && (
-                <div className="task-stats">
-                    <span className="stat-item">Showing <strong>{filteredTasks('TODO').length + filteredTasks('IN_PROGRESS').length + filteredTasks('DONE').length}</strong> tasks</span>
-                </div>
-            )}
-
             <DragDropContext onDragEnd={handleDragEnd}>
                 <div className="kanban-columns">
                     {COLUMNS.map((column) => (
