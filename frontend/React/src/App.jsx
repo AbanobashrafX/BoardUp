@@ -1,23 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { ThemeProvider as CustomThemeProvider, useTheme } from './contexts/ThemeContext';
-import KanbanBoard from './components/KanbanBoard/KanbanBoard';
+import BoardContainer from './components/BoardContainer/BoardContainer';
+import ProjectSidebar from './components/ProjectSidebar/ProjectSidebar';
 import ThemeToggle from './components/ThemeToggle/ThemeToggle';
 
 function AppContent() {
+    const [selectedProject, setSelectedProject] = useState(null);
+
     return (
         <div className="app">
             <header className="header">
                 <h1>📋 BoardUp</h1>
                 <div className="header-actions">
                     <ThemeToggle />
-                    <span className="version">v1.5.0</span>
+                    <span className="version">v1.9.0</span>
                 </div>
             </header>
 
-            <main className="main-content">
-                <KanbanBoard />
-            </main>
+            <div className="app-layout">
+                <ProjectSidebar
+                    selectedProject={selectedProject}
+                    onSelectProject={setSelectedProject}
+                />
+                <main className="main-content">
+                    <BoardContainer selectedProject={selectedProject} />
+                </main>
+            </div>
         </div>
     );
 }
