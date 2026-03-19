@@ -1,51 +1,56 @@
 /* ==========================================================================
    Card Styles - Shared card component styles
+   Modern Glassmorphism Edition
    ========================================================================== */
 
 /* Base Card */
 .card {
     background: var(--color-surface);
     border: 1px solid var(--color-border-light);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-spring);
 }
 
 /* Card Header */
 .card-header {
-    padding: var(--space-md) var(--space-lg);
+    padding: var(--space-lg) var(--space-xl);
     border-bottom: 1px solid var(--color-border-light);
 }
 
 .card-title {
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
     color: var(--color-text);
     margin: 0;
+    letter-spacing: -0.01em;
 }
 
 /* Card Body */
 .card-body {
-    padding: var(--space-lg);
+    padding: var(--space-xl);
 }
 
 /* Card Footer */
 .card-footer {
-    padding: var(--space-md) var(--space-lg);
+    padding: var(--space-lg) var(--space-xl);
     border-top: 1px solid var(--color-border-light);
     border-bottom: 1px solid var(--color-border-light);
     background: var(--color-background-alt);
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 
 /* Card Hover Effect */
 .card-hover {
-    transition: all var(--transition-fast);
+    transition: all var(--transition-spring);
 }
 
 .card-hover:hover {
-    border-color: var(--color-border);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    border-color: var(--color-primary-surface);
+    box-shadow: var(--shadow-lg), var(--shadow-primary);
+    transform: translateY(-4px) scale(1.01);
 }
 
 /* Card Flat (no shadow) */
@@ -60,16 +65,31 @@
     border: 1px solid var(--color-border);
 }
 
+/* Glass Card */
+.card-glass {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .card-glass {
+    background: rgba(40, 44, 52, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* Task Card Specific */
 .task-card {
     background: var(--color-surface);
     border: 1px solid var(--color-border-light);
-    border-radius: var(--radius-md);
-    padding: var(--space-md);
-    transition: all var(--transition-fast);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    transition: all var(--transition-spring);
+    backdrop-filter: blur(10px);
 }
 
 .task-card:hover {
-    border-color: var(--color-border);
-    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary-surface);
+    box-shadow: var(--shadow-lg), var(--shadow-primary);
+    transform: translateY(-4px);
 }

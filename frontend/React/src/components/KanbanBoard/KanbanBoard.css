@@ -23,11 +23,12 @@
 }
 
 .kanban-header h2 {
-    font-size: 28px;
-    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
     color: var(--color-text);
     margin: 0;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.03em;
 }
 
 .kanban-controls {
@@ -38,6 +39,7 @@
     padding: 4px;
     border-radius: var(--radius-md);
     flex-wrap: wrap;
+    border: 1px solid var(--color-border-light);
 }
 
 /* Search */
@@ -48,10 +50,11 @@
 }
 
 .search-input {
-    width: 180px;
-    padding: 6px 8px 6px 28px;
+    width: 200px;
+    padding: 10px 12px 10px 36px;
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 14px;
     background: transparent;
     color: var(--color-text);
@@ -65,7 +68,7 @@
 .search-input:focus {
     outline: none;
     background: var(--color-surface);
-    width: 240px;
+    width: 360px;
 }
 
 .search-input::placeholder {
@@ -197,21 +200,25 @@
 .new-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
+    gap: 6px;
+    padding: 10px 18px;
     background: var(--color-primary);
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-lg);
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--color-on-primary);
     cursor: pointer;
-    transition: background var(--transition-fast);
-    margin-left: 4px;
+    transition: all var(--transition-fast);
+    margin-left: 6px;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
 }
 
 .new-btn:hover {
     background: var(--color-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4);
 }
 
 .new-btn svg {
@@ -281,7 +288,7 @@
 .kanban-columns {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 20px;
     flex: 1;
     overflow-x: auto;
 }
@@ -296,9 +303,9 @@
 }
 
 .column-header {
-    padding: 12px 14px;
+    padding: 20px 20px 16px;
     border-top: none;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     background: transparent;
     display: flex;
     justify-content: space-between;
@@ -306,39 +313,41 @@
 }
 
 .column-header h3 {
-    font-size: 13px;
-    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
     color: var(--color-text);
-    text-transform: none;
-    letter-spacing: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
 .task-count {
-    background: var(--color-border);
-    color: var(--color-text-secondary);
-    padding: 2px 8px;
-    border-radius: 3px;
+    background: var(--color-primary-surface);
+    color: var(--color-primary);
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 700;
 }
 
 .column-content {
-    padding: 8px;
+    padding: 16px;
     flex: 1;
     overflow-y: auto;
 }
 
 .column-content.dragging-over {
-    background: var(--color-active-bg);
+    background: var(--color-primary-surface);
 }
 
 .empty-column {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80px;
+    height: 100px;
     color: var(--color-text-tertiary);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 /* Responsive */
@@ -360,7 +369,7 @@
 
 @media (max-width: 640px) {
     .kanban-header h2 {
-        font-size: 22px;
+        font-size: 24px;
     }
 
     .kanban-controls {
@@ -372,7 +381,7 @@
     }
 
     .search-input:focus {
-        width: 300%;
+        width: 100%;
     }
 
     .kanban-columns {

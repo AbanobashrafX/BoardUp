@@ -1,21 +1,22 @@
 /* Task Modal - Unified View/Edit Component */
 .task-modal {
     background: var(--color-surface);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-2xl);
     width: 100%;
-    max-width: 700px;
-    max-height: 85vh;
+    max-width: 720px;
+    max-height: 88vh;
     overflow-y: auto;
-    box-shadow: var(--shadow-2xl);
+    box-shadow: var(--shadow-2xl), 0 0 40px rgba(99, 102, 241, 0.1);
     position: relative;
-    animation: modalSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     border: 1px solid var(--color-border-light);
+    backdrop-filter: blur(20px);
 }
 
 @keyframes modalSlideIn {
     from {
         opacity: 0;
-        transform: translateY(10px) scale(0.98);
+        transform: translateY(20px) scale(0.96);
     }
 
     to {
@@ -32,7 +33,7 @@
 }
 
 .task-modal-content {
-    padding: 32px 40px;
+    padding: 36px 48px;
 }
 
 /* Header */
@@ -40,34 +41,38 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
-    gap: 16px;
+    margin-bottom: 32px;
+    gap: 20px;
 }
 
 .task-modal-title {
-    font-size: 1.75rem;
-    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.875rem;
+    font-weight: 700;
     color: var(--color-text);
-    line-height: 1.3;
+    line-height: 1.2;
     margin: 0;
     flex: 1;
     word-break: break-word;
+    letter-spacing: -0.02em;
 }
 
 .task-modal-title-input {
-    font-size: 1.75rem;
-    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.875rem;
+    font-weight: 700;
     color: var(--color-text);
-    line-height: 1.3;
+    line-height: 1.2;
     flex: 1;
     border: none;
     outline: none;
     background: transparent;
     border-bottom: 2px solid transparent;
-    padding: 4px 0;
-    margin-bottom: 8px;
+    padding: 6px 0;
+    margin-bottom: 10px;
     width: 100%;
     transition: border-color 0.2s ease;
+    letter-spacing: -0.02em;
 }
 
 .task-modal-title-input:focus {
@@ -86,23 +91,25 @@
 }
 
 .task-modal-action-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-md);
-    border: none;
-    background: transparent;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-light);
+    background: var(--color-surface-elevated);
     color: var(--color-text-secondary);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all var(--transition-fast);
+    backdrop-filter: blur(4px);
 }
 
 .task-modal-action-btn:hover {
     background: var(--color-hover-bg);
     color: var(--color-text);
     transform: scale(1.05);
+    border-color: var(--color-primary);
 }
 
 .task-modal-action-btn:active {
@@ -120,15 +127,17 @@
 }
 
 .task-modal-btn {
-    padding: 8px 16px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    border-radius: 6px;
+    padding: 12px 24px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
     border: none;
     position: relative;
     overflow: hidden;
+    letter-spacing: 0.01em;
 }
 
 .task-modal-btn::after {
@@ -211,28 +220,30 @@
 .task-modal-properties {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    margin-bottom: 32px;
-    padding-bottom: 24px;
+    gap: 24px;
+    margin-bottom: 36px;
+    padding-bottom: 28px;
     border-bottom: 1px solid var(--color-border-light);
 }
 
 .task-modal-property {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .task-modal-property-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 700;
     color: var(--color-text-tertiary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
 }
 
 .task-modal-property-value {
-    font-size: 0.9375rem;
+    font-size: 1rem;
+    font-weight: 500;
     color: var(--color-text);
 }
 
@@ -241,12 +252,13 @@
 .task-modal-input,
 .task-modal-textarea {
     width: 100%;
-    padding: 10px 12px;
-    font-size: 0.9375rem;
+    padding: 14px 16px;
+    font-size: 1rem;
+    font-weight: 500;
     color: var(--color-text);
     background: var(--color-surface);
-    border: 1px solid transparent;
-    border-radius: var(--radius-md);
+    border: 2px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
     outline: none;
     transition: all var(--transition-fast);
     font-family: inherit;
@@ -255,14 +267,14 @@
 .task-modal-select:hover,
 .task-modal-input:hover,
 .task-modal-textarea:hover {
-    border-color: transparent;
+    border-color: var(--color-border);
 }
 
 .task-modal-select:focus,
 .task-modal-input:focus,
 .task-modal-textarea:focus {
-    border-color: transparent;
-    box-shadow: 0 0 0 3px var(--color-focus-ring);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-focus-ring);
 }
 
 /* Error state for inputs */
@@ -300,40 +312,47 @@
 .task-status-badge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.8125rem;
-    font-weight: 500;
+    font-weight: 600;
     color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Priority Badge */
 .task-priority-badge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.8125rem;
-    font-weight: 600;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Category Badge */
 .task-category-badge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.8125rem;
-    font-weight: 500;
+    font-weight: 600;
     color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Due Date */
 .task-due-date {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    font-weight: 500;
+    gap: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
 }
 
 .task-due-date.overdue {
@@ -355,21 +374,22 @@
 
 /* Description Section */
 .task-modal-section {
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 
 .task-modal-section-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--color-text-tertiary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 12px;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
 }
 
 .task-modal-description {
-    font-size: 1rem;
-    line-height: 1.7;
+    font-size: 1.0625rem;
+    line-height: 1.75;
     color: var(--color-text);
     white-space: pre-wrap;
     word-break: break-word;
@@ -379,8 +399,8 @@
 .task-modal-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
-    padding-top: 20px;
+    gap: 20px;
+    padding-top: 24px;
     border-top: 1px solid var(--color-border-light);
     font-size: 0.8125rem;
     color: var(--color-text-tertiary);
@@ -427,14 +447,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 12px;
+    padding: 12px 16px;
     background: var(--color-background-alt);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     transition: all var(--transition-fast);
+    border: 1px solid transparent;
 }
 
 .subtask-item:hover {
     background: var(--color-hover-bg);
+    border-color: var(--color-border-light);
 }
 
 .subtask-item.completed .subtask-title {
@@ -451,27 +473,29 @@
 }
 
 .subtask-checkbox input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     accent-color: var(--color-primary);
+    border-radius: 4px;
 }
 
 .subtask-title {
-    font-size: 0.9375rem;
+    font-size: 1rem;
+    font-weight: 500;
     color: var(--color-text);
     transition: all var(--transition-fast);
 }
 
 .subtask-delete-btn {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border: none;
     background: transparent;
     color: var(--color-text-tertiary);
     cursor: pointer;
-    border-radius: var(--radius-sm);
-    font-size: 18px;
+    border-radius: var(--radius-md);
+    font-size: 20px;
     line-height: 1;
     display: flex;
     align-items: center;
@@ -491,44 +515,44 @@
 
 .subtask-add-form {
     display: flex;
-    gap: 8px;
+    gap: 10px;
 }
 
 .subtask-add-input {
     flex: 1;
-    padding: 8px 12px;
+    padding: 12px 16px;
     font-size: 0.9375rem;
-    color: var(--color-text);
+    border: 2px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    outline: none;
-    transition: all var(--transition-fast);
+    transition: border-color var(--transition-fast);
 }
 
 .subtask-add-input:focus {
-    border-color: transparent;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    outline: none;
+    border-color: var(--color-primary);
 }
 
 .subtask-add-input::placeholder {
-    color: var(--color-text-muted, #94a3b8);
+    color: var(--color-text-tertiary);
 }
 
 .subtask-add-btn {
-    padding: 8px 16px;
+    padding: 12px 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.9375rem;
-    font-weight: 500;
+    font-weight: 600;
     color: white;
-    background: var(--color-primary, #6366f1);
+    background: var(--color-primary);
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
 }
 
 .subtask-add-btn:hover:not(:disabled) {
-    background: var(--color-primary-hover, #4f46e5);
+    background: var(--color-primary-hover);
+    transform: translateY(-1px);
 }
 
 .subtask-add-btn:disabled {
