@@ -13,7 +13,7 @@
     backdrop-filter: blur(10px);
 }
 
-/* Subtle gradient border effect on hover */
+/* Subtle gradient border effect on hover - uses column color when available */
 .task-card::before {
     content: '';
     position: absolute;
@@ -21,7 +21,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    background: linear-gradient(90deg, var(--column-color, var(--color-primary)), var(--column-color, var(--color-secondary)));
     opacity: 0;
     transition: opacity 0.25s ease;
 }
@@ -42,11 +42,7 @@
     pointer-events: none;
 }
 
-.task-card:hover {
-    box-shadow: var(--shadow-lg), var(--shadow-primary);
-    transform: translateY(-4px) scale(1.01);
-    border-color: var(--color-primary-surface);
-}
+
 
 .task-card:hover::before {
     opacity: 1;
@@ -67,7 +63,7 @@
 
 /* Focus visible for accessibility */
 .task-card:focus-visible {
-    outline: 2px solid var(--color-primary);
+    /* outline: 2px solid var(--column-color); */
     outline-offset: 2px;
 }
 
@@ -151,7 +147,7 @@
 }
 
 .task-card:hover .task-title {
-    color: var(--color-primary);
+    color: var(--column-color, var(--color-primary));
 }
 
 /* Task Description */

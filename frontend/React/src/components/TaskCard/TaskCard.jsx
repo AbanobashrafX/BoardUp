@@ -1,7 +1,7 @@
 import React from 'react';
 import './TaskCard.css';
 
-function TaskCard({ task, onEdit, onDelete, onView }) {
+function TaskCard({ task, columnColor, onEdit, onDelete, onView }) {
     const priority = task.priority || 'MEDIUM';
     const priorityClass = `priority-badge priority-${priority.toLowerCase()}`;
 
@@ -40,6 +40,7 @@ function TaskCard({ task, onEdit, onDelete, onView }) {
             className="task-card clickable"
             data-priority={priority}
             onClick={handleCardClick}
+            style={columnColor ? { '--column-color': columnColor } : undefined}
         >
             <div className="task-card-header">
                 <span className={priorityClass}>{priority}</span>

@@ -217,7 +217,7 @@ function KanbanBoard({
                                             <Draggable key={task.id} draggableId={String(task.id)} index={index}>
                                                 {(provided, snapshot) => (
                                                     <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={{ ...provided.draggableProps.style, opacity: snapshot.isDragging ? 0.8 : 1 }}>
-                                                        <TaskCard task={task} onEdit={handleTaskClick} onDelete={handleDeleteTask} onView={handleTaskClick} />
+                                                        <TaskCard task={task} columnColor={column.color} onEdit={handleTaskClick} onDelete={handleDeleteTask} onView={handleTaskClick} />
                                                     </div>
                                                 )}
                                             </Draggable>
