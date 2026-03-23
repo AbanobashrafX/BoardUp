@@ -21,19 +21,20 @@ const SAMPLE_TASKS = {
     ],
 };
 
-const SAMPLE_CATEGORIES = [
-
-];
+const SAMPLE_CATEGORIES = [];
+const SAMPLE_PROJECTS = [];
 
 function KanbanBoard({
     selectedProject = null,
     searchQuery = '',
     filter = { categories: [], priorities: [] },
     sortBy = '',
-    categories: propCategories = []
+    categories: propCategories = [],
+    projects: propProjects = []
 }) {
     const [tasks, setTasks] = useState({ TODO: [], IN_PROGRESS: [], DONE: [] });
     const [categories, setCategories] = useState(propCategories);
+    const [projects, setProjects] = useState(propProjects);
     const [isLoading, setIsLoading] = useState(true);
     const [isFetching, setIsFetching] = useState(false);
     const [showTaskModal, setShowTaskModal] = useState(false);
@@ -48,6 +49,13 @@ function KanbanBoard({
             setCategories(propCategories);
         }
     }, [propCategories]);
+
+    // Sync prop projects to state
+    useEffect(() => {
+        if (propProjects.length > 0) {
+            setProjects(propProjects);
+        }
+    }, [propProjects]);
 
     // Keyboard shortcuts
     useKeyboardShortcuts({
@@ -234,8 +242,8 @@ function KanbanBoard({
                 </div>
             </DragDropContext>
 
-            {showTaskModal && <TaskModal mode="create" categories={categories} onClose={handleCloseModal} />}
-            {selectedTask && <TaskModal task={selectedTask} categories={categories} onClose={handleCloseModal} onDelete={(id) => { handleDeleteTask(id); handleCloseModal(); }} />}
+            {showTaskModal && <TaskModal mode="create" categories={categories} projects={projects} preselectedProject={selectedProject} onClose={handleCloseModal} />}
+            {selectedTask && <TaskModal task={selectedTask} categories={categories} projects={projects} onClose={handleCloseModal} onDelete={(id) => { handleDeleteTask(id); handleCloseModal(); }} />}
         </div>
     );
 }

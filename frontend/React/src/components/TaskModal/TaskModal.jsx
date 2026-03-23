@@ -7,7 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import './TaskModal.css';
 
-function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: propMode }) {
+function TaskModal({ task, onClose, onDelete, categories: propCategories, projects: propProjects, mode: propMode, preselectedProject: propPreselectedProject }) {
     // Determine mode: 'create' | 'edit' | 'view' (default 'view')
     // If task is provided but mode is not, assume 'view'
     // If mode is explicitly provided, use that
@@ -23,12 +23,14 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
     const [categories] = useState(propCategories || []);
+    const [projects] = useState(propProjects || []);
     const [subtasks, setSubtasks] = useState([]);
     const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
     const [subtasksLoading, setSubtasksLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
+        project: '',
         category: '',
         priority: 'LOW',
         status: 'TODO',
@@ -38,10 +40,11 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
     useEffect(() => {
         // Skip fetching for create mode
         if (!task) {
-            // Create mode - use default form data
+            // Create mode - use default form data with preselected project
             setFormData({
                 title: '',
                 description: '',
+                project: propPreselectedProject ? propPreselectedProject.id : '',
                 category: '',
                 priority: 'LOW',
                 status: 'TODO',
@@ -64,6 +67,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                     setFormData({
                         title: data.title || '',
                         description: data.description || '',
+                        project: data.project || '',
                         category: data.category || '',
                         priority: data.priority || 'LOW',
                         status: data.status || 'TODO',
@@ -76,6 +80,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                     setFormData({
                         title: task.title || '',
                         description: task.description || '',
+                        project: task.project || '',
                         category: task.category || '',
                         priority: task.priority || 'LOW',
                         status: task.status || 'TODO',
@@ -110,6 +115,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
         try {
             const submitData = {
                 ...formData,
+                project: formData.project ? parseInt(formData.project) : null,
                 category: formData.category ? parseInt(formData.category) : null,
             };
 
@@ -144,8 +150,9 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
         setFormData({
             title: fullTask?.title || '',
             description: fullTask?.description || '',
+            project: fullTask?.project || '',
             category: fullTask?.category || '',
-            priority: fullTask?.priority || 'lOW',
+            priority: fullTask?.priority || 'LOW',
             status: fullTask?.status || 'TODO',
             due_date: fullTask?.due_date || '',
         });
@@ -258,11 +265,25 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
         { value: 'URGENT', label: 'Urgent' },
     ];
 
+    // Build project options from propProjects
+    const projectOptions = [
+        { value: '', label: 'No Project', color: '#6366f1' },
+        ...(propProjects || []).map(proj => ({ value: proj.id, label: proj.name, color: proj.color })),
+    ];
+
     // Build category options from propCategories
     const categoryOptions = [
         { value: '', label: 'No Category', color: '#6366f1' },
         ...(propCategories || []).map(cat => ({ value: cat.id, label: cat.name, color: cat.color })),
     ];
+
+    const getProjectOptionStyle = (option) => {
+        if (!option.value) {
+            // No project - gray background with dark text
+            return { backgroundColor: '#e5e7eb', color: '#374151' };
+        }
+        return { backgroundColor: option.color || '#6366f1' };
+    };
 
     const getCategoryOptionStyle = (option) => {
         if (!option.value) {
@@ -427,6 +448,32 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, mode: 
                                         >
                                             {fullTask?.priority}
                                         </span>
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Project */}
+                            <div className="task-modal-property">
+                                <span className="task-modal-property-label">Project</span>
+                                {isEditing || isCreateMode ? (
+                                    <BadgeSelect
+                                        name="project"
+                                        value={formData.project}
+                                        onChange={handleChange}
+                                        options={projectOptions}
+                                        getOptionStyle={getProjectOptionStyle}
+                                        placeholder="Select project..."
+                                    />
+                                ) : (
+                                    <span className="task-modal-property-value">
+                                        {fullTask?.project && (
+                                            <span
+                                                className="task-project-badge"
+                                                style={{ backgroundColor: fullTask?.project_color || '#6366f1' }}
+                                            >
+                                                {fullTask?.project_name || fullTask?.project}
+                                            </span>
+                                        )}
                                     </span>
                                 )}
                             </div>

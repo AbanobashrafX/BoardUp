@@ -12,13 +12,27 @@ const MONTHS = [
 const SAMPLE_TASKS = [
 ];
 
-function CalendarBoard({ selectedProject = null, viewMode = 'calendar', onViewModeChange = () => { } }) {
+function CalendarBoard({ selectedProject = null, viewMode = 'calendar', onViewModeChange = () => { }, propCategories = [], propProjects = [] }) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [tasks, setTasks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useState(propCategories);
+    const [projects, setProjects] = useState(propProjects);
+
+    // Sync prop categories and projects to state
+    useEffect(() => {
+        if (propCategories.length > 0) {
+            setCategories(propCategories);
+        }
+    }, [propCategories]);
+
+    useEffect(() => {
+        if (propProjects.length > 0) {
+            setProjects(propProjects);
+        }
+    }, [propProjects]);
 
     useEffect(() => {
         fetchTasks();
@@ -199,6 +213,7 @@ function CalendarBoard({ selectedProject = null, viewMode = 'calendar', onViewMo
                 <TaskModal
                     task={selectedTask}
                     categories={categories}
+                    projects={projects}
                     onClose={handleCloseModal}
                     onDelete={(id) => handleCloseModal()}
                 />

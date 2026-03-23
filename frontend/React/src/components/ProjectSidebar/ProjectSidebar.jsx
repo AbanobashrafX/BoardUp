@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useData } from '../../contexts/DataContext';
 import { projectAPI } from '../../services/api';
 import './ProjectSidebar.css';
 
@@ -9,33 +10,12 @@ const PROJECT_ICONS = ['📋', '🏠', '💼', '📚', '🎯', '🚀', '💡', '
 const PROJECT_COLORS = ['#6366f1', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
 
 function ProjectSidebar({ selectedProject, onSelectProject }) {
-    const [projects, setProjects] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { projects } = useData();
+    const [loading, setLoading] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newProjectName, setNewProjectName] = useState('');
     const [newProjectIcon, setNewProjectIcon] = useState('📋');
     const [newProjectColor, setNewProjectColor] = useState('#6366f1');
-
-    useEffect(() => {
-        fetchProjects();
-    }, []);
-
-    const fetchProjects = async () => {
-        try {
-            const data = await projectAPI.getAll();
-            // Use sample data if API returns empty or error
-            if (!data || data.length === 0) {
-                setProjects(SAMPLE_PROJECTS);
-            } else {
-                setProjects(data);
-            }
-        } catch (error) {
-            console.log('Using sample projects');
-            setProjects(SAMPLE_PROJECTS);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleCreateProject = async () => {
         if (!newProjectName.trim()) return;
@@ -46,9 +26,6 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
                 icon: newProjectIcon,
                 color: newProjectColor,
             });
-            setProjects([...projects, newProject]);
-            setNewProjectName('');
-            setShowCreateForm(false);
             onSelectProject(newProject);
         } catch (error) {
             const demoProject = {
@@ -59,11 +36,10 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
                 tasks_count: 0,
                 completed_tasks_count: 0,
             };
-            setProjects([...projects, demoProject]);
-            setNewProjectName('');
-            setShowCreateForm(false);
             onSelectProject(demoProject);
         }
+        setNewProjectName('');
+        setShowCreateForm(false);
     };
 
     const handleDeleteProject = async (e, projectId) => {
@@ -72,12 +48,10 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
 
         try {
             await projectAPI.delete(projectId);
-            setProjects(projects.filter(p => p.id !== projectId));
             if (selectedProject?.id === projectId) {
                 onSelectProject(null);
             }
         } catch (error) {
-            setProjects(projects.filter(p => p.id !== projectId));
             if (selectedProject?.id === projectId) {
                 onSelectProject(null);
             }

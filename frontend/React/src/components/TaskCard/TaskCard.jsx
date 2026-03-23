@@ -83,6 +83,14 @@ function TaskCard({ task, columnColor, onEdit, onDelete, onView }) {
                 )}
             </div>
             <div className="task-additional-feature-container">
+                {task.project && (
+                    <span
+                        className="project-tag"
+                        style={{ backgroundColor: task.project_color || '#8b5cf6' }}
+                    >
+                        📁 {task.project_name || task.project}
+                    </span>
+                )}
                 {task.due_date && (
                     <span className={`task-due-date ${dueDateStatus}`}>
                         {dueDateStatus === 'overdue' && '⚠️ '}

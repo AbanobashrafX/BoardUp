@@ -1,43 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import KanbanBoard from '../KanbanBoard/KanbanBoard';
 import CalendarBoard from '../CalendarBoard/CalendarBoard';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import TaskModal from '../TaskModal/TaskModal';
-import { categoryAPI } from '../../services/api';
+import { useData } from '../../contexts/DataContext';
 import './BoardContainer.css';
 
-const SAMPLE_CATEGORIES = [
-
-];
+const SAMPLE_CATEGORIES = [];
+const SAMPLE_PROJECTS = [];
 
 function BoardContainer({
   selectedProject = null,
   projectName: propProjectName = 'All Tasks'
 }) {
-  // Board state - all managed internally
+  // Get shared data from context
+  const { categories, projects } = useData();
+
+  // Board state - search/filter managed internally
   const [viewMode, setViewMode] = useState('kanban');
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState({ categories: [], priorities: [] });
   const [sortBy, setSortBy] = useState('');
-  const [categories, setCategories] = useState(SAMPLE_CATEGORIES);
   const [showTaskModal, setShowTaskModal] = useState(false);
 
   const searchInputRef = useRef(null);
-
-  // Fetch categories on mount (single source of truth)
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await categoryAPI.getAll();
-        if (data && data.length > 0) {
-          setCategories(data);
-        }
-      } catch (error) {
-        console.log('Using sample categories');
-      }
-    };
-    fetchCategories();
-  }, []);
 
   // Project name from prop or selectedProject
   const projectName = propProjectName || (selectedProject ? selectedProject.name : 'All Tasks');
@@ -131,11 +117,14 @@ function BoardContainer({
             filter={filter}
             sortBy={sortBy}
             categories={categories}
+            projects={projects}
           />
         ) : (
           <CalendarBoard
             selectedProject={selectedProject}
             searchQuery={searchQuery}
+            categories={categories}
+            projects={projects}
           />
         )}
       </div>
@@ -145,6 +134,8 @@ function BoardContainer({
         <TaskModal
           mode="create"
           categories={categories}
+          projects={projects}
+          preselectedProject={selectedProject}
           onClose={() => setShowTaskModal(false)}
         />
       )}
