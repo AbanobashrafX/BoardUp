@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { ThemeProvider as CustomThemeProvider, useTheme } from './contexts/ThemeContext';
+import { DataProvider } from './contexts/DataContext';
 import BoardContainer from './components/BoardContainer/BoardContainer';
 import ProjectSidebar from './components/ProjectSidebar/ProjectSidebar';
 import ThemeToggle from './components/ThemeToggle/ThemeToggle';
@@ -64,7 +65,9 @@ function ThemedApp() {
     return (
         <MuiThemeProvider theme={muiTheme}>
             <CssBaseline />
-            <AppContent />
+            <DataProvider>
+                <AppContent />
+            </DataProvider>
         </MuiThemeProvider>
     );
 }
