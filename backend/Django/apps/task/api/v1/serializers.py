@@ -3,8 +3,9 @@ from rest_framework import serializers
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    tasks_count = serializers.IntegerField(read_only=True)
-    completed_tasks_count = serializers.IntegerField(read_only=True)
+    tasks_count = serializers.SerializerMethodField()
+    completed_tasks_count = serializers.SerializerMethodField()
+    total_tasks_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -17,10 +18,21 @@ class ProjectSerializer(serializers.ModelSerializer):
             "is_active",
             "tasks_count",
             "completed_tasks_count",
+            "total_tasks_count",
             "created_at",
             "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
+
+    def get_tasks_count(self, obj):
+        return obj.tasks_count
+
+    def get_completed_tasks_count(self, obj):
+        return obj.completed_tasks_count
+
+    def get_total_tasks_count(self, obj):
+        # Get total task count from context (set by the view)
+        return self.context.get("total_tasks_count", 0)
 
 
 class SubtaskSerializer(serializers.ModelSerializer):

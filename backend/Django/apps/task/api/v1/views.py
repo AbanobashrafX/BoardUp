@@ -43,7 +43,11 @@ def ProjectList(request):
     """List all projects or create a new project"""
     if request.method == "GET":
         projects = Project.objects.filter(is_active=True)
-        serializer = ProjectSerializer(projects, many=True)
+        # Get total task count (including tasks without a project)
+        total_tasks_count = Task.objects.count()
+        serializer = ProjectSerializer(
+            projects, many=True, context={"total_tasks_count": total_tasks_count}
+        )
         return Response(serializer.data)
 
     if request.method == "POST":
@@ -61,6 +65,13 @@ def ProjectDetail(request, pk):
         project = Project.objects.get(pk=pk)
     except Project.DoesNotExist:
         return Response(status=404)
+
+    if not project:
+        return Response(status=404)
+
+    # Map annotated fields to model properties
+    project.tasks_count = project._tasks_count
+    project.completed_tasks_count = project._completed_tasks_count
 
     if request.method == "GET":
         serializer = ProjectSerializer(project)
