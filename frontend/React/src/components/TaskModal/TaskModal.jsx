@@ -179,7 +179,12 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
 
     const handleToggleSubtask = async (subtaskId) => {
         try {
-            const updatedSubtask = await subtaskAPI.toggle(subtaskId);
+            // Find the current subtask to get its is_completed state
+            const currentSubtask = subtasks.find(st => st.id === subtaskId);
+            if (!currentSubtask) return;
+
+            // Pass the current is_completed state to avoid extra GET request
+            const updatedSubtask = await subtaskAPI.toggle(subtaskId, currentSubtask.is_completed);
             setSubtasks(subtasks.map(st =>
                 st.id === subtaskId ? updatedSubtask : st
             ));
