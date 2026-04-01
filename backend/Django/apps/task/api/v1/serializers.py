@@ -80,7 +80,7 @@ class TaskSerializer(serializers.ModelSerializer):
     subtasks = SubtaskSerializer(many=True, read_only=True)
     subtasks_count = serializers.IntegerField(read_only=True)
     completed_subtasks_count = serializers.IntegerField(read_only=True)
-    due_date = serializers.DateTimeField(required=False, allow_null=True)
+    due_date = serializers.DateField(required=False, allow_null=True)
 
     class Meta:
         model = Task
@@ -133,10 +133,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        if ret.get("due_date"):
-            ret["due_date"] = (
-                instance.due_date.strftime("%Y-%m-%d") if instance.due_date else None
-            )
+        # due_date is now handled by DateField serializer
         return ret
 
 
