@@ -30,11 +30,10 @@ function KanbanBoard({
     filter = { categories: [], priorities: [] },
     sortBy = '',
     categories: propCategories = [],
-    projects: propProjects = []
+    projects: propProjects = [],
+    onProjectsRefresh = null
 }) {
     const [tasks, setTasks] = useState({ TODO: [], IN_PROGRESS: [], DONE: [] });
-    const [categories, setCategories] = useState(propCategories);
-    const [projects, setProjects] = useState(propProjects);
     const [isLoading, setIsLoading] = useState(true);
     const [isFetching, setIsFetching] = useState(false);
     const [showTaskModal, setShowTaskModal] = useState(false);
@@ -42,20 +41,6 @@ function KanbanBoard({
 
     // Track initialization to avoid duplicate fetches on mount
     const isInitialized = useRef(false);
-
-    // Sync prop categories to state
-    useEffect(() => {
-        if (propCategories.length > 0) {
-            setCategories(propCategories);
-        }
-    }, [propCategories]);
-
-    // Sync prop projects to state
-    useEffect(() => {
-        if (propProjects.length > 0) {
-            setProjects(propProjects);
-        }
-    }, [propProjects]);
 
     // Keyboard shortcuts
     useKeyboardShortcuts({
@@ -118,7 +103,6 @@ function KanbanBoard({
         } catch (error) {
             console.log('API error, using sample data');
             setTasks(SAMPLE_TASKS);
-            setCategories(SAMPLE_CATEGORIES);
         } finally {
             setIsLoading(false);
             setIsFetching(false);
@@ -146,6 +130,7 @@ function KanbanBoard({
 
         try {
             await taskAPI.move(draggableId, destColumn, destIndex);
+            onProjectsRefresh?.();
         } catch (error) {
             console.error('Error moving task:', error);
             fetchData();
@@ -156,6 +141,7 @@ function KanbanBoard({
         try {
             await taskAPI.delete(taskId);
             fetchData();
+            onProjectsRefresh?.();
         } catch (error) {
             console.error('Error deleting task:', error);
         }
@@ -167,6 +153,7 @@ function KanbanBoard({
         setShowTaskModal(false);
         setSelectedTask(null);
         fetchData();
+        onProjectsRefresh?.();
     };
 
     // Sort function
@@ -242,8 +229,8 @@ function KanbanBoard({
                 </div>
             </DragDropContext>
 
-            {showTaskModal && <TaskModal mode="create" categories={categories} projects={projects} preselectedProject={selectedProject} onClose={handleCloseModal} />}
-            {selectedTask && <TaskModal task={selectedTask} categories={categories} projects={projects} onClose={handleCloseModal} onDelete={(id) => { handleDeleteTask(id); handleCloseModal(); }} />}
+            {showTaskModal && <TaskModal mode="create" categories={propCategories} projects={propProjects} preselectedProject={selectedProject} onClose={handleCloseModal} />}
+            {selectedTask && <TaskModal task={selectedTask} categories={propCategories} projects={propProjects} onClose={handleCloseModal} onDelete={(id) => { handleDeleteTask(id); handleCloseModal(); }} />}
         </div>
     );
 }
