@@ -87,7 +87,7 @@ class Task(BaseModel):
     position = models.IntegerField(default=0)
 
     # TASK dates
-    due_date = models.DateTimeField(null=True, blank=True)
+    due_date = models.DateField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
