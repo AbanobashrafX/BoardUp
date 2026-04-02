@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import KanbanBoard from '../KanbanBoard/KanbanBoard';
 import CalendarBoard from '../CalendarBoard/CalendarBoard';
 import MultiFilter from '../MultiFilter/MultiFilter';
@@ -27,6 +27,40 @@ function BoardContainer({
 
   // Project name from prop or selectedProject
   const projectName = propProjectName || (selectedProject ? selectedProject.name : 'All Tasks');
+
+  // Handle keyboard shortcuts
+  const handleKeyboardShortcut = useCallback((event) => {
+    const { action, status } = event.detail;
+
+    switch (action) {
+      case 'newTask':
+        setShowTaskModal(true);
+        break;
+      case 'search':
+        searchInputRef.current?.focus();
+        break;
+      case 'clearFilters':
+        setSearchQuery('');
+        setFilter({ categories: [], priorities: [] });
+        setSortBy('');
+        break;
+      case 'statusFilter':
+        setFilter(prev => ({
+          ...prev,
+          priorities: prev.priorities?.includes(status)
+            ? prev.priorities.filter(p => p !== status)
+            : [...(prev.priorities || []), status]
+        }));
+        break;
+      default:
+        break;
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('keyboard-shortcut', handleKeyboardShortcut);
+    return () => window.removeEventListener('keyboard-shortcut', handleKeyboardShortcut);
+  }, [handleKeyboardShortcut]);
 
   return (
     <div className="board-container">
