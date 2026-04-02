@@ -36,12 +36,54 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
         status: 'TODO',
         due_date: '',
     });
+    const [originalFormData, setOriginalFormData] = useState(null);
+    const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
+
+    // Check if form has unsaved changes
+    const hasUnsavedChanges = () => {
+        if (!originalFormData) return false;
+        return JSON.stringify(formData) !== JSON.stringify(originalFormData);
+    };
+
+    // Handle close with unsaved changes warning
+    const handleClose = () => {
+        if (hasUnsavedChanges()) {
+            setShowUnsavedWarning(true);
+        } else {
+            onClose();
+        }
+    };
+
+    // Handle discard changes
+    const handleDiscardChanges = () => {
+        setShowUnsavedWarning(false);
+        onClose();
+    };
+
+    // Handle cancel discard
+    const handleCancelDiscard = () => {
+        setShowUnsavedWarning(false);
+    };
+
+    // Handle beforeunload event (browser close/refresh)
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (hasUnsavedChanges()) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [formData, originalFormData]);
 
     useEffect(() => {
         // Skip fetching for create mode
         if (!task) {
             // Create mode - use default form data with preselected project
-            setFormData({
+            const defaultData = {
                 title: '',
                 description: '',
                 project: propPreselectedProject ? propPreselectedProject.id : '',
@@ -49,7 +91,9 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                 priority: 'LOW',
                 status: 'TODO',
                 due_date: '',
-            });
+            };
+            setFormData(defaultData);
+            setOriginalFormData(defaultData);
             setSubtasks([]);
             return;
         }
@@ -64,7 +108,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                     ]);
                     setFullTask(data);
                     setSubtasks(subtasksData);
-                    setFormData({
+                    const taskData = {
                         title: data.title || '',
                         description: data.description || '',
                         project: data.project || '',
@@ -72,12 +116,14 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                         priority: data.priority || 'LOW',
                         status: data.status || 'TODO',
                         due_date: data.due_date || '',
-                    });
+                    };
+                    setFormData(taskData);
+                    setOriginalFormData(taskData);
                 } catch (error) {
                     console.error('Error fetching task:', error);
                     setFullTask(task);
                     setSubtasks(task.subtasks || []);
-                    setFormData({
+                    const taskData = {
                         title: task.title || '',
                         description: task.description || '',
                         project: task.project || '',
@@ -85,7 +131,9 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                         priority: task.priority || 'LOW',
                         status: task.status || 'TODO',
                         due_date: task.due_date || '',
-                    });
+                    };
+                    setFormData(taskData);
+                    setOriginalFormData(taskData);
                 } finally {
                     setLoading(false);
                 }
@@ -131,6 +179,8 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                 const updatedTask = await taskAPI.getOne(fullTask.id);
                 setFullTask(updatedTask);
                 setIsEditing(false);
+                // Reset original form data after successful save
+                setOriginalFormData(formData);
             }
         } catch (err) {
             console.error('Error saving task:', err);
@@ -328,7 +378,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
     const showLoading = loading && !isCreateMode;
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
+        <div className="modal-overlay" onClick={handleClose}>
             <div className="task-modal" onClick={(e) => e.stopPropagation()}>
 
                 {showLoading ? (
@@ -637,6 +687,37 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                     </div>
                 )}
             </div>
+
+            {/* Unsaved Changes Warning Modal */}
+            {showUnsavedWarning && (
+                <div className="unsaved-warning-overlay" onClick={(e) => e.stopPropagation()}>
+                    <div className="unsaved-warning-modal">
+                        <div className="unsaved-warning-header">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            <h3>Unsaved Changes</h3>
+                        </div>
+                        <p>You have unsaved changes. Are you sure you want to close without saving?</p>
+                        <div className="unsaved-warning-actions">
+                            <button
+                                className="unsaved-warning-btn unsaved-warning-btn-secondary"
+                                onClick={handleCancelDiscard}
+                            >
+                                Keep Editing
+                            </button>
+                            <button
+                                className="unsaved-warning-btn unsaved-warning-btn-danger"
+                                onClick={handleDiscardChanges}
+                            >
+                                Discard Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
