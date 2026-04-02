@@ -14,7 +14,7 @@ function BoardContainer({
   projectName: propProjectName = 'All Tasks'
 }) {
   // Get shared data from context
-  const { categories, projects } = useData();
+  const { categories, projects, refreshProjects } = useData();
 
   // Board state - search/filter managed internally
   const [viewMode, setViewMode] = useState('kanban');
@@ -118,6 +118,7 @@ function BoardContainer({
             sortBy={sortBy}
             categories={categories}
             projects={projects}
+            onProjectsRefresh={refreshProjects}
           />
         ) : (
           <CalendarBoard

@@ -123,7 +123,9 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
                     <span className="project-icon">📋</span>
                     <span className="project-name">All Tasks</span>
                     <span className="project-count">
-                        {projects.reduce((acc, p) => acc + (p.tasks_count || 0), 0)}
+                        {projects.length > 0 && projects[0].total_tasks_count !== undefined
+                            ? projects[0].total_tasks_count
+                            : projects.reduce((acc, p) => acc + (p.tasks_count || 0), 0)}
                     </span>
                 </div>
 
