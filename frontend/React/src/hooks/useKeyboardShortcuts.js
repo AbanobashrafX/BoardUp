@@ -8,6 +8,7 @@ import { useEffect, useCallback } from 'react';
  * @param {Function} options.onToggleTheme - Callback for theme toggle
  * @param {Function} options.onClearFilters - Callback for clear filters
  * @param {Function} options.onStatusFilter - Callback for status filter (param: status)
+ * @param {Function} options.onShowHelp - Callback for showing keyboard shortcuts help
  * @param {boolean} options.enabled - Whether shortcuts are enabled
  */
 export function useKeyboardShortcuts({
@@ -16,6 +17,7 @@ export function useKeyboardShortcuts({
     onToggleTheme,
     onClearFilters,
     onStatusFilter,
+    onShowHelp,
     enabled = true,
 }) {
     const handleKeyDown = useCallback((event) => {
@@ -63,6 +65,10 @@ export function useKeyboardShortcuts({
                     event.preventDefault();
                     onStatusFilter?.('DONE');
                     break;
+                case '?':
+                    event.preventDefault();
+                    onShowHelp?.();
+                    break;
                 default:
                     break;
             }
@@ -77,7 +83,7 @@ export function useKeyboardShortcuts({
                 modals[modals.length - 1].click();
             }
         }
-    }, [onNewTask, onSearch, onToggleTheme, onClearFilters, onStatusFilter]);
+    }, [onNewTask, onSearch, onToggleTheme, onClearFilters, onStatusFilter, onShowHelp]);
 
     useEffect(() => {
         if (!enabled) return;
