@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useData } from '../../contexts/DataContext';
 import { projectAPI } from '../../services/api';
 import { useToast } from '../../contexts/ToastContext';
@@ -20,7 +20,7 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
     const { showSuccess, showError } = useToast();
 
     // Local state for UI
-    const [showCreateForm, setShowCreateForm] = useState(false);
+    const [showCreateModal, setShowCreateModal] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(null); // Track which project is being deleted
 
@@ -28,6 +28,17 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
     const [newProjectName, setNewProjectName] = useState('');
     const [newProjectIcon, setNewProjectIcon] = useState('📋');
     const [newProjectColor, setNewProjectColor] = useState('#6366f1');
+
+    // Close modal on escape key
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape' && showCreateModal) {
+                setShowCreateModal(false);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [showCreateModal]);
 
     /**
      * Calculate total tasks across all projects for "All Tasks" display
@@ -72,8 +83,9 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
             onSelectProject(createdProject);
             showSuccess(`Project "${createdProject.name}" created!`);
 
-            // Reset form
+            // Reset form and close modal
             resetForm();
+            setShowCreateModal(false);
         } catch (error) {
             console.error('Error creating project:', error);
             showError('Failed to create project. Please try again.');
@@ -128,7 +140,7 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
         setNewProjectName('');
         setNewProjectIcon('📋');
         setNewProjectColor('#6366f1');
-        setShowCreateForm(false);
+        setShowCreateModal(false);
     };
 
     /**
@@ -152,80 +164,13 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
                 <h3>Projects</h3>
                 <button
                     className="project-add-btn"
-                    onClick={() => setShowCreateForm(!showCreateForm)}
+                    onClick={() => setShowCreateModal(true)}
                     title="New Project"
                     aria-label="Create new project"
                 >
                     +
                 </button>
             </div>
-
-            {/* Create Project Form */}
-            {showCreateForm && (
-                <div className="project-create-form">
-                    <input
-                        type="text"
-                        placeholder="Project name..."
-                        value={newProjectName}
-                        onChange={(e) => setNewProjectName(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && !isCreating && handleCreateProject()}
-                        disabled={isCreating}
-                        autoFocus
-                        maxLength={50}
-                    />
-
-                    <div className="project-form-options">
-                        {/* Icon Picker */}
-                        <div className="icon-picker">
-                            {PROJECT_ICONS.map((icon) => (
-                                <button
-                                    key={icon}
-                                    type="button"
-                                    className={`icon-option ${newProjectIcon === icon ? 'selected' : ''}`}
-                                    onClick={() => setNewProjectIcon(icon)}
-                                    disabled={isCreating}
-                                >
-                                    {icon}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Color Picker */}
-                        <div className="color-picker">
-                            {PROJECT_COLORS.map((color) => (
-                                <button
-                                    key={color}
-                                    type="button"
-                                    className={`color-option ${newProjectColor === color ? 'selected' : ''}`}
-                                    style={{ backgroundColor: color }}
-                                    onClick={() => setNewProjectColor(color)}
-                                    disabled={isCreating}
-                                />
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Form Actions */}
-                    <div className="project-form-actions">
-                        <button
-                            type="button"
-                            className="cancel-btn"
-                            onClick={resetForm}
-                            disabled={isCreating}
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="button"
-                            className="create-btn"
-                            onClick={handleCreateProject}
-                            disabled={isCreating || !newProjectName.trim()}
-                        >
-                            {isCreating ? 'Creating...' : 'Create'}
-                        </button>
-                    </div>
-                </div>
-            )}
 
             {/* Project List */}
             <div className="project-list">
@@ -283,6 +228,89 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
                     </div>
                 )}
             </div>
+
+            {/* Create Project Modal */}
+            {showCreateModal && (
+                <div className="project-modal-overlay" onClick={() => setShowCreateModal(false)}>
+                    <div className="project-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="project-modal-header">
+                            <h2>Create New Project</h2>
+                            <button
+                                className="project-modal-close"
+                                onClick={() => setShowCreateModal(false)}
+                                aria-label="Close"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <div className="project-modal-form">
+                            <label>Project Name</label>
+                            <input
+                                type="text"
+                                placeholder="Enter project name..."
+                                value={newProjectName}
+                                onChange={(e) => setNewProjectName(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && !isCreating && newProjectName.trim() && handleCreateProject()}
+                                disabled={isCreating}
+                                autoFocus
+                                maxLength={50}
+                            />
+
+                            <label>Choose an Icon</label>
+                            <div className="icon-picker">
+                                {PROJECT_ICONS.map((icon) => (
+                                    <button
+                                        key={icon}
+                                        type="button"
+                                        className={`icon-option ${newProjectIcon === icon ? 'selected' : ''}`}
+                                        onClick={() => setNewProjectIcon(icon)}
+                                        disabled={isCreating}
+                                    >
+                                        {icon}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <label>Choose a Color</label>
+                            <div className="color-picker">
+                                {PROJECT_COLORS.map((color) => (
+                                    <button
+                                        key={color}
+                                        type="button"
+                                        className={`color-option ${newProjectColor === color ? 'selected' : ''}`}
+                                        style={{ backgroundColor: color }}
+                                        onClick={() => setNewProjectColor(color)}
+                                        disabled={isCreating}
+                                    />
+                                ))}
+                            </div>
+
+                            <div className="project-modal-actions">
+                                <button
+                                    type="button"
+                                    className="cancel-btn"
+                                    onClick={() => {
+                                        resetForm();
+                                        setShowCreateModal(false);
+                                    }}
+                                    disabled={isCreating}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    className="create-btn"
+                                    onClick={handleCreateProject}
+                                    disabled={isCreating || !newProjectName.trim()}
+                                >
+                                    {isCreating ? 'Creating...' : 'Create Project'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
