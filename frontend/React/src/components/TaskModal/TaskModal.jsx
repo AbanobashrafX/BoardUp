@@ -233,8 +233,8 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
             const currentSubtask = subtasks.find(st => st.id === subtaskId);
             if (!currentSubtask) return;
 
-            // Pass the current is_completed state to avoid extra GET request
-            const updatedSubtask = await subtaskAPI.toggle(subtaskId, currentSubtask.is_completed);
+            // Toggle to the opposite state (optimized single PATCH request)
+            const updatedSubtask = await subtaskAPI.toggle(subtaskId, !currentSubtask.is_completed);
             setSubtasks(subtasks.map(st =>
                 st.id === subtaskId ? updatedSubtask : st
             ));

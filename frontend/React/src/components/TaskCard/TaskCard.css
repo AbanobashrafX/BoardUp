@@ -18,6 +18,16 @@
     overflow-wrap: break-word;
 }
 
+/* Click animation - scale down on click */
+.task-card:active {
+    transform: scale(0.97);
+    cursor: grabbing;
+}
+
+.task-card.clickable:active {
+    transform: scale(0.98);
+}
+
 /* Subtle gradient border effect on hover - uses column color when available */
 .task-card::before {
     content: '';
