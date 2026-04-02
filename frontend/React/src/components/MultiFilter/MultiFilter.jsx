@@ -217,7 +217,7 @@ function MultiFilter({ categories, filters, onFilterChange, sortBy, onSortChange
                                 }
                             }}
                         >
-                            Cat
+                            {getCategoryName(catId)}
                         </button>
                     ))}
                     {filters.priorities?.map((priority) => (
@@ -237,7 +237,7 @@ function MultiFilter({ categories, filters, onFilterChange, sortBy, onSortChange
                             }}
                             style={{ borderColor: PRIORITIES.find(p => p.value === priority)?.color, color: PRIORITIES.find(p => p.value === priority)?.color }}
                         >
-                            Prio
+                            {PRIORITIES.find(p => p.value === priority)?.label}
                         </button>
                     ))}
                 </div>
