@@ -148,8 +148,10 @@
 }
 
 .shortcut-item:hover {
+    color: rgba(255, 255, 255, 1);
+    cursor: pointer;
     background: var(--bg-tertiary);
-    border-color: var(--border-color);
+    border-color: rgba(255, 255, 255, 1);
     transform: translateX(4px);
 }
 
