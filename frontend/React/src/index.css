@@ -190,6 +190,31 @@ img {
     font-weight: 500;
 }
 
+/* Keyboard Shortcuts Help Button */
+.shortcuts-help-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.shortcuts-help-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.shortcuts-help-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
 /* View Toggle */
 .view-toggle {
     display: flex;
