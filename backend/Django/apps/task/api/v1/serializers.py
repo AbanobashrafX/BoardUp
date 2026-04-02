@@ -126,7 +126,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         # Handle empty string for due_date
-        if data.get("due_date") == "":
+        if "due_date" in data and data["due_date"] == "":
             data = data.copy()
             data["due_date"] = None
         return super().to_internal_value(data)
