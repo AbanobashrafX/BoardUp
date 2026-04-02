@@ -4,6 +4,7 @@ import CalendarBoard from '../CalendarBoard/CalendarBoard';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import TaskModal from '../TaskModal/TaskModal';
 import { useData } from '../../contexts/DataContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import './BoardContainer.css';
 
 const SAMPLE_CATEGORIES = [];
@@ -15,6 +16,7 @@ function BoardContainer({
 }) {
   // Get shared data from context
   const { categories, projects, refreshProjects } = useData();
+  const { toggleTheme } = useTheme();
 
   // Board state - search/filter managed internally
   const [viewMode, setViewMode] = useState('kanban');
@@ -39,6 +41,9 @@ function BoardContainer({
       case 'search':
         searchInputRef.current?.focus();
         break;
+      case 'toggleTheme':
+        toggleTheme();
+        break;
       case 'clearFilters':
         setSearchQuery('');
         setFilter({ categories: [], priorities: [] });
@@ -55,7 +60,7 @@ function BoardContainer({
       default:
         break;
     }
-  }, []);
+  }, [toggleTheme]);
 
   useEffect(() => {
     window.addEventListener('keyboard-shortcut', handleKeyboardShortcut);

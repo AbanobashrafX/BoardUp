@@ -664,7 +664,7 @@ button:focus-visible,
 /* Firefox scrollbar */
 * {
     scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-color: var(--scrollbar-thumb) rgba(0, 0, 0, 0.1);
 }
 
 /* ============================================

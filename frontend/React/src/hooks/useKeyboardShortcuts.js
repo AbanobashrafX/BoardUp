@@ -7,7 +7,7 @@ import { useEffect, useCallback } from 'react';
  * @param {Function} options.onSearch - Callback for search focus
  * @param {Function} options.onToggleTheme - Callback for theme toggle
  * @param {Function} options.onClearFilters - Callback for clear filters
- * @param {Function} options.onStatusFilter - Callback for status filter (param: status)
+ * @param {Function} options.onStatusFilter - Callback for priority filter (param: priority)
  * @param {Function} options.onShowHelp - Callback for showing keyboard shortcuts help
  * @param {boolean} options.enabled - Whether shortcuts are enabled
  */
@@ -27,7 +27,7 @@ export function useKeyboardShortcuts({
             target.tagName === 'TEXTAREA' ||
             target.isContentEditable;
 
-        const key = event.key.toLowerCase();
+        const key = event.key;
 
         // Global shortcuts that work even in inputs (with modifier)
         if (event.metaKey || event.ctrlKey) {
@@ -36,7 +36,16 @@ export function useKeyboardShortcuts({
 
         // Only trigger non-input shortcuts
         if (!isInput) {
-            switch (key) {
+            // Handle ? key (Shift + /) - check before converting to lowercase
+            if (key === '?' || (event.shiftKey && key === '/')) {
+                event.preventDefault();
+                onShowHelp?.();
+                return;
+            }
+
+            const keyLower = key.toLowerCase();
+
+            switch (keyLower) {
                 case 'n':
                     event.preventDefault();
                     onNewTask?.();
@@ -55,19 +64,19 @@ export function useKeyboardShortcuts({
                     break;
                 case '1':
                     event.preventDefault();
-                    onStatusFilter?.('TODO');
+                    onStatusFilter?.('LOW');
                     break;
                 case '2':
                     event.preventDefault();
-                    onStatusFilter?.('IN_PROGRESS');
+                    onStatusFilter?.('MEDIUM');
                     break;
                 case '3':
                     event.preventDefault();
-                    onStatusFilter?.('DONE');
+                    onStatusFilter?.('HIGH');
                     break;
-                case '?':
+                case '4':
                     event.preventDefault();
-                    onShowHelp?.();
+                    onStatusFilter?.('URGENT');
                     break;
                 default:
                     break;
@@ -75,8 +84,8 @@ export function useKeyboardShortcuts({
         }
 
         // Escape always closes modals (works from anywhere)
-        if (key === 'escape') {
-            const modals = document.querySelectorAll('.modal-overlay');
+        if (key === 'Escape') {
+            const modals = document.querySelectorAll('.modal-overlay, .shortcuts-modal-overlay');
             if (modals.length > 0) {
                 event.preventDefault();
                 // Trigger click on the last modal's close button or dispatch event
