@@ -12,27 +12,21 @@ const MONTHS = [
 const SAMPLE_TASKS = [
 ];
 
-function CalendarBoard({ selectedProject = null, viewMode = 'calendar', onViewModeChange = () => { }, propCategories = [], propProjects = [] }) {
+function CalendarBoard({
+    selectedProject = null,
+    viewMode = 'calendar',
+    onViewModeChange = () => { },
+    propCategories = [],
+    propProjects = [],
+    searchQuery = '',
+    filter = { categories: [], priorities: [] },
+    sortBy = ''
+}) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [tasks, setTasks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-    const [categories, setCategories] = useState(propCategories);
-    const [projects, setProjects] = useState(propProjects);
-
-    // Sync prop categories and projects to state
-    useEffect(() => {
-        if (propCategories.length > 0) {
-            setCategories(propCategories);
-        }
-    }, [propCategories]);
-
-    useEffect(() => {
-        if (propProjects.length > 0) {
-            setProjects(propProjects);
-        }
-    }, [propProjects]);
 
     useEffect(() => {
         fetchTasks();
@@ -48,13 +42,11 @@ function CalendarBoard({ selectedProject = null, viewMode = 'calendar', onViewMo
 
             const tasksData = await taskAPI.getAll(params);
 
-            // Filter tasks with due dates
-            const tasksWithDueDates = (tasksData || []).filter(t => t.due_date);
-
-            if (tasksWithDueDates.length > 0) {
-                setTasks(tasksWithDueDates);
+            // Use all tasks - CalendarBoard will display them on their due_date or created_at
+            if (tasksData && tasksData.length > 0) {
+                setTasks(tasksData);
             } else {
-                // Use sample data if no tasks with due dates
+                // Use sample data if no tasks exist
                 setTasks(SAMPLE_TASKS);
             }
         } catch (error) {
@@ -104,9 +96,77 @@ function CalendarBoard({ selectedProject = null, viewMode = 'calendar', onViewMo
         return days;
     };
 
+    // Filter and sort tasks
+    const filterAndSortTasks = (tasksToFilter) => {
+        let filtered = [...tasksToFilter];
+
+        // Apply search filter
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            filtered = filtered.filter(task =>
+                task.title?.toLowerCase().includes(query) ||
+                task.description?.toLowerCase().includes(query)
+            );
+        }
+
+        // Apply category filter
+        if (filter.categories?.length > 0) {
+            filtered = filtered.filter(task =>
+                task.category && filter.categories.includes(task.category)
+            );
+        }
+
+        // Apply priority filter
+        if (filter.priorities?.length > 0) {
+            filtered = filtered.filter(task =>
+                task.priority && filter.priorities.includes(task.priority)
+            );
+        }
+
+        // Apply sorting
+        if (sortBy) {
+            const priorityOrder = { 'URGENT': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3 };
+            switch (sortBy) {
+                case 'oldest':
+                    filtered.sort((a, b) => (a.id || 0) - (b.id || 0));
+                    break;
+                case 'priority-high':
+                    filtered.sort((a, b) =>
+                        (priorityOrder[a.priority] ?? 4) - (priorityOrder[b.priority] ?? 4)
+                    );
+                    break;
+                case 'priority-low':
+                    filtered.sort((a, b) =>
+                        (priorityOrder[b.priority] ?? 4) - (priorityOrder[a.priority] ?? 4)
+                    );
+                    break;
+                case 'alphabetical':
+                    filtered.sort((a, b) =>
+                        (a.title || '').localeCompare(b.title || '')
+                    );
+                    break;
+                case 'newest':
+                default:
+                    filtered.sort((a, b) => (b.id || 0) - (a.id || 0));
+                    break;
+            }
+        }
+
+        return filtered;
+    };
+
     const getTasksForDate = (date) => {
         const dateStr = date.toISOString().split('T')[0];
-        return tasks.filter(task => task.due_date === dateStr);
+        const dateTasks = tasks.filter(task => {
+            // Use due_date if available, otherwise fall back to created_at
+            const dateToUse = task.due_date || task.created_at;
+            if (!dateToUse) return false;
+
+            // Normalize date to date string for comparison
+            const taskDate = dateToUse.split('T')[0];
+            return taskDate === dateStr;
+        });
+        return filterAndSortTasks(dateTasks);
     };
 
     const isToday = (date) => {
@@ -212,8 +272,8 @@ function CalendarBoard({ selectedProject = null, viewMode = 'calendar', onViewMo
             {selectedTask && (
                 <TaskModal
                     task={selectedTask}
-                    categories={categories}
-                    projects={projects}
+                    categories={propCategories}
+                    projects={propProjects}
                     onClose={handleCloseModal}
                     onDelete={(id) => handleCloseModal()}
                 />
