@@ -29,7 +29,7 @@
     width: 24px;
     height: 24px;
     border-radius: 4px;
-    background: var(--color-bg-secondary);
+    background: var(--color-background-alt);
     color: var(--color-text-secondary);
     font-size: 16px;
     display: flex;
@@ -47,7 +47,7 @@
 .project-create-form {
     padding: 12px;
     border-bottom: 1px solid var(--color-border-light);
-    background: var(--color-bg-secondary);
+    background: var(--color-background-alt);
 }
 
 .project-create-form input {
@@ -172,7 +172,7 @@
 }
 
 .project-item:hover {
-    background: var(--color-bg-secondary);
+    background: var(--color-background-alt);
 }
 
 .project-item.active {
@@ -198,7 +198,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-bg-secondary);
+    background: var(--color-background-alt);
     flex-shrink: 0;
 }
 
@@ -213,8 +213,8 @@
 
 .project-count {
     font-size: 11px;
-    color: var(--color-text-muted);
-    background: var(--color-bg-secondary);
+    color: var(--color-text-tertiary);
+    background: var(--color-background-alt);
     padding: 2px 8px;
     border-radius: 10px;
     white-space: nowrap;
@@ -228,7 +228,7 @@
     border-radius: 4px;
     background: transparent;
     border: none;
-    color: var(--color-text-muted);
+    color: var(--color-text-tertiary);
     font-size: 14px;
     cursor: pointer;
     opacity: 0;
@@ -262,7 +262,7 @@
 }
 
 .project-sidebar::-webkit-scrollbar-thumb:hover {
-    background: var(--color-text-muted);
+    background: var(--color-text-tertiary);
 }
 
 /* Modal overlay for project creation */
@@ -331,7 +331,7 @@
     width: 32px;
     height: 32px;
     border-radius: 6px;
-    background: var(--color-bg-secondary);
+    background: var(--color-background-alt);
     border: none;
     color: var(--color-text-secondary);
     cursor: pointer;
@@ -353,7 +353,7 @@
     border: 1px solid var(--color-border);
     border-radius: 8px;
     font-size: 15px;
-    background: var(--color-bg-secondary);
+    background: var(--color-background-alt);
     color: var(--color-text);
     margin-bottom: 16px;
     transition: border-color 0.15s ease;
@@ -390,7 +390,7 @@
 .project-modal-actions .cancel-btn {
     padding: 10px 20px;
     border-radius: 8px;
-    background: var(--color-bg-secondary);
+    background: var(--color-background-alt);
     border: 1px solid var(--color-border);
     color: var(--color-text);
     font-size: 14px;
