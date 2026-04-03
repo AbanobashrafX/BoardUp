@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { ThemeProvider as MuiThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import { ThemeProvider as CustomThemeProvider, useTheme } from './contexts/ThemeContext';
+import { ThemeProvider as CustomThemeProvider } from './contexts/ThemeContext';
 import { DataProvider } from './contexts/DataContext';
+import { ToastProvider } from './contexts/ToastContext';
 import BoardContainer from './components/BoardContainer/BoardContainer';
 import ProjectSidebar from './components/ProjectSidebar/ProjectSidebar';
 import ThemeToggle from './components/ThemeToggle/ThemeToggle';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal/KeyboardShortcutsModal';
+import ToastContainer from './components/Toast/Toast';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 function AppContent() {
@@ -91,54 +92,19 @@ function AppContent() {
                 isOpen={showShortcutsModal}
                 onClose={() => setShowShortcutsModal(false)}
             />
+            <ToastContainer />
         </div>
-    );
-}
-
-function ThemedApp() {
-    const { isDark } = useTheme();
-
-    const muiTheme = createTheme({
-        palette: {
-            mode: isDark ? 'dark' : 'light',
-            primary: {
-                main: isDark ? '#61afef' : '#6366f1',
-            },
-            secondary: {
-                main: isDark ? '#c678dd' : '#a78bfa',
-            },
-            background: {
-                default: isDark ? '#1e2127' : '#f8fafc',
-                paper: isDark ? '#282c34' : '#ffffff',
-            },
-        },
-        components: {
-            MuiTextField: {
-                styleOverrides: {
-                    root: {
-                        '& .MuiOutlinedInput-root': {
-                            borderRadius: '8px',
-                        },
-                    },
-                },
-            },
-        },
-    });
-
-    return (
-        <MuiThemeProvider theme={muiTheme}>
-            <CssBaseline />
-            <DataProvider>
-                <AppContent />
-            </DataProvider>
-        </MuiThemeProvider>
     );
 }
 
 function App() {
     return (
         <CustomThemeProvider>
-            <ThemedApp />
+            <ToastProvider>
+                <DataProvider>
+                    <AppContent />
+                </DataProvider>
+            </ToastProvider>
         </CustomThemeProvider>
     );
 }
