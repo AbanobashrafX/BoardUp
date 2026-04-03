@@ -72,7 +72,16 @@ function BoardContainer({
       {/* Header with controls */}
       <div className="board-header">
         <div className="board-header-left">
-          <h2>{projectName}</h2>
+          {selectedProject ? (
+            <h2>
+              <span className="board-project-icon" style={{ backgroundColor: selectedProject.color }}>
+                {selectedProject.icon}
+              </span>
+              {projectName}
+            </h2>
+          ) : (
+            <h2>{projectName}</h2>
+          )}
         </div>
 
         <div className="board-controls">
