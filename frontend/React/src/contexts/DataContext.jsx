@@ -16,6 +16,7 @@ export function DataProvider({ children }) {
     const [projects, setProjects] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [viewMode, setViewMode] = useState('kanban'); // 'kanban', 'table', 'calendar'
 
     // Fetch all data once on mount
     useEffect(() => {
@@ -76,7 +77,9 @@ export function DataProvider({ children }) {
         isLoading,
         error,
         refreshCategories,
-        refreshProjects
+        refreshProjects,
+        viewMode,
+        setViewMode
     };
 
     return (

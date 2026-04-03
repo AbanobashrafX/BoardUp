@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import KanbanBoard from '../KanbanBoard/KanbanBoard';
 import CalendarBoard from '../CalendarBoard/CalendarBoard';
+import TableBoard from '../TableBoard/TableBoard';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import TaskModal from '../TaskModal/TaskModal';
 import { useData } from '../../contexts/DataContext';
@@ -15,11 +16,10 @@ function BoardContainer({
   projectName: propProjectName = 'All Tasks'
 }) {
   // Get shared data from context
-  const { categories, projects, refreshProjects } = useData();
+  const { categories, projects, refreshProjects, viewMode, setViewMode } = useData();
   const { toggleTheme } = useTheme();
 
   // Board state - search/filter managed internally
-  const [viewMode, setViewMode] = useState('kanban');
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState({ categories: [], priorities: [] });
   const [sortBy, setSortBy] = useState('');
@@ -113,6 +113,19 @@ function BoardContainer({
               </svg>
             </button>
             <button
+              className={`view-toggle-btn ${viewMode === 'table' ? 'active' : ''}`}
+              onClick={() => setViewMode('table')}
+              title="Table View"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <line x1="3" y1="9" x2="21" y2="9" />
+                <line x1="3" y1="15" x2="21" y2="15" />
+                <line x1="9" y1="3" x2="9" y2="21" />
+                <line x1="15" y1="3" x2="15" y2="21" />
+              </svg>
+            </button>
+            <button
               className={`view-toggle-btn ${viewMode === 'calendar' ? 'active' : ''}`}
               onClick={() => setViewMode('calendar')}
               title="Calendar View"
@@ -150,6 +163,16 @@ function BoardContainer({
       <div className="board-body">
         {viewMode === 'kanban' ? (
           <KanbanBoard
+            selectedProject={selectedProject}
+            searchQuery={searchQuery}
+            filter={filter}
+            sortBy={sortBy}
+            categories={categories}
+            projects={projects}
+            onProjectsRefresh={refreshProjects}
+          />
+        ) : viewMode === 'table' ? (
+          <TableBoard
             selectedProject={selectedProject}
             searchQuery={searchQuery}
             filter={filter}
