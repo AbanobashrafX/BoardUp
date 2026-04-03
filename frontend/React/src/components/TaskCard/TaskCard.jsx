@@ -68,6 +68,26 @@ function TaskCard({ task, columnColor, onEdit, onDelete, onView }) {
                 </p>
             )}
 
+            {/* Subtasks Progress Bar */}
+            {task.subtasks_count > 0 && (
+                <div className="task-subtasks-progress">
+                    <div className="task-subtasks-label">
+                        <span className="task-subtasks-count">
+                            ☑️ Subtasks
+                        </span>
+                        <span>{task.completed_subtasks_count}/{task.subtasks_count}</span>
+                    </div>
+                    <div className="progress">
+                        <div
+                            className={`progress-bar ${task.completed_subtasks_count === task.subtasks_count ? 'complete' : ''}`}
+                            style={{
+                                width: `${(task.completed_subtasks_count / task.subtasks_count) * 100}%`
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
+
             <div className="task-card-footer">
                 {task.category && (
                     <span
@@ -99,12 +119,7 @@ function TaskCard({ task, columnColor, onEdit, onDelete, onView }) {
                         {formatDate(task.due_date)}
                     </span>
                 )}
-                {/* Subtask progress */}
-                {task.subtasks_count > 0 && (
-                    <span className={`task-subtasks ${task.completed_subtasks_count === task.subtasks_count ? 'all-complete' : ''}`}>
-                        ☑️ {task.completed_subtasks_count}/{task.subtasks_count}
-                    </span>
-                )}
+                {/* Subtask progress removed - now shown as ProgressBar above */}
             </div>
         </div>
     );
