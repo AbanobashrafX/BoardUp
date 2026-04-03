@@ -2,6 +2,8 @@
     width: 100%;
     height: calc(100vh - 140px);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .table-container {
@@ -86,9 +88,9 @@
     color: var(--color-priority-medium-on-bg);
 }
 
-.status-badge.status-in_progress {
-    background: var(--color-primary-surface);
-    color: var(--color-primary);
+.status-badge.status-in-progress {
+    background: rgba(4, 113, 254, 0.1);
+    color: rgba(4, 113, 254, 1);
 }
 
 .status-badge.status-done {
@@ -164,6 +166,115 @@
     text-align: center;
     color: var(--color-text-tertiary);
     padding: 40px !important;
+}
+
+/* Sortable headers */
+.sortable-header {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.sortable-header:hover {
+    background: var(--color-hover-bg);
+}
+
+.sort-icon {
+    margin-left: 4px;
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+/* Subtasks column */
+.subtasks-cell {
+    width: 100px;
+}
+
+.subtasks-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.subtasks-progress-bar {
+    width: 60px;
+    height: 6px;
+    background: var(--color-border-light);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.subtasks-progress-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-slow);
+}
+
+.subtasks-progress-fill.complete {
+    background: var(--color-success);
+}
+
+.subtasks-count {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+.no-subtasks {
+    color: var(--color-text-tertiary);
+}
+
+/* Pagination */
+.table-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    border-top: 1px solid var(--color-border-light);
+    background: var(--color-surface);
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    padding: 0 12px;
+}
+
+.pagination-count {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    padding-left: 8px;
+    border-left: 1px solid var(--color-border-light);
+    margin-left: 8px;
 }
 
 /* Responsive */

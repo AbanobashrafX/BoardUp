@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { taskAPI } from '../../services/api';
-import TaskCard from '../TaskCard/TaskCard';
 import TaskModal from '../TaskModal/TaskModal';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import './TableBoard.css';
 
 const SAMPLE_TASKS = [];
+const ITEMS_PER_PAGE = 15;
 
 function TableBoard({
     selectedProject = null,
@@ -21,6 +21,12 @@ function TableBoard({
     const [isFetching, setIsFetching] = useState(false);
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+
+    // Sorting state
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
 
     const isInitialized = useRef(false);
 
@@ -43,6 +49,11 @@ function TableBoard({
 
         return () => clearTimeout(timer);
     }, [searchQuery, filter, sortBy, selectedProject]);
+
+    // Reset pagination when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, filter, selectedProject]);
 
     const fetchData = async (showLoader = true) => {
         try {
@@ -84,32 +95,79 @@ function TableBoard({
         onProjectsRefresh?.();
     };
 
-    const sortTasks = (tasksArray) => {
-        if (!sortBy) return tasksArray;
-        const priorityOrder = { 'URGENT': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3 };
-
-        switch (sortBy) {
-            case 'oldest':
-                return [...tasksArray].sort((a, b) => (a.id || 0) - (b.id || 0));
-            case 'priority-high':
-                return [...tasksArray].sort((a, b) =>
-                    (priorityOrder[a.priority] ?? 4) - (priorityOrder[b.priority] ?? 4)
-                );
-            case 'priority-low':
-                return [...tasksArray].sort((a, b) =>
-                    (priorityOrder[b.priority] ?? 4) - (priorityOrder[a.priority] ?? 4)
-                );
-            case 'alphabetical':
-                return [...tasksArray].sort((a, b) =>
-                    (a.title || '').localeCompare(b.title || '')
-                );
-            case 'newest':
-            default:
-                return [...tasksArray].sort((a, b) => (b.id || 0) - (a.id || 0));
+    // Sorting handler
+    const handleSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
         }
+        setSortConfig({ key, direction });
     };
 
-    const filteredTasks = sortTasks(tasks);
+    // Sort tasks
+    const sortTasks = useCallback((tasksArray) => {
+        // First apply external sortBy from props
+        let sorted = [...tasksArray];
+        if (sortBy) {
+            const priorityOrder = { 'URGENT': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3 };
+            switch (sortBy) {
+                case 'oldest':
+                    sorted.sort((a, b) => (a.id || 0) - (b.id || 0));
+                    break;
+                case 'priority-high':
+                    sorted.sort((a, b) => (priorityOrder[a.priority] ?? 4) - (priorityOrder[b.priority] ?? 4));
+                    break;
+                case 'priority-low':
+                    sorted.sort((a, b) => (priorityOrder[b.priority] ?? 4) - (priorityOrder[a.priority] ?? 4));
+                    break;
+                case 'alphabetical':
+                    sorted.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+                    break;
+                case 'newest':
+                default:
+                    sorted.sort((a, b) => (b.id || 0) - (a.id || 0));
+            }
+        }
+
+        // Then apply column sorting
+        if (sortConfig.key) {
+            sorted.sort((a, b) => {
+                let aVal = a[sortConfig.key];
+                let bVal = b[sortConfig.key];
+
+                // Handle null/undefined
+                if (aVal == null) aVal = '';
+                if (bVal == null) bVal = '';
+
+                // Numeric sorting for IDs
+                if (sortConfig.key === 'id') {
+                    aVal = Number(aVal) || 0;
+                    bVal = Number(bVal) || 0;
+                }
+
+                // String comparison
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        return sorted;
+    }, [sortBy, sortConfig]);
+
+    // Pagination
+    const paginatedTasks = useMemo(() => {
+        const sorted = sortTasks(tasks);
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        return sorted.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    }, [tasks, sortTasks, currentPage]);
+
+    const totalPages = Math.ceil(tasks.length / ITEMS_PER_PAGE);
 
     const formatDate = (dateString) => {
         if (!dateString) return '-';
@@ -134,13 +192,15 @@ function TableBoard({
         return statusMap[status] || status;
     };
 
-    if (isLoading) {
-        return (
-            <div className="loading">
-                <div className="spinner"></div>
-            </div>
-        );
-    }
+    const getStatusClass = (status) => {
+        // Convert status to CSS-friendly class name (e.g., IN_PROGRESS -> in-progress)
+        return `status-badge status-${(status || 'TODO').replace('_', '-').toLowerCase()}`;
+    };
+
+    const getSortIcon = (key) => {
+        if (sortConfig.key !== key) return '⇅';
+        return sortConfig.direction === 'asc' ? '↑' : '↓';
+    };
 
     return (
         <div className="table-board">
@@ -148,23 +208,38 @@ function TableBoard({
                 <table className="tasks-table">
                     <thead>
                         <tr>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Priority</th>
-                            <th>Category</th>
-                            <th>Project</th>
-                            <th>Due Date</th>
-                            <th>Created</th>
+                            <th onClick={() => handleSort('title')} className="sortable-header">
+                                Title <span className="sort-icon">{getSortIcon('title')}</span>
+                            </th>
+                            <th onClick={() => handleSort('status')} className="sortable-header">
+                                Status <span className="sort-icon">{getSortIcon('status')}</span>
+                            </th>
+                            <th onClick={() => handleSort('priority')} className="sortable-header">
+                                Priority <span className="sort-icon">{getSortIcon('priority')}</span>
+                            </th>
+                            <th onClick={() => handleSort('category_name')} className="sortable-header">
+                                Category <span className="sort-icon">{getSortIcon('category_name')}</span>
+                            </th>
+                            <th onClick={() => handleSort('project_name')} className="sortable-header">
+                                Project <span className="sort-icon">{getSortIcon('project_name')}</span>
+                            </th>
+                            <th>Subtasks</th>
+                            <th onClick={() => handleSort('due_date')} className="sortable-header">
+                                Due Date <span className="sort-icon">{getSortIcon('due_date')}</span>
+                            </th>
+                            <th onClick={() => handleSort('created_at')} className="sortable-header">
+                                Created <span className="sort-icon">{getSortIcon('created_at')}</span>
+                            </th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredTasks.length === 0 ? (
+                        {paginatedTasks.length === 0 ? (
                             <tr>
-                                <td colSpan="8" className="empty-row">No tasks found</td>
+                                <td colSpan="9" className="empty-row">No tasks found</td>
                             </tr>
                         ) : (
-                            filteredTasks.map((task) => (
+                            paginatedTasks.map((task) => (
                                 <tr key={task.id} onClick={() => handleTaskClick(task)} className="task-row">
                                     <td className="task-title-cell">
                                         <span className="task-title-text">{task.title}</span>
@@ -177,7 +252,7 @@ function TableBoard({
                                         )}
                                     </td>
                                     <td>
-                                        <span className={`status-badge status-${task.status?.toLowerCase()}`}>
+                                        <span className={getStatusClass(task.status)}>
                                             {getStatusLabel(task.status)}
                                         </span>
                                     </td>
@@ -206,6 +281,23 @@ function TableBoard({
                                             </span>
                                         )}
                                     </td>
+                                    <td className="subtasks-cell">
+                                        {task.subtasks_count > 0 ? (
+                                            <div className="subtasks-progress">
+                                                <div className="subtasks-progress-bar">
+                                                    <div
+                                                        className={`subtasks-progress-fill ${task.completed_subtasks_count === task.subtasks_count ? 'complete' : ''}`}
+                                                        style={{ width: `${(task.completed_subtasks_count / task.subtasks_count) * 100}%` }}
+                                                    />
+                                                </div>
+                                                <span className="subtasks-count">
+                                                    {task.completed_subtasks_count}/{task.subtasks_count}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <span className="no-subtasks">-</span>
+                                        )}
+                                    </td>
                                     <td className="date-cell">
                                         {task.due_date ? formatDate(task.due_date) : '-'}
                                     </td>
@@ -230,6 +322,50 @@ function TableBoard({
                     </tbody>
                 </table>
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="table-pagination">
+                    <button
+                        className="pagination-btn"
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1}
+                        title="First page"
+                    >
+                        ««
+                    </button>
+                    <button
+                        className="pagination-btn"
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        title="Previous page"
+                    >
+                        «
+                    </button>
+                    <span className="pagination-info">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                        className="pagination-btn"
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        title="Next page"
+                    >
+                        »
+                    </button>
+                    <button
+                        className="pagination-btn"
+                        onClick={() => setCurrentPage(totalPages)}
+                        disabled={currentPage === totalPages}
+                        title="Last page"
+                    >
+                        »»
+                    </button>
+                    <span className="pagination-count">
+                        ({tasks.length} tasks)
+                    </span>
+                </div>
+            )}
 
             {showTaskModal && <TaskModal mode="create" categories={propCategories} projects={propProjects} preselectedProject={selectedProject} onClose={handleCloseModal} />}
             {selectedTask && <TaskModal task={selectedTask} categories={propCategories} projects={propProjects} onClose={handleCloseModal} onDelete={(id) => { handleDeleteTask(id); handleCloseModal(); }} />}
