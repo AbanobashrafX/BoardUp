@@ -80,11 +80,11 @@ export const subtaskAPI = {
         return response.data;
     },
 
-    // Toggle subtask completion (using PATCH to set is_completed)
-    // Optimized: accepts current is_completed state to avoid extra GET request
-    toggle: async (id, currentIsCompleted) => {
-        const updated = await api.patch(`/subtasks/${id}/`, { is_completed: !currentIsCompleted });
-        return updated.data;
+    // Toggle subtask completion (optimized - single PATCH request)
+    // Takes the DESIRED state (not current state) to avoid confusion
+    toggle: async (id, isCompleted) => {
+        const response = await api.patch(`/subtasks/${id}/`, { is_completed: isCompleted });
+        return response.data;
     },
 };
 
