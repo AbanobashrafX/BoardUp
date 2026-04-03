@@ -149,6 +149,14 @@ function KanbanBoard({
 
     const handleTaskClick = (task) => setSelectedTask(task);
 
+    const handleAddTask = (columnId) => {
+        // Open modal in create mode with preselected status
+        setSelectedTask(null);
+        setShowTaskModal(true);
+        // Store the preselected status for the modal
+        window.__preselectedStatus = columnId;
+    };
+
     const handleCloseModal = () => {
         setShowTaskModal(false);
         setSelectedTask(null);
@@ -201,8 +209,18 @@ function KanbanBoard({
                     {COLUMNS.map((column) => (
                         <div key={column.id} className="kanban-column">
                             <div className="column-header" style={{ borderTopColor: column.color }}>
-                                <h3>{column.title}</h3>
-                                <span className="task-count">{filteredTasks(column.id).length}</span>
+                                <div className="column-header-left">
+                                    <span className="column-icon" style={{ color: column.color }}>▶</span>
+                                    <h3>{column.title}</h3>
+                                    <span className="task-count">{filteredTasks(column.id).length}</span>
+                                </div>
+                                <button
+                                    className="column-add-btn"
+                                    onClick={() => handleAddTask(column.id)}
+                                    title={`Add task to ${column.title}`}
+                                >
+                                    +
+                                </button>
                             </div>
 
                             <Droppable droppableId={column.id}>

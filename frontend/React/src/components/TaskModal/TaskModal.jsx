@@ -7,7 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import './TaskModal.css';
 
-function TaskModal({ task, onClose, onDelete, categories: propCategories, projects: propProjects, mode: propMode, preselectedProject: propPreselectedProject }) {
+function TaskModal({ task, onClose, onDelete, categories: propCategories, projects: propProjects, mode: propMode, preselectedProject: propPreselectedProject, preselectedStatus: propPreselectedStatus }) {
     // Determine mode: 'create' | 'edit' | 'view' (default 'view')
     // If task is provided but mode is not, assume 'view'
     // If mode is explicitly provided, use that
@@ -82,14 +82,18 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
     useEffect(() => {
         // Skip fetching for create mode
         if (!task) {
-            // Create mode - use default form data with preselected project
+            // Create mode - use default form data with preselected project and status
+            const preselectedStatus = window.__preselectedStatus || propPreselectedStatus || 'TODO';
+            // Clear the global after use
+            delete window.__preselectedStatus;
+
             const defaultData = {
                 title: '',
                 description: '',
                 project: propPreselectedProject ? propPreselectedProject.id : '',
                 category: '',
                 priority: 'LOW',
-                status: 'TODO',
+                status: preselectedStatus,
                 due_date: '',
             };
             setFormData(defaultData);
