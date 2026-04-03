@@ -2,11 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useData } from '../../contexts/DataContext';
 import { projectAPI } from '../../services/api';
 import { useToast } from '../../contexts/ToastContext';
+import CreateProjectModal from './CreateProjectModal';
 import './ProjectSidebar.css';
-
-// Icon and color options for project creation
-const PROJECT_ICONS = ['📋', '🏠', '💼', '📚', '🎯', '🚀', '💡', '🎨', '🔧', '📞', '✈️', '🎮'];
-const PROJECT_COLORS = ['#6366f1', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
 
 /**
  * ProjectSidebar Component
@@ -21,14 +18,8 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
 
     // Local state for UI
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [isCreating, setIsCreating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(null); // Track which project is being deleted
     const [isCollapsed, setIsCollapsed] = useState(false); // Track sidebar collapsed state
-
-    // Form state
-    const [newProjectName, setNewProjectName] = useState('');
-    const [newProjectIcon, setNewProjectIcon] = useState('📋');
-    const [newProjectColor, setNewProjectColor] = useState('#6366f1');
 
     // Close modal on escape key
     useEffect(() => {
@@ -55,44 +46,6 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
         return projects.reduce((sum, project) => {
             return sum + (project.total_tasks_count || 0);
         }, 0);
-    };
-
-    /**
-     * Handle creating a new project
-     */
-    const handleCreateProject = async () => {
-        // Validate input
-        if (!newProjectName.trim()) {
-            showError('Please enter a project name');
-            return;
-        }
-
-        setIsCreating(true);
-
-        try {
-            // Create project via API
-            const createdProject = await projectAPI.create({
-                name: newProjectName.trim(),
-                icon: newProjectIcon,
-                color: newProjectColor,
-            });
-
-            // Refresh projects list
-            await refreshProjects();
-
-            // Select the newly created project
-            onSelectProject(createdProject);
-            showSuccess(`Project "${createdProject.name}" created!`);
-
-            // Reset form and close modal
-            resetForm();
-            setShowCreateModal(false);
-        } catch (error) {
-            console.error('Error creating project:', error);
-            showError('Failed to create project. Please try again.');
-        } finally {
-            setIsCreating(false);
-        }
     };
 
     /**
@@ -132,16 +85,6 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
         } finally {
             setIsDeleting(null);
         }
-    };
-
-    /**
-     * Reset form state
-     */
-    const resetForm = () => {
-        setNewProjectName('');
-        setNewProjectIcon('📋');
-        setNewProjectColor('#6366f1');
-        setShowCreateModal(false);
     };
 
     /**
@@ -285,88 +228,14 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
                 </div>
             )}
 
-            {/* Create Project Modal */}
-            {showCreateModal && (
-                <div className="project-modal-overlay" onClick={() => setShowCreateModal(false)}>
-                    <div className="project-modal" onClick={(e) => e.stopPropagation()}>
-                        <div className="project-modal-header">
-                            <h2>Create New Project</h2>
-                            <button
-                                className="project-modal-close"
-                                onClick={() => setShowCreateModal(false)}
-                                aria-label="Close"
-                            >
-                                ×
-                            </button>
-                        </div>
-
-                        <div className="project-modal-form">
-                            <label>Project Name</label>
-                            <input
-                                type="text"
-                                placeholder="Enter project name..."
-                                value={newProjectName}
-                                onChange={(e) => setNewProjectName(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && !isCreating && newProjectName.trim() && handleCreateProject()}
-                                disabled={isCreating}
-                                autoFocus
-                                maxLength={50}
-                            />
-
-                            <label>Choose an Icon</label>
-                            <div className="icon-picker">
-                                {PROJECT_ICONS.map((icon) => (
-                                    <button
-                                        key={icon}
-                                        type="button"
-                                        className={`icon-option ${newProjectIcon === icon ? 'selected' : ''}`}
-                                        onClick={() => setNewProjectIcon(icon)}
-                                        disabled={isCreating}
-                                    >
-                                        {icon}
-                                    </button>
-                                ))}
-                            </div>
-
-                            <label>Choose a Color</label>
-                            <div className="color-picker">
-                                {PROJECT_COLORS.map((color) => (
-                                    <button
-                                        key={color}
-                                        type="button"
-                                        className={`color-option ${newProjectColor === color ? 'selected' : ''}`}
-                                        style={{ backgroundColor: color }}
-                                        onClick={() => setNewProjectColor(color)}
-                                        disabled={isCreating}
-                                    />
-                                ))}
-                            </div>
-
-                            <div className="project-modal-actions">
-                                <button
-                                    type="button"
-                                    className="cancel-btn"
-                                    onClick={() => {
-                                        resetForm();
-                                        setShowCreateModal(false);
-                                    }}
-                                    disabled={isCreating}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="button"
-                                    className="create-btn"
-                                    onClick={handleCreateProject}
-                                    disabled={isCreating || !newProjectName.trim()}
-                                >
-                                    {isCreating ? 'Creating...' : 'Create Project'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Create Project Modal - using separate component */}
+            <CreateProjectModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onCreated={() => { }}
+                onSelectProject={onSelectProject}
+                refreshProjects={refreshProjects}
+            />
         </div>
     );
 }
