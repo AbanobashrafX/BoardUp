@@ -27,8 +27,8 @@ function BoardContainer({
 
   const searchInputRef = useRef(null);
 
-  // Project name from prop or selectedProject
-  const projectName = propProjectName || (selectedProject ? selectedProject.name : 'All Tasks');
+  // Project name - use selectedProject's name when available, otherwise default to 'All Tasks'
+  const projectName = selectedProject?.name || 'All Tasks';
 
   // Handle keyboard shortcuts
   const handleKeyboardShortcut = useCallback((event) => {
