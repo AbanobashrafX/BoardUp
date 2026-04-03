@@ -23,6 +23,7 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(null); // Track which project is being deleted
+    const [isCollapsed, setIsCollapsed] = useState(false); // Track sidebar collapsed state
 
     // Form state
     const [newProjectName, setNewProjectName] = useState('');
@@ -158,76 +159,131 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
     };
 
     return (
-        <div className="project-sidebar">
-            {/* Header */}
+        <div className={`project-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+            {/* Header with toggle button */}
             <div className="project-sidebar-header">
-                <h3>Projects</h3>
+                {!isCollapsed && <h3>Projects</h3>}
                 <button
-                    className="project-add-btn"
-                    onClick={() => setShowCreateModal(true)}
-                    title="New Project"
-                    aria-label="Create new project"
+                    className="sidebar-toggle-btn"
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                    aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                 >
-                    +
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        {isCollapsed ? (
+                            <path d="M9 18l6-6-6-6" />
+                        ) : (
+                            <path d="M15 18l-6-6 6-6" />
+                        )}
+                    </svg>
                 </button>
             </div>
 
             {/* Project List */}
-            <div className="project-list">
-                {/* All Tasks */}
-                <div
-                    className={`project-item ${!selectedProject ? 'active' : ''}`}
-                    onClick={handleAllTasksClick}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => e.key === 'Enter' && handleAllTasksClick()}
-                >
-                    <span className="project-icon">📋</span>
-                    <span className="project-name">All Tasks</span>
-                    <span className="project-count">{getAllTasksCount()}</span>
-                </div>
-
-                {/* Individual Projects */}
-                {projects.map((project) => (
+            {!isCollapsed ? (
+                <div className="project-list">
+                    {/* Add Project Button - visible when expanded */}
+                    <button
+                        className="project-add-btn"
+                        onClick={() => setShowCreateModal(true)}
+                        title="New Project"
+                        aria-label="Create new project"
+                    >
+                        + New Project
+                    </button>
+                    {/* All Tasks */}
                     <div
-                        key={project.id}
-                        className={`project-item ${selectedProject?.id === project.id ? 'active' : ''}`}
-                        onClick={() => handleProjectClick(project)}
+                        className={`project-item ${!selectedProject ? 'active' : ''}`}
+                        onClick={handleAllTasksClick}
                         role="button"
                         tabIndex={0}
-                        onKeyDown={(e) => e.key === 'Enter' && handleProjectClick(project)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAllTasksClick()}
                     >
-                        <span
-                            className="project-icon"
-                            style={{ backgroundColor: project.color + '20' }}
-                        >
-                            {project.icon}
-                        </span>
-                        <span className="project-name">{project.name}</span>
-                        <span className="project-count">
-                            {project.total_tasks_count || 0}
-                        </span>
-
-                        {/* Delete Button */}
-                        <button
-                            className="project-delete-btn"
-                            onClick={(e) => handleDeleteProject(e, project.id)}
-                            disabled={isDeleting === project.id}
-                            title="Delete project"
-                            aria-label={`Delete ${project.name}`}
-                        >
-                            {isDeleting === project.id ? '...' : '×'}
-                        </button>
+                        <span className="project-icon">📋</span>
+                        <span className="project-name">All Tasks</span>
+                        <span className="project-count">{getAllTasksCount()}</span>
                     </div>
-                ))}
 
-                {/* Empty State */}
-                {projects.length === 0 && (
-                    <div className="project-empty">
-                        No projects yet. Create one to get started!
+                    {/* Individual Projects */}
+                    {projects.map((project) => (
+                        <div
+                            key={project.id}
+                            className={`project-item ${selectedProject?.id === project.id ? 'active' : ''}`}
+                            onClick={() => handleProjectClick(project)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => e.key === 'Enter' && handleProjectClick(project)}
+                        >
+                            <span
+                                className="project-icon"
+                                style={{ backgroundColor: project.color + '20' }}
+                            >
+                                {project.icon}
+                            </span>
+                            <span className="project-name">{project.name}</span>
+                            <span className="project-count">
+                                {project.total_tasks_count || 0}
+                            </span>
+
+                            {/* Delete Button */}
+                            <button
+                                className="project-delete-btn"
+                                onClick={(e) => handleDeleteProject(e, project.id)}
+                                disabled={isDeleting === project.id}
+                                title="Delete project"
+                                aria-label={`Delete ${project.name}`}
+                            >
+                                {isDeleting === project.id ? '...' : '×'}
+                            </button>
+                        </div>
+                    ))}
+
+                    {/* Empty State */}
+                    {projects.length === 0 && (
+                        <div className="project-empty">
+                            No projects yet. Create one to get started!
+                        </div>
+                    )}
+                </div>
+            ) : (
+                /* Collapsed view - just show icons */
+                <div className="project-list-collapsed">
+                    <button
+                        className="project-add-btn"
+                        onClick={() => setShowCreateModal(true)}
+                        title="New Project"
+                        aria-label="Create new project"
+                    >
+                        +
+                    </button>
+                    <div
+                        className={`project-item-collapsed ${!selectedProject ? 'active' : ''}`}
+                        onClick={handleAllTasksClick}
+                        title="All Tasks"
+                        role="button"
+                        tabIndex={0}
+                    >
+                        <span className="project-icon">📋</span>
                     </div>
-                )}
-            </div>
+                    {projects.map((project) => (
+                        <div
+                            key={project.id}
+                            className={`project-item-collapsed ${selectedProject?.id === project.id ? 'active' : ''}`}
+                            onClick={() => handleProjectClick(project)}
+                            title={project.name}
+                            role="button"
+                            tabIndex={0}
+                        >
+                            <span
+                                className="project-icon"
+                                style={{ backgroundColor: project.color + '20' }}
+                            >
+                                {project.icon}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {/* Create Project Modal */}
             {showCreateModal && (

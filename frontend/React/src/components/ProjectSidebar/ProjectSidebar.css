@@ -6,6 +6,11 @@
     flex-direction: column;
     height: 100%;
     overflow: hidden;
+    transition: width 0.3s ease;
+}
+
+.project-sidebar.collapsed {
+    width: 60px;
 }
 
 .project-sidebar-header {
@@ -16,6 +21,11 @@
     border-bottom: 1px solid var(--color-border-light);
 }
 
+.project-sidebar.collapsed .project-sidebar-header {
+    justify-content: center;
+    padding: 16px 8px;
+}
+
 .project-sidebar-header h3 {
     font-size: 13px;
     font-weight: 600;
@@ -23,6 +33,30 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0;
+}
+
+/* Toggle button */
+.sidebar-toggle-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--color-background-alt);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: none;
+}
+
+.sidebar-toggle-btn:hover {
+    background: var(--color-primary);
+    color: white;
+}
+
+.project-sidebar.collapsed .sidebar-toggle-btn {
+    transform: rotate(180deg);
 }
 
 .project-add-btn {
@@ -42,6 +76,23 @@
 .project-add-btn:hover {
     background: var(--color-primary);
     color: white;
+}
+
+/* Full width add button in project list */
+.project-list .project-add-btn {
+    width: 100%;
+    height: auto;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    background: var(--color-primary);
+    color: white;
+    margin-bottom: 8px;
+}
+
+.project-list .project-add-btn:hover {
+    background: var(--color-primary-hover);
 }
 
 .project-create-form {
@@ -422,4 +473,46 @@
 .project-modal-actions .create-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* Collapsed sidebar styles */
+.project-list-collapsed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    gap: 4px;
+}
+
+.project-list-collapsed .project-add-btn {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 8px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.project-item-collapsed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.project-item-collapsed:hover {
+    background: var(--color-background-alt);
+}
+
+.project-item-collapsed.active {
+    background: var(--color-primary);
+}
+
+.project-item-collapsed.active .project-icon {
+    background: transparent;
 }
