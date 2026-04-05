@@ -472,3 +472,71 @@ img {
 .shadow-xl {
     box-shadow: var(--shadow-xl);
 }
+
+/* ============================================
+   MUI COMPONENT DARK MODE OVERRIDES
+   MUI DatePicker/Calendar renders in a portal,
+   so we need global CSS to force dark mode
+   ============================================ */
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPaper-root {
+    background-color: #282838 !important;
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersCalendarHeader-root {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root.Mui-selected {
+    background-color: #8b63f1 !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root:not(.Mui-selected):hover {
+    background-color: rgba(139, 99, 241, 0.15) !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiDayCalendar-weekDayLabel {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersArrowSwitcher-root button {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersYear-yearButton,
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersMonth-monthButton {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersYear-yearButton:hover,
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersMonth-monthButton:hover {
+    background-color: rgba(139, 99, 241, 0.15) !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiDialogActions-root {
+    border-top-color: #3f3f50 !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiButtonBase-root {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiInputBase-root {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiInputBase-root .MuiOutlinedInput-notchedOutline {
+    border-color: #3f3f50 !important;
+}
+
+/* Emoji Picker Dark Mode - emoji-picker-react reads system preference */
+[data-theme="dark"] .emoji-picker-popup {
+    /* emoji-picker-react v4 supports theme="auto" which reads prefers-color-scheme */
+    /* We also need to sync our data-theme with the system preference */
+}
