@@ -391,20 +391,18 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                     </div>
                 ) : (
                     <div className="task-modal-content">
-                        {/* Header */}
+                        {/* Header - Full Width */}
                         <div className="task-modal-header">
                             {isEditing || isCreateMode ? (
-                                <>
-                                    <input
-                                        type="text"
-                                        name="title"
-                                        className={`task-modal-title-input ${error ? 'has-error' : ''}`}
-                                        value={formData.title}
-                                        onChange={handleChange}
-                                        placeholder={isCreateMode ? 'Enter task title...' : 'Task title'}
-                                        autoFocus
-                                    />
-                                </>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    className={`task-modal-title-input ${error ? 'has-error' : ''}`}
+                                    value={formData.title}
+                                    onChange={handleChange}
+                                    placeholder={isCreateMode ? 'Enter task title...' : 'Task title'}
+                                    autoFocus
+                                />
                             ) : (
                                 <h1 className="task-modal-title">{fullTask?.title}</h1>
                             )}
@@ -416,7 +414,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                             onClick={handleCancel}
                                             disabled={saving}
                                         >
-                                            {isCreateMode ? 'Cancel' : 'Cancel'}
+                                            Cancel
                                         </button>
                                         <button
                                             className="task-modal-btn task-modal-btn-primary"
@@ -456,232 +454,269 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                             </div>
                         </div>
 
-                        {/* Properties */}
-                        <div className="task-modal-properties">
-                            {error && (
-                                <div className="task-modal-error">
-                                    {error}
-                                </div>
-                            )}
-                            {/* Status */}
-                            <div className="task-modal-property">
-                                <span className="task-modal-property-label">Status</span>
-                                {isEditing || isCreateMode ? (
-                                    <BadgeSelect
-                                        name="status"
-                                        value={formData.status}
-                                        onChange={handleChange}
-                                        options={statusOptions}
-                                        getOptionStyle={getStatusOptionStyle}
-                                        placeholder="Select status..."
-                                    />
-                                ) : (
-                                    <span className="task-modal-property-value">
-                                        <span className={`task-status-badge ${statusInfo.className}`}>
-                                            {statusInfo.label}
-                                        </span>
-                                    </span>
-                                )}
-                            </div>
-
-                            {/* Priority */}
-                            <div className="task-modal-property">
-                                <span className="task-modal-property-label">Priority</span>
-                                {isEditing || isCreateMode ? (
-                                    <BadgeSelect
-                                        name="priority"
-                                        value={formData.priority}
-                                        onChange={handleChange}
-                                        options={priorityOptions}
-                                        getOptionStyle={getPriorityOptionStyle}
-                                        placeholder="Select priority..."
-                                    />
-                                ) : (
-                                    <span className="task-modal-property-value">
-                                        <span className={`task-priority-badge ${priorityInfo.className}`}>
-                                            {priorityInfo.label}
-                                        </span>
-                                    </span>
-                                )}
-                            </div>
-
-                            {/* Project */}
-                            <div className="task-modal-property">
-                                <span className="task-modal-property-label">Project</span>
-                                {isEditing || isCreateMode ? (
-                                    <BadgeSelect
-                                        name="project"
-                                        value={formData.project}
-                                        onChange={handleChange}
-                                        options={projectOptions}
-                                        getOptionStyle={getProjectOptionStyle}
-                                        placeholder="Select project..."
-                                    />
-                                ) : (
-                                    <span className="task-modal-property-value">
-                                        {fullTask?.project && (
-                                            <span
-                                                className="task-project-badge"
-                                                style={{ backgroundColor: fullTask?.project_color || '#6366f1' }}
-                                            >
-                                                {fullTask?.project_name || fullTask?.project}
-                                            </span>
-                                        )}
-                                    </span>
-                                )}
-                            </div>
-
-                            {/* Category */}
-                            <div className="task-modal-property">
-                                <span className="task-modal-property-label">Category</span>
-                                {isEditing || isCreateMode ? (
-                                    <BadgeSelect
-                                        name="category"
-                                        value={formData.category}
-                                        onChange={handleChange}
-                                        options={categoryOptions}
-                                        getOptionStyle={getCategoryOptionStyle}
-                                        placeholder="Select category..."
-                                    />
-                                ) : (
-                                    <span className="task-modal-property-value">
-                                        {fullTask?.category && (
-                                            <span
-                                                className="task-category-badge"
-                                                style={{ backgroundColor: fullTask?.category_color || '#6366f1' }}
-                                            >
-                                                {fullTask?.category_name || fullTask?.category}
-                                            </span>
-                                        )}
-                                    </span>
-                                )}
-                            </div>
-
-                            {/* Due Date */}
-                            <div className="task-modal-property">
-                                <span className="task-modal-property-label">Due Date</span>
-                                {isEditing || isCreateMode ? (
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DatePicker
-                                            name="due_date"
-                                            value={formData.due_date ? dayjs(formData.due_date) : null}
-                                            onChange={(newValue) => {
-                                                setFormData(prev => ({
-                                                    ...prev,
-                                                    due_date: newValue ? newValue.format('YYYY-MM-DD') : ''
-                                                }));
-                                            }}
-                                            slotProps={{
-                                                textField: {
-                                                    className: 'task-modal-input',
-                                                    size: 'small',
-                                                    placeholder: 'Select due date',
-                                                },
-                                            }}
-                                            disablePast
-                                            format="YYYY-MM-DD"
+                        {/* Main Body - Side by Side Layout */}
+                        <div className="task-modal-body">
+                            {/* Main Content - Description & Checklist */}
+                            <main className="task-modal-main">
+                                {/* Description Section */}
+                                <div className="task-modal-section">
+                                    <h3 className="task-modal-section-title">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <line x1="17" y1="10" x2="3" y2="10"></line>
+                                            <line x1="21" y1="6" x2="3" y2="6"></line>
+                                            <line x1="21" y1="14" x2="3" y2="14"></line>
+                                            <line x1="17" y1="18" x2="3" y2="18"></line>
+                                        </svg>
+                                        Description
+                                    </h3>
+                                    {isEditing || isCreateMode ? (
+                                        <textarea
+                                            name="description"
+                                            className="task-modal-textarea"
+                                            value={formData.description}
+                                            onChange={handleChange}
+                                            placeholder="Add a more detailed description..."
+                                            rows={5}
                                         />
-                                    </LocalizationProvider>
-                                ) : (
-                                    <span className={`task-modal-property-value task-due-date ${dueDateStatus}`}>
-                                        {fullTask?.due_date ? (
-                                            <>
-                                                {dueDateStatus === 'overdue' && '⚠️ '}
-                                                {dueDateStatus === 'due-soon' && '⏰ '}
-                                                {formatDate(fullTask?.due_date)}
-                                            </>
-                                        ) : (
-                                            <span className="task-no-value">No due date</span>
-                                        )}
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Description */}
-                        <div className="task-modal-section">
-                            <h3 className="task-modal-section-title">Description</h3>
-                            {isEditing || isCreateMode ? (
-                                <textarea
-                                    name="description"
-                                    className="task-modal-textarea"
-                                    value={formData.description}
-                                    onChange={handleChange}
-                                    placeholder="Add a description..."
-                                    rows={5}
-                                />
-                            ) : (
-                                <div className="task-modal-description">
-                                    {fullTask?.description || (
-                                        <span className="task-no-value">No description</span>
+                                    ) : (
+                                        <div className="task-modal-description">
+                                            {fullTask?.description || (
+                                                <span className="task-no-value">No description provided</span>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
-                            )}
-                        </div>
 
-                        {/* Subtasks Section - Only show when not in create mode */}
-                        {!isCreateMode && fullTask && (
-                            <div className="task-modal-section">
-                                <h3 className="task-modal-section-title">
-                                    Checklist
-                                    <span className="subtasks-count">
-                                        ({subtasks.filter(st => st.is_completed).length}/{subtasks.length})
-                                    </span>
-                                </h3>
+                                {/* Subtasks Section - Only show when not in create mode */}
+                                {!isCreateMode && fullTask && (
+                                    <div className="task-modal-section">
+                                        <h3 className="task-modal-section-title">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M9 11l3 3L22 4"></path>
+                                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                            </svg>
+                                            Checklist
+                                            <span className="subtasks-count">
+                                                ({subtasks.filter(st => st.is_completed).length}/{subtasks.length})
+                                            </span>
+                                        </h3>
 
-                                {/* Subtask list */}
-                                <div className="subtasks-list">
-                                    {subtasks.map((subtask) => (
-                                        <div key={subtask.id} className={`subtask-item ${subtask.is_completed ? 'completed' : ''}`}>
-                                            <label className="subtask-checkbox">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={subtask.is_completed}
-                                                    onChange={() => handleToggleSubtask(subtask.id)}
-                                                />
-                                                <span className="subtask-title">{subtask.title}</span>
-                                            </label>
+                                        {/* Subtask list */}
+                                        <div className="subtasks-list">
+                                            {subtasks.map((subtask) => (
+                                                <div key={subtask.id} className={`subtask-item ${subtask.is_completed ? 'completed' : ''}`}>
+                                                    <label className="subtask-checkbox">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={subtask.is_completed}
+                                                            onChange={() => handleToggleSubtask(subtask.id)}
+                                                        />
+                                                        <span className="subtask-title">{subtask.title}</span>
+                                                    </label>
+                                                    <button
+                                                        className="subtask-delete-btn"
+                                                        onClick={() => handleDeleteSubtask(subtask.id)}
+                                                        title="Delete subtask"
+                                                    >
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Add subtask input */}
+                                        <div className="subtask-add-form">
+                                            <input
+                                                type="text"
+                                                className="subtask-add-input"
+                                                placeholder="Add an item..."
+                                                value={newSubtaskTitle}
+                                                onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                                                onKeyPress={(e) => e.key === 'Enter' && handleAddSubtask()}
+                                            />
                                             <button
-                                                className="subtask-delete-btn"
-                                                onClick={() => handleDeleteSubtask(subtask.id)}
-                                                title="Delete subtask"
+                                                className="subtask-add-btn"
+                                                onClick={handleAddSubtask}
+                                                disabled={!newSubtaskTitle.trim() || subtasksLoading}
                                             >
-                                                ×
+                                                {subtasksLoading ? (
+                                                    <span className="subtask-add-spinner"></span>
+                                                ) : (
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                    </svg>
+                                                )}
                                             </button>
                                         </div>
-                                    ))}
-                                </div>
-
-                                {/* Add subtask input */}
-                                <div className="subtask-add-form">
-                                    <input
-                                        type="text"
-                                        className="subtask-add-input"
-                                        placeholder="Add an item..."
-                                        value={newSubtaskTitle}
-                                        onChange={(e) => setNewSubtaskTitle(e.target.value)}
-                                        onKeyPress={(e) => e.key === 'Enter' && handleAddSubtask()}
-                                    />
-                                    <button
-                                        className="subtask-add-btn"
-                                        onClick={handleAddSubtask}
-                                        disabled={!newSubtaskTitle.trim() || subtasksLoading}
-                                    >
-                                        {subtasksLoading ? '...' : '+'}
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Metadata - Hide in create mode */}
-                        {!isCreateMode && fullTask && (
-                            <div className="task-modal-meta">
-                                <span>Created: {formatDateTime(fullTask?.created_at)}</span>
-                                {fullTask?.updated_at && (
-                                    <span>Updated: {formatDateTime(fullTask?.updated_at)}</span>
+                                    </div>
                                 )}
-                            </div>
-                        )}
+                            </main>
+                                {/* Sidebar - Properties Panel */}
+                            <aside className="task-modal-sidebar">
+                                <div className="task-modal-properties">
+                                    {error && (
+                                        <div className="task-modal-error">
+                                            {error}
+                                        </div>
+                                    )}
+
+                                    {/* Status */}
+                                    <div className="task-modal-property">
+                                        <span className="task-modal-property-label">Status</span>
+                                        {isEditing || isCreateMode ? (
+                                            <BadgeSelect
+                                                name="status"
+                                                value={formData.status}
+                                                onChange={handleChange}
+                                                options={statusOptions}
+                                                getOptionStyle={getStatusOptionStyle}
+                                                placeholder="Select status..."
+                                            />
+                                        ) : (
+                                            <span className="task-modal-property-value">
+                                                <span className={`task-status-badge ${statusInfo.className}`}>
+                                                    {statusInfo.label}
+                                                </span>
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Priority */}
+                                    <div className="task-modal-property">
+                                        <span className="task-modal-property-label">Priority</span>
+                                        {isEditing || isCreateMode ? (
+                                            <BadgeSelect
+                                                name="priority"
+                                                value={formData.priority}
+                                                onChange={handleChange}
+                                                options={priorityOptions}
+                                                getOptionStyle={getPriorityOptionStyle}
+                                                placeholder="Select priority..."
+                                            />
+                                        ) : (
+                                            <span className="task-modal-property-value">
+                                                <span className={`task-priority-badge ${priorityInfo.className}`}>
+                                                    {priorityInfo.label}
+                                                </span>
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Project */}
+                                    <div className="task-modal-property">
+                                        <span className="task-modal-property-label">Project</span>
+                                        {isEditing || isCreateMode ? (
+                                            <BadgeSelect
+                                                name="project"
+                                                value={formData.project}
+                                                onChange={handleChange}
+                                                options={projectOptions}
+                                                getOptionStyle={getProjectOptionStyle}
+                                                placeholder="Select project..."
+                                            />
+                                        ) : (
+                                            <span className="task-modal-property-value">
+                                                {fullTask?.project && (
+                                                    <span
+                                                        className="task-project-badge"
+                                                        style={{ backgroundColor: fullTask?.project_color || '#6366f1' }}
+                                                    >
+                                                        {fullTask?.project_name || fullTask?.project}
+                                                    </span>
+                                                )}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Category */}
+                                    <div className="task-modal-property">
+                                        <span className="task-modal-property-label">Category</span>
+                                        {isEditing || isCreateMode ? (
+                                            <BadgeSelect
+                                                name="category"
+                                                value={formData.category}
+                                                onChange={handleChange}
+                                                options={categoryOptions}
+                                                getOptionStyle={getCategoryOptionStyle}
+                                                placeholder="Select category..."
+                                            />
+                                        ) : (
+                                            <span className="task-modal-property-value">
+                                                {fullTask?.category && (
+                                                    <span
+                                                        className="task-category-badge"
+                                                        style={{ backgroundColor: fullTask?.category_color || '#6366f1' }}
+                                                    >
+                                                        {fullTask?.category_name || fullTask?.category}
+                                                    </span>
+                                                )}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Due Date */}
+                                    <div className="task-modal-property">
+                                        <span className="task-modal-property-label">Due Date</span>
+                                        {isEditing || isCreateMode ? (
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DatePicker
+                                                    name="due_date"
+                                                    value={formData.due_date ? dayjs(formData.due_date) : null}
+                                                    onChange={(newValue) => {
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            due_date: newValue ? newValue.format('YYYY-MM-DD') : ''
+                                                        }));
+                                                    }}
+                                                    slotProps={{
+                                                        textField: {
+                                                            className: 'task-modal-input',
+                                                            size: 'small',
+                                                            placeholder: 'Select due date',
+                                                        },
+                                                    }}
+                                                    disablePast
+                                                    format="YYYY-MM-DD"
+                                                />
+                                            </LocalizationProvider>
+                                        ) : (
+                                            <span className={`task-modal-property-value task-due-date ${dueDateStatus}`}>
+                                                {fullTask?.due_date ? (
+                                                    <>
+                                                        {dueDateStatus === 'overdue' && '⚠️ '}
+                                                        {dueDateStatus === 'due-soon' && '⏰ '}
+                                                        {formatDate(fullTask?.due_date)}
+                                                    </>
+                                                ) : (
+                                                    <span className="task-no-value">No due date</span>
+                                                )}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Metadata - Wrapped inside properties, hide in create mode */}
+                                    {!isCreateMode && fullTask && (
+                                        <div className="task-modal-meta">
+                                            <div className="task-modal-meta-item">
+                                                <span className="task-modal-meta-label">Created</span>
+                                                <span>{formatDateTime(fullTask?.created_at)}</span>
+                                            </div>
+                                            {fullTask?.updated_at && (
+                                                <div className="task-modal-meta-item">
+                                                    <span className="task-modal-meta-label">Updated</span>
+                                                    <span>{formatDateTime(fullTask?.updated_at)}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </aside>
+
+                        </div>
                     </div>
                 )}
             </div>
