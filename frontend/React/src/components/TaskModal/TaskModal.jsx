@@ -291,21 +291,21 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
         return 'normal';
     };
 
-    const getPriorityColor = (priority) => {
-        const colors = {
-            LOW: '#22c55e',
-            MEDIUM: '#f59e0b',
-            HIGH: '#ef4444',
-            URGENT: '#ec4899',
+    const getPriorityInfo = (priority) => {
+        const priorities = {
+            LOW: { label: 'Low', className: 'priority-low', color: '#22c55e' },
+            MEDIUM: { label: 'Medium', className: 'priority-medium', color: '#f59e0b' },
+            HIGH: { label: 'High', className: 'priority-high', color: '#ef4444' },
+            URGENT: { label: 'Urgent', className: 'priority-urgent', color: '#ec4899' },
         };
-        return colors[priority] || colors.MEDIUM;
+        return priorities[priority] || priorities.MEDIUM;
     };
 
     const getStatusInfo = (status) => {
         const statuses = {
-            TODO: { label: 'To Do', color: '#f59e0b' },
-            IN_PROGRESS: { label: 'In Progress', color: '#3b82f6' },
-            DONE: { label: 'Done', color: '#10b981' },
+            TODO: { label: 'To Do', className: 'status-todo', color: '#f59e0b' },
+            IN_PROGRESS: { label: 'In Progress', className: 'status-in-progress', color: '#3b82f6' },
+            DONE: { label: 'Done', className: 'status-done', color: '#10b981' },
         };
         return statuses[status] || statuses.TODO;
     };
@@ -374,7 +374,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
 
     const dueDateStatus = getDueDateStatus(isEditing || isCreateMode ? formData.due_date : fullTask?.due_date);
     const statusInfo = getStatusInfo(isEditing || isCreateMode ? formData.status : fullTask?.status);
-    const priorityColor = getPriorityColor(isEditing || isCreateMode ? formData.priority : fullTask?.priority);
+    const priorityInfo = getPriorityInfo(isEditing || isCreateMode ? formData.priority : fullTask?.priority);
 
     if (!task && !isCreateMode) return null;
 
@@ -477,7 +477,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                     />
                                 ) : (
                                     <span className="task-modal-property-value">
-                                        <span className="task-status-badge" style={{ backgroundColor: statusInfo.color }}>
+                                        <span className={`task-status-badge ${statusInfo.className}`}>
                                             {statusInfo.label}
                                         </span>
                                     </span>
@@ -498,14 +498,8 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                     />
                                 ) : (
                                     <span className="task-modal-property-value">
-                                        <span
-                                            className="task-priority-badge"
-                                            style={{
-                                                backgroundColor: `${priorityColor}20`,
-                                                color: priorityColor
-                                            }}
-                                        >
-                                            {fullTask?.priority}
+                                        <span className={`task-priority-badge ${priorityInfo.className}`}>
+                                            {priorityInfo.label}
                                         </span>
                                     </span>
                                 )}
