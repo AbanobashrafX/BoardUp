@@ -480,7 +480,7 @@ img {
    ============================================ */
 
 [data-theme="dark"] .MuiPickersPopper-root .MuiPaper-root {
-    background-color: #282838 !important;
+    background-color: var(--color-background) !important;
     color: #e2e8f0 !important;
 }
 
@@ -493,12 +493,12 @@ img {
 }
 
 [data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root.Mui-selected {
-    background-color: #8b63f1 !important;
+    background-color: var(--color-hover-bg) !important;
     color: white !important;
 }
 
 [data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root:not(.Mui-selected):hover {
-    background-color: rgba(139, 99, 241, 0.15) !important;
+    background-color: var(--color-primary) !important;
 }
 
 [data-theme="dark"] .MuiPickersPopper-root .MuiDayCalendar-weekDayLabel {
@@ -516,7 +516,7 @@ img {
 
 [data-theme="dark"] .MuiPickersPopper-root .MuiPickersYear-yearButton:hover,
 [data-theme="dark"] .MuiPickersPopper-root .MuiPickersMonth-monthButton:hover {
-    background-color: rgba(139, 99, 241, 0.15) !important;
+    background-color: var(--color-secondary) !important;
 }
 
 [data-theme="dark"] .MuiPickersPopper-root .MuiDialogActions-root {
@@ -535,8 +535,7 @@ img {
     border-color: #3f3f50 !important;
 }
 
-/* Emoji Picker Dark Mode - emoji-picker-react reads system preference */
-[data-theme="dark"] .emoji-picker-popup {
-    /* emoji-picker-react v4 supports theme="auto" which reads prefers-color-scheme */
-    /* We also need to sync our data-theme with the system preference */
-}
+/* Emoji Picker Dark Mode:
+   emoji-picker-react v4 supports theme="auto" which reads prefers-color-scheme.
+   We also need to sync our data-theme with the system preference.
+   No CSS overrides needed. */
