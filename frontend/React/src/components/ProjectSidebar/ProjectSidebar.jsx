@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useData } from '../../contexts/DataContext';
 import { projectAPI } from '../../services/api';
 import { useToast } from '../../contexts/ToastContext';
@@ -20,17 +20,6 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(null); // Track which project is being deleted
     const [isCollapsed, setIsCollapsed] = useState(false); // Track sidebar collapsed state
-
-    // Close modal on escape key
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape' && showCreateModal) {
-                setShowCreateModal(false);
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [showCreateModal]);
 
     /**
      * Calculate total tasks across all projects for "All Tasks" display
@@ -232,7 +221,6 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
             <CreateProjectModal
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
-                onCreated={() => { }}
                 onSelectProject={onSelectProject}
                 refreshProjects={refreshProjects}
             />
