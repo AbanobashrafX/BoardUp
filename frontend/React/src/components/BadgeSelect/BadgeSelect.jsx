@@ -38,12 +38,17 @@ function BadgeSelect({
                 onClick={() => setIsOpen(!isOpen)}
             >
                 {selectedOption ? (
-                    <span
-                        className="badge-select-value"
-                        style={getOptionStyle ? getOptionStyle(selectedOption) : {}}
-                    >
-                        {selectedOption.label}
-                    </span>
+                    (() => {
+                        const optionStyle = getOptionStyle ? getOptionStyle(selectedOption) : {};
+                        if (optionStyle.className) {
+                            return <span className={`badge-select-value ${optionStyle.className}`}>{selectedOption.label}</span>;
+                        }
+                        return (
+                            <span className="badge-select-value" style={optionStyle}>
+                                {selectedOption.label}
+                            </span>
+                        );
+                    })()
                 ) : (
                     <span className="badge-select-placeholder">{placeholder}</span>
                 )}
@@ -69,12 +74,20 @@ function BadgeSelect({
                             className={`badge-select-option ${option.value === value ? 'selected' : ''}`}
                             onClick={() => handleSelect(option.value)}
                         >
-                            <span
-                                className="badge-select-option-badge"
-                                style={getOptionStyle ? getOptionStyle(option) : {}}
-                            >
-                                {option.label}
-                            </span>
+                            {(() => {
+                                const optionStyle = getOptionStyle ? getOptionStyle(option) : {};
+                                if (optionStyle.className) {
+                                    return <span className={`badge-select-option-badge ${optionStyle.className}`}>{option.label}</span>;
+                                }
+                                return (
+                                    <span
+                                        className="badge-select-option-badge"
+                                        style={optionStyle}
+                                    >
+                                        {option.label}
+                                    </span>
+                                );
+                            })()}
                         </button>
                     ))}
                 </div>

@@ -88,6 +88,7 @@
     font-weight: 400;
 }
 
+
 /* ============================================
    DROPDOWN ARROW
    ============================================ */
@@ -200,6 +201,59 @@
 
 .badge-select-option:focus-visible .badge-select-option-badge {
     transform: translateX(4px);
+}
+
+/* ============================================
+   PRIORITY BADGE INSIDE BADGE SELECT
+   Override default badge styles to match TaskCard exactly
+   ============================================ */
+
+.badge-select-value.priority-badge,
+.badge-select-option-badge.priority-badge {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 10px !important;
+    padding: 4px 10px !important;
+    border-radius: var(--radius-full) !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    color: inherit !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+}
+
+.badge-select-value.priority-badge:hover,
+.badge-select-option-badge.priority-badge:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Priority colors - theme aware */
+.badge-select-value.priority-low,
+.badge-select-option-badge.priority-low {
+    background: var(--color-priority-low-bg) !important;
+    color: var(--color-priority-low-on-bg) !important;
+}
+
+.badge-select-value.priority-medium,
+.badge-select-option-badge.priority-medium {
+    background: var(--color-priority-medium-bg) !important;
+    color: var(--color-priority-medium-on-bg) !important;
+}
+
+.badge-select-value.priority-high,
+.badge-select-option-badge.priority-high {
+    background: var(--color-priority-high-bg) !important;
+    color: var(--color-priority-high-on-bg) !important;
+}
+
+.badge-select-value.priority-urgent,
+.badge-select-option-badge.priority-urgent {
+    background: var(--color-priority-urgent-bg) !important;
+    color: var(--color-priority-urgent-on-bg) !important;
 }
 
 /* ============================================
