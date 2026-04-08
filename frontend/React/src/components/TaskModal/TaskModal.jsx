@@ -326,28 +326,36 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
 
     // Build project options from propProjects
     const projectOptions = [
-        { value: '', label: 'No Project', color: '#6366f1' },
+        { value: '', label: 'No Project', isGhost: true },
         ...(propProjects || []).map(proj => ({ value: proj.id, label: proj.name, color: proj.color })),
     ];
 
     // Build category options from propCategories
     const categoryOptions = [
-        { value: '', label: 'No Category', color: '#6366f1' },
+        { value: '', label: 'No Category', isGhost: true },
         ...(propCategories || []).map(cat => ({ value: cat.id, label: cat.name, color: cat.color })),
     ];
 
     const getProjectOptionStyle = (option) => {
-        if (!option.value) {
-            // No project - gray background with dark text
-            return { backgroundColor: '#e5e7eb', color: '#374151' };
+        if (option.isGhost) {
+            // Ghost pill style for "No Project"
+            return {
+                backgroundColor: 'transparent',
+                color: 'var(--color-text-secondary)',
+                border: '1px dashed var(--color-border-strong)',
+            };
         }
         return { backgroundColor: option.color || '#6366f1' };
     };
 
     const getCategoryOptionStyle = (option) => {
-        if (!option.value) {
-            // No category - gray background with dark text
-            return { backgroundColor: '#e5e7eb', color: '#374151' };
+        if (option.isGhost) {
+            // Ghost pill style for "No Category"
+            return {
+                backgroundColor: 'transparent',
+                color: 'var(--color-text-secondary)',
+                border: '1px dashed var(--color-border-strong)',
+            };
         }
         return { backgroundColor: option.color || '#6366f1' };
     };
@@ -555,7 +563,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                     </div>
                                 )}
                             </main>
-                                {/* Sidebar - Properties Panel */}
+                            {/* Sidebar - Property Table */}
                             <aside className="task-modal-sidebar">
                                 <div className="task-modal-properties">
                                     {error && (
@@ -564,9 +572,12 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                         </div>
                                     )}
 
-                                    {/* Status */}
+                                    {/* Status Row */}
                                     <div className="task-modal-property">
-                                        <span className="task-modal-property-label">Status</span>
+                                        <span className="task-modal-property-label">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle></svg>
+                                            Status
+                                        </span>
                                         {isEditing || isCreateMode ? (
                                             <BadgeSelect
                                                 name="status"
@@ -578,16 +589,19 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                             />
                                         ) : (
                                             <span className="task-modal-property-value">
-                                                <span className={`task-status-badge ${statusInfo.className}`}>
+                                                <span className={`tm-status-dot tm-status-dot--${statusInfo.className.replace('status-', '')}`}>
                                                     {statusInfo.label}
                                                 </span>
                                             </span>
                                         )}
                                     </div>
 
-                                    {/* Priority */}
+                                    {/* Priority Row */}
                                     <div className="task-modal-property">
-                                        <span className="task-modal-property-label">Priority</span>
+                                        <span className="task-modal-property-label">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                                            Priority
+                                        </span>
                                         {isEditing || isCreateMode ? (
                                             <BadgeSelect
                                                 name="priority"
@@ -599,16 +613,20 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                             />
                                         ) : (
                                             <span className="task-modal-property-value">
-                                                <span className={`task-priority-badge ${priorityInfo.className}`}>
+                                                <span className={`tm-priority tm-priority--${priorityInfo.className.replace('priority-', '')}`}>
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15" stroke="currentColor" strokeWidth="2"></line></svg>
                                                     {priorityInfo.label}
                                                 </span>
                                             </span>
                                         )}
                                     </div>
 
-                                    {/* Project */}
+                                    {/* Project Row */}
                                     <div className="task-modal-property">
-                                        <span className="task-modal-property-label">Project</span>
+                                        <span className="task-modal-property-label">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                            Project
+                                        </span>
                                         {isEditing || isCreateMode ? (
                                             <BadgeSelect
                                                 name="project"
@@ -620,21 +638,27 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                             />
                                         ) : (
                                             <span className="task-modal-property-value">
-                                                {fullTask?.project && (
-                                                    <span
-                                                        className="task-project-badge"
-                                                        style={{ backgroundColor: fullTask?.project_color || '#6366f1' }}
-                                                    >
+                                                {fullTask?.project ? (
+                                                    <span className="tm-project">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
                                                         {fullTask?.project_name || fullTask?.project}
+                                                    </span>
+                                                ) : (
+                                                    <span className="tm-project tm-project--empty">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                                        No Project
                                                     </span>
                                                 )}
                                             </span>
                                         )}
                                     </div>
 
-                                    {/* Category */}
+                                    {/* Category Row */}
                                     <div className="task-modal-property">
-                                        <span className="task-modal-property-label">Category</span>
+                                        <span className="task-modal-property-label">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+                                            Category
+                                        </span>
                                         {isEditing || isCreateMode ? (
                                             <BadgeSelect
                                                 name="category"
@@ -646,21 +670,27 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                             />
                                         ) : (
                                             <span className="task-modal-property-value">
-                                                {fullTask?.category && (
-                                                    <span
-                                                        className="task-category-badge"
-                                                        style={{ backgroundColor: fullTask?.category_color || '#6366f1' }}
-                                                    >
+                                                {fullTask?.category ? (
+                                                    <span className="tm-category">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
                                                         {fullTask?.category_name || fullTask?.category}
+                                                    </span>
+                                                ) : (
+                                                    <span className="tm-category tm-category--empty">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+                                                        No Category
                                                     </span>
                                                 )}
                                             </span>
                                         )}
                                     </div>
 
-                                    {/* Due Date */}
+                                    {/* Due Date Row */}
                                     <div className="task-modal-property">
-                                        <span className="task-modal-property-label">Due Date</span>
+                                        <span className="task-modal-property-label">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                            Due Date
+                                        </span>
                                         {isEditing || isCreateMode ? (
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                 <DatePicker
@@ -674,7 +704,6 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                                     }}
                                                     slotProps={{
                                                         textField: {
-                                                            className: 'task-modal-input',
                                                             size: 'small',
                                                             placeholder: 'Select due date',
                                                         },
@@ -684,13 +713,12 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                                 />
                                             </LocalizationProvider>
                                         ) : (
-                                            <span className={`task-modal-property-value task-due-date ${dueDateStatus}`}>
+                                            <span className="task-modal-property-value">
                                                 {fullTask?.due_date ? (
-                                                    <>
-                                                        {dueDateStatus === 'overdue' && '⚠️ '}
-                                                        {dueDateStatus === 'due-soon' && '⏰ '}
+                                                    <span className={`tm-due-date ${dueDateStatus === 'overdue' ? 'tm-due-date--overdue' : dueDateStatus === 'due-soon' ? 'tm-due-date--due-soon' : ''}`}>
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                                                         {formatDate(fullTask?.due_date)}
-                                                    </>
+                                                    </span>
                                                 ) : (
                                                     <span className="task-no-value">No due date</span>
                                                 )}
@@ -698,7 +726,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                         )}
                                     </div>
 
-                                    {/* Metadata - Wrapped inside properties, hide in create mode */}
+                                    {/* Metadata - Bottom section */}
                                     {!isCreateMode && fullTask && (
                                         <div className="task-modal-meta">
                                             <div className="task-modal-meta-item">

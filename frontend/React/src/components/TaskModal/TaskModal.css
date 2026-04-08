@@ -1,6 +1,5 @@
-/* Task Modal - Notion-Inspired Horizontal Layout
-   Design System: Clean, minimal, 8px spacing scale
-   Layout: Side-by-side (sidebar + main content)
+/* Task Modal - Premium SaaS UI (Linear/Notion Style)
+   Property Table Architecture: Horizontal rows, ghost styling
 */
 
 /* ============================================
@@ -20,9 +19,9 @@
     --tm-font-title: 28px;
     --tm-font-label: 12px;
     --tm-font-body: 14px;
+    --tm-font-value: 13px;
     --tm-font-small: 13px;
 
-    --tm-select-height: 44px;
     --tm-btn-height: 44px;
     --tm-icon-btn-size: 40px;
     --tm-modal-max-width: 960px;
@@ -31,6 +30,7 @@
     --tm-input-radius: 10px;
     --tm-badge-radius: 9999px;
     --tm-sidebar-width: 280px;
+    --tm-property-label-width: 100px;
 }
 
 /* ============================================
@@ -248,7 +248,7 @@
 }
 
 /* ============================================
-   SIDEBAR - Properties Panel
+   SIDEBAR - Property Table (Horizontal Rows)
    ============================================ */
 
 .task-modal-sidebar {
@@ -259,41 +259,332 @@
 .task-modal-properties {
     display: flex;
     flex-direction: column;
-    gap: var(--tm-space-20);
+    gap: 12px;
 }
 
+/* Property Row: [Icon + Label] [Value] */
 .task-modal-property {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: var(--tm-space-12);
+    gap: var(--tm-space-8);
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: all var(--transition-fast);
+    cursor: default;
+}
+
+.task-modal-property:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .task-modal-property-label {
-    font-size: var(--tm-font-label);
-    font-weight: 600;
-    color: var(--color-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: var(--tm-property-label-width);
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: #9CA3AF;
     line-height: 1;
 }
 
+.task-modal-property-label svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
 .task-modal-property-value {
-    font-size: var(--tm-font-body);
-    font-weight: 500;
-    color: var(--color-text);
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 400;
+    color: #E5E7EB;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 /* ============================================
-   META (inside sidebar)
+   STATUS DOT (colored circle + text)
+   ============================================ */
+
+.tm-status-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #E5E7EB;
+}
+
+.tm-status-dot::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.tm-status-dot--todo::before {
+    background-color: #f59e0b;
+}
+
+.tm-status-dot--in-progress::before {
+    background-color: #3b82f6;
+}
+
+.tm-status-dot--done::before {
+    background-color: #10b981;
+}
+
+/* ============================================
+   PRIORITY (muted signal style)
+   ============================================ */
+
+.tm-priority {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.tm-priority--low {
+    color: #4ade80;
+}
+
+.tm-priority--medium {
+    color: #d97706;
+}
+
+.tm-priority--high {
+    color: #dc2626;
+}
+
+.tm-priority--urgent {
+    color: #db2777;
+}
+
+.tm-priority svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   PROJECT / CATEGORY (icon + text, no borders)
+   ============================================ */
+
+.tm-project,
+.tm-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #E5E7EB;
+}
+
+.tm-project svg,
+.tm-category svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+.tm-project--empty,
+.tm-category--empty {
+    color: #6B7280;
+}
+
+/* ============================================
+   DUE DATE (invisible text + calendar icon)
+   ============================================ */
+
+.tm-due-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #E5E7EB;
+}
+
+.tm-due-date svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+.tm-due-date--overdue {
+    color: var(--color-error);
+}
+
+.tm-due-date--due-soon {
+    color: var(--color-warning);
+}
+
+.tm-no-value {
+    color: #6B7280;
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* ============================================
+   BADGE SELECT (Edit Mode - ghost style)
+   ============================================ */
+
+.badge-select-container {
+    position: relative;
+    width: 100%;
+}
+
+.badge-select-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 4px 8px;
+    height: 32px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #E5E7EB;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.badge-select-trigger:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: #3E3F45;
+}
+
+.badge-select-trigger:focus-visible {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+
+.badge-select-trigger.open {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-focus-ring);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.badge-select-value {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+}
+
+
+.badge-select-placeholder {
+    color: #6B7280;
+    font-size: 13px;
+}
+
+.badge-select-arrow {
+    flex-shrink: 0;
+    color: #6B7280;
+    transition: transform var(--transition-base);
+    width: 12px;
+    height: 12px;
+}
+
+.badge-select-arrow.open {
+    transform: rotate(180deg);
+}
+
+.badge-select-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #28292D;
+    border: 1px solid #2E2F35;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: var(--z-dropdown);
+    overflow: hidden;
+    animation: tm-dropdownFadeIn 0.15s ease;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+@keyframes tm-dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.badge-select-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    height: 36px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: left;
+    color: var(--color-text);
+    font-size: 13px;
+}
+
+.badge-select-option:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.badge-select-option:focus-visible {
+    outline: none;
+    background: var(--color-primary-surface);
+}
+
+.badge-select-option.selected {
+    background: var(--color-primary-surface);
+}
+
+.badge-select-option-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+/* ============================================
+   META (bottom section)
    ============================================ */
 
 .task-modal-meta {
     display: flex;
     flex-direction: column;
-    gap: var(--tm-space-12);
-    padding-top: var(--tm-space-20);
-    margin-top: var(--tm-space-8);
+    gap: 8px;
+    padding-top: 16px;
+    margin-top: 8px;
     border-top: 1px solid var(--color-divider);
 }
 
@@ -302,19 +593,25 @@
     flex-direction: row;
     align-items: center;
     gap: var(--tm-space-8);
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: all var(--transition-fast);
+    cursor: default;
 }
 
 .task-modal-meta-label {
-    font-size: var(--tm-font-label);
-    font-weight: 600;
-    color: var(--color-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    width: var(--tm-property-label-width);
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: #9CA3AF;
 }
 
 .task-modal-meta-item span:last-child {
-    font-size: var(--tm-font-small);
+    font-size: 12px;
     color: var(--color-text-secondary);
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-variant-numeric: tabular-nums;
 }
 
 /* ============================================
@@ -325,10 +622,6 @@
     flex: 1;
     min-width: 0;
 }
-
-/* ============================================
-   SECTIONS
-   ============================================ */
 
 .task-modal-section {
     margin-bottom: var(--tm-space-32);
@@ -366,9 +659,9 @@
     white-space: pre-wrap;
     word-break: break-word;
     padding: var(--tm-space-16);
-    background: var(--color-surface-elevated);
+    background: transparent;
     border-radius: var(--tm-input-radius);
-    border: 1px solid var(--color-border);
+    border: none;
     min-height: 80px;
 }
 
@@ -385,8 +678,8 @@
     font-weight: 400;
     line-height: 1.7;
     color: var(--color-text);
-    background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border);
+    background: transparent;
+    border: none;
     border-radius: var(--tm-input-radius);
     outline: none;
     transition: all var(--transition-fast);
@@ -524,7 +817,6 @@
     outline: 2px solid var(--color-primary);
 }
 
-/* Add Subtask Form */
 .subtask-add-form {
     display: flex;
     gap: var(--tm-space-8);
@@ -533,14 +825,15 @@
 
 .subtask-add-input {
     flex: 1;
-    padding: var(--tm-space-12) var(--tm-space-16);
+    padding: 8px 12px;
     font-size: var(--tm-font-body);
     border: 1px solid var(--color-border);
     border-radius: var(--tm-input-radius);
     background: var(--color-surface-elevated);
     color: var(--color-text);
     transition: all var(--transition-fast);
-    min-height: var(--tm-select-height);
+    min-height: 36px;
+    height: 36px;
     font-family: inherit;
 }
 
@@ -560,9 +853,9 @@
 }
 
 .subtask-add-btn {
-    width: var(--tm-select-height);
-    height: var(--tm-select-height);
-    min-width: var(--tm-select-height);
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
     color: white;
     background: var(--color-primary);
     border: none;
@@ -610,260 +903,6 @@
 }
 
 /* ============================================
-   SELECT INPUT (BadgeSelect)
-   ============================================ */
-
-.badge-select-container {
-    position: relative;
-    width: 100%;
-}
-
-.badge-select-trigger {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--tm-space-12);
-    padding: var(--tm-space-12) var(--tm-space-16);
-    font-size: var(--tm-font-body);
-    font-weight: 500;
-    color: var(--color-text);
-    background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border);
-    border-radius: var(--tm-input-radius);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    min-height: var(--tm-select-height);
-}
-
-.badge-select-trigger:hover {
-    border-color: var(--color-border-strong);
-    background: var(--color-hover-bg);
-}
-
-.badge-select-trigger:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-}
-
-.badge-select-trigger.open {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px var(--color-focus-ring);
-}
-
-.badge-select-trigger.has-value {
-    padding: var(--tm-space-8) var(--tm-space-12);
-}
-
-.badge-select-value {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--tm-space-4) var(--tm-space-12);
-    border-radius: var(--tm-badge-radius);
-    font-size: var(--tm-font-small);
-    font-weight: 600;
-    color: white;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.badge-select-placeholder {
-    color: var(--color-text-tertiary);
-    font-size: var(--tm-font-body);
-}
-
-.badge-select-arrow {
-    flex-shrink: 0;
-    color: var(--color-text-tertiary);
-    transition: transform var(--transition-base);
-}
-
-.badge-select-arrow.open {
-    transform: rotate(180deg);
-}
-
-.badge-select-dropdown {
-    position: absolute;
-    top: calc(100% + var(--tm-space-8));
-    left: 0;
-    right: 0;
-    background: var(--color-surface-elevated);
-    border: 1px solid var(--color-border);
-    border-radius: var(--tm-input-radius);
-    box-shadow: var(--shadow-xl);
-    z-index: var(--z-dropdown);
-    overflow: hidden;
-    animation: tm-dropdownFadeIn 0.2s ease;
-    max-height: 280px;
-    overflow-y: auto;
-}
-
-@keyframes tm-dropdownFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.badge-select-option {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: var(--tm-space-12) var(--tm-space-16);
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    text-align: left;
-    color: var(--color-text);
-    min-height: var(--tm-select-height);
-}
-
-.badge-select-option:hover {
-    background: var(--color-hover-bg);
-}
-
-.badge-select-option:focus-visible {
-    outline: none;
-    background: var(--color-primary-surface);
-}
-
-.badge-select-option.selected {
-    background: var(--color-primary-surface);
-}
-
-.badge-select-option-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--tm-space-4) var(--tm-space-12);
-    border-radius: var(--tm-badge-radius);
-    font-size: var(--tm-font-small);
-    font-weight: 600;
-    color: white;
-    transition: all var(--transition-fast);
-}
-
-.badge-select-option:hover .badge-select-option-badge {
-    transform: translateX(4px);
-}
-
-/* ============================================
-   STATUS BADGES
-   ============================================ */
-
-.task-status-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--tm-space-4) var(--tm-space-12);
-    border-radius: var(--tm-badge-radius);
-    font-size: var(--tm-font-small);
-    font-weight: 600;
-    color: white;
-    line-height: 1.4;
-}
-
-.status-todo {
-    background-color: #f59e0b;
-}
-
-.status-in-progress {
-    background-color: #3b82f6;
-}
-
-.status-done {
-    background-color: #10b981;
-}
-
-/* ============================================
-   PRIORITY BADGES
-   ============================================ */
-
-.task-priority-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--tm-space-4) var(--tm-space-12);
-    border-radius: var(--tm-badge-radius);
-    font-size: var(--tm-font-small);
-    font-weight: 600;
-    line-height: 1.4;
-}
-
-.priority-low {
-    background-color: rgba(34, 197, 94, 0.15);
-    color: #22c55e;
-}
-
-.priority-medium {
-    background-color: rgba(245, 158, 11, 0.15);
-    color: #f59e0b;
-}
-
-.priority-high {
-    background-color: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
-}
-
-.priority-urgent {
-    background-color: rgba(236, 72, 153, 0.15);
-    color: #ec4899;
-}
-
-/* ============================================
-   CATEGORY / PROJECT BADGES
-   ============================================ */
-
-.task-category-badge,
-.task-project-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--tm-space-4) var(--tm-space-12);
-    border-radius: var(--tm-badge-radius);
-    font-size: var(--tm-font-small);
-    font-weight: 600;
-    color: white;
-    line-height: 1.4;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-}
-
-/* ============================================
-   DUE DATE
-   ============================================ */
-
-.task-due-date {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--tm-space-8);
-    font-weight: 500;
-}
-
-.task-due-date.overdue {
-    color: var(--color-error);
-}
-
-.task-due-date.due-soon {
-    color: var(--color-warning);
-}
-
-.task-due-date.normal {
-    color: var(--color-text-secondary);
-}
-
-.task-no-value {
-    color: var(--color-text-tertiary);
-    font-style: italic;
-    font-size: var(--tm-font-body);
-}
-
-/* ============================================
    ERROR MESSAGE
    ============================================ */
 
@@ -871,7 +910,7 @@
     padding: var(--tm-space-12) var(--tm-space-16);
     background: var(--color-error-bg);
     border: 1px solid var(--color-error);
-    border-radius: var(--tm-input-radius);
+    border-radius: 8px;
     color: var(--color-error);
     font-size: var(--tm-font-body);
     font-weight: 500;
@@ -892,6 +931,106 @@
     75% {
         transform: translateX(6px);
     }
+}
+
+/* ============================================
+   MUI DATEPICKER - "Invisibility" Overrides
+   ============================================ */
+
+.MuiPickersPopper-root .MuiPaper-root {
+    background-color: #28292D !important;
+    border: 1px solid #2E2F35 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.MuiPickersPopper-root .MuiPickersCalendarHeader-root {
+    color: var(--color-text) !important;
+}
+
+.MuiPickersPopper-root .MuiPickersDay-root {
+    color: var(--color-text) !important;
+}
+
+.MuiPickersPopper-root .MuiPickersDay-root.Mui-selected {
+    background-color: var(--color-primary) !important;
+    color: white !important;
+}
+
+.MuiPickersPopper-root .MuiPickersDay-root:not(.Mui-selected):hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.MuiPickersPopper-root .MuiDayCalendar-weekDayLabel {
+    color: #6B7280 !important;
+}
+
+.MuiPickersPopper-root .MuiPickersArrowSwitcher-root button {
+    color: var(--color-text) !important;
+}
+
+.MuiPickersPopper-root .MuiPickersYear-yearButton,
+.MuiPickersPopper-root .MuiPickersMonth-monthButton {
+    color: var(--color-text) !important;
+}
+
+.MuiPickersPopper-root .MuiDialogActions-root {
+    border-top-color: #2E2F35 !important;
+}
+
+.MuiPickersPopper-root .MuiButtonBase-root {
+    color: var(--color-text) !important;
+}
+
+/* DatePicker input - invisible text field */
+.MuiFormControl-root {
+    width: 100% !important;
+}
+
+.MuiFormControl-root .MuiInputBase-root {
+    width: 100% !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    background: var(--color-surface-base) !important;
+    border: 1px solid transparent !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    box-shadow: none !important;
+    padding: 8px 12px !important;
+    transition: all var(--transition-fast) !important;
+}
+
+.MuiFormControl-root .MuiInputBase-root:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: #3E3F45 !important;
+}
+
+.MuiFormControl-root .MuiInputBase-root.Mui-focused {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 2px var(--color-focus-ring) !important;
+}
+
+.MuiFormControl-root .MuiInputBase-input {
+    padding: 8px 12px !important;
+    height: 30px !important;
+    line-height: 22px !important;
+    color: #E5E7EB !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+}
+
+.MuiFormControl-root .MuiInputBase-input::placeholder {
+    color: #6B7280 !important;
+    font-weight: 400 !important;
+}
+
+.MuiFormControl-root .MuiOutlinedInput-notchedOutline {
+    border: none !important;
+}
+
+.MuiFormControl-root .MuiSvgIcon-root {
+    width: 14px !important;
+    height: 14px !important;
+    color: #6B7280 !important;
 }
 
 /* ============================================
@@ -986,7 +1125,7 @@
     cursor: pointer;
     transition: all var(--transition-fast);
     border: none;
-    min-height: var(--tm-select-height);
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1034,21 +1173,7 @@
     }
 
     .task-modal-properties {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--tm-space-20);
-    }
-
-    .task-modal-meta {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: var(--tm-space-16);
-    }
-
-    .task-modal-meta-item {
-        flex-direction: row;
-        align-items: center;
-        gap: var(--tm-space-8);
+        gap: 12px;
     }
 }
 
@@ -1067,11 +1192,6 @@
     .task-modal-title,
     .task-modal-title-input {
         font-size: 24px;
-    }
-
-    .task-modal-properties {
-        grid-template-columns: 1fr;
-        gap: var(--tm-space-16);
     }
 
     .task-modal-header {
@@ -1111,16 +1231,16 @@
 
 [data-theme="dark"] .task-modal-textarea,
 [data-theme="dark"] .subtask-add-input {
-    background: var(--color-surface-base);
+    background: transparent;
 }
 
 [data-theme="dark"] .task-modal-textarea:focus,
 [data-theme="dark"] .subtask-add-input:focus {
-    background: var(--color-surface);
+    background: transparent;
 }
 
 [data-theme="dark"] .task-modal-description {
-    background: var(--color-surface-base);
+    background: transparent;
 }
 
 [data-theme="dark"] .subtask-item {
