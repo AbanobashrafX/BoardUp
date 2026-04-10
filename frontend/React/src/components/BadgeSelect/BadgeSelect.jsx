@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import './BadgeSelect.css';
 
@@ -12,6 +13,7 @@ function BadgeSelect({
 }) {
     const { isDark } = useTheme();
     const [isOpen, setIsOpen] = useState(false);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
     const containerRef = useRef(null);
 
     const selectedOption = options.find(opt => opt.value === value);
@@ -27,10 +29,27 @@ function BadgeSelect({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    const calculateDropdownPosition = () => {
+        if (containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect();
+            setDropdownPosition({
+                top: rect.bottom + window.scrollY,
+                left: rect.left + window.scrollX,
+                width: rect.width
+            });
+        }
+    };
+
     const handleSelect = (optionValue) => {
         onChange({ target: { name, value: optionValue } });
         setIsOpen(false);
     };
+
+    useEffect(() => {
+        if (isOpen) {
+            calculateDropdownPosition();
+        }
+    }, [isOpen]);
 
     return (
         <div className={`badge-select-container ${isDark ? 'dark' : 'light'}`} ref={containerRef}>
@@ -67,8 +86,17 @@ function BadgeSelect({
                 </svg>
             </button>
 
-            {isOpen && (
-                <div className="badge-select-dropdown">
+            {isOpen && createPortal(
+                <div
+                    className="badge-select-dropdown portal-dropdown"
+                    style={{
+                        position: 'fixed',
+                        top: dropdownPosition.top,
+                        left: dropdownPosition.left,
+                        width: dropdownPosition.width,
+                        zIndex: 99999
+                    }}
+                >
                     {options.map((option) => (
                         <button
                             key={option.value}
@@ -92,7 +120,8 @@ function BadgeSelect({
                             })()}
                         </button>
                     ))}
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
