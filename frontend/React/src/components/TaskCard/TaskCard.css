@@ -20,7 +20,7 @@
 
 /* Click animation - scale down on click */
 .task-card:active {
-    transform: scale(0.97);
+    /* transform: rotate(-30deg) scale(1.02); */
     cursor: grabbing;
 }
 
@@ -97,7 +97,8 @@
     gap: 6px;
     opacity: 0;
     transition: opacity 0.25s ease, transform 0.25s ease;
-    transform: translateX(-8px);
+    /* transform: translateX(-8px); */
+    transform: rotate(-30deg) scale(1.02);
 }
 
 .task-card:hover .task-actions {
@@ -226,18 +227,23 @@
 /* Task Footer */
 .task-card-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-end;
+    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: nowrap;
 }
 
 /* Additional Features Container */
 .task-additional-feature-container {
     display: flex;
-    align-items: center;
-    margin-top: 6px;
-    padding-top: 6px;
+    align-items: stretch;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
     gap: 10px;
     flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
 }
 
 
@@ -246,30 +252,6 @@
 .task-date {
     font-size: 12px;
     color: var(--color-text-tertiary);
-}
-
-/* Due Date */
-.task-due-date {
-    /* All base styling inherited from shared BadgeSelect base */
-    font-size: 12px;
-    gap: 5px;
-}
-
-.task-due-date.overdue {
-    color: var(--color-error);
-    background-color: var(--color-error-bg);
-}
-
-.task-due-date.due-soon {
-    color: var(--color-warning);
-    background-color: var(--color-warning-bg);
-    border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.task-due-date.normal {
-    color: var(--color-text-secondary);
-    background-color: var(--color-hover-bg);
-    border: 1px solid var(--color-border-light);
 }
 
 
