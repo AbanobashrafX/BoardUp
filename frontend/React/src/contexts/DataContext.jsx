@@ -30,11 +30,11 @@ export function DataProvider({ children }) {
                     projectAPI.getAll()
                 ]);
 
-                if (categoriesData && categoriesData.length > 0) {
+                if (categoriesData) {
                     setCategories(categoriesData);
                 }
 
-                if (projectsData && projectsData.length > 0) {
+                if (projectsData) {
                     setProjects(projectsData);
                 }
             } catch (err) {
@@ -52,9 +52,7 @@ export function DataProvider({ children }) {
     const refreshCategories = async () => {
         try {
             const data = await categoryAPI.getAll();
-            if (data && data.length > 0) {
-                setCategories(data);
-            }
+            setCategories(data || []);
         } catch (err) {
             console.error('Error refreshing categories:', err);
         }
@@ -63,9 +61,7 @@ export function DataProvider({ children }) {
     const refreshProjects = async () => {
         try {
             const data = await projectAPI.getAll();
-            if (data && data.length > 0) {
-                setProjects(data);
-            }
+            setProjects(data || []);
         } catch (err) {
             console.error('Error refreshing projects:', err);
         }
