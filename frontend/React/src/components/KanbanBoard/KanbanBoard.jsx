@@ -3,7 +3,6 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { taskAPI } from '../../services/api';
 import TaskCard from '../TaskCard/TaskCard';
 import TaskModal from '../TaskModal/TaskModal';
-import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import './KanbanBoard.css';
 
 const COLUMNS = [
@@ -13,16 +12,10 @@ const COLUMNS = [
 ];
 
 const SAMPLE_TASKS = {
-    TODO: [
-    ],
-    IN_PROGRESS: [
-    ],
-    DONE: [
-    ],
+    TODO: [],
+    IN_PROGRESS: [],
+    DONE: [],
 };
-
-const SAMPLE_CATEGORIES = [];
-const SAMPLE_PROJECTS = [];
 
 function KanbanBoard({
     selectedProject = null,
@@ -35,40 +28,32 @@ function KanbanBoard({
 }) {
     const [tasks, setTasks] = useState({ TODO: [], IN_PROGRESS: [], DONE: [] });
     const [isLoading, setIsLoading] = useState(true);
-    const [isFetching, setIsFetching] = useState(false);
     const [showTaskModal, setShowTaskModal] = useState(false);
+    const [preselectedStatus, setPreselectedStatus] = useState('TODO');
     const [selectedTask, setSelectedTask] = useState(null);
 
     // Track initialization to avoid duplicate fetches on mount
     const isInitialized = useRef(false);
-
-    // Keyboard shortcuts
-    useKeyboardShortcuts({
-        onNewTask: useCallback(() => setShowTaskModal(true), []),
-        onClearFilters: useCallback(() => { }, []),
-        onStatusFilter: useCallback((status) => { }, []),
-    });
 
     // Single effect for initial load and all changes (with proper initialization)
     useEffect(() => {
         // Skip if not yet initialized (first render)
         if (!isInitialized.current) {
             isInitialized.current = true;
-            fetchData(true);
+            fetchData();
             return;
         }
 
         // Debounce search queries for subsequent updates
         const timer = setTimeout(() => {
-            fetchData(false);
+            fetchData();
         }, searchQuery ? 300 : 0);
 
         return () => clearTimeout(timer);
     }, [searchQuery, filter, sortBy, selectedProject]);
 
-    const fetchData = async (showLoader = true) => {
+    const fetchData = async () => {
         try {
-            if (showLoader) setIsFetching(true);
 
             const params = {};
             if (searchQuery) params.search = searchQuery;
@@ -105,7 +90,6 @@ function KanbanBoard({
             setTasks(SAMPLE_TASKS);
         } finally {
             setIsLoading(false);
-            setIsFetching(false);
         }
     };
 
@@ -150,11 +134,9 @@ function KanbanBoard({
     const handleTaskClick = (task) => setSelectedTask(task);
 
     const handleAddTask = (columnId) => {
-        // Open modal in create mode with preselected status
         setSelectedTask(null);
+        setPreselectedStatus(columnId);
         setShowTaskModal(true);
-        // Store the preselected status for the modal
-        window.__preselectedStatus = columnId;
     };
 
     const handleCloseModal = () => {
@@ -247,7 +229,7 @@ function KanbanBoard({
                 </div>
             </DragDropContext>
 
-            {showTaskModal && <TaskModal mode="create" categories={propCategories} projects={propProjects} preselectedProject={selectedProject} onClose={handleCloseModal} />}
+            {showTaskModal && <TaskModal mode="create" categories={propCategories} projects={propProjects} preselectedProject={selectedProject} preselectedStatus={preselectedStatus} onClose={handleCloseModal} />}
             {selectedTask && <TaskModal task={selectedTask} categories={propCategories} projects={propProjects} onClose={handleCloseModal} onDelete={(id) => { handleDeleteTask(id); handleCloseModal(); }} />}
         </div>
     );
