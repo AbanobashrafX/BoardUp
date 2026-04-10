@@ -3,7 +3,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import BadgeSelect from '../BadgeSelect/BadgeSelect';
+import BadgeSelect, { Badge } from '../BadgeSelect/BadgeSelect';
 
 const TaskModalSidebar = React.memo(({
     isEditing,
@@ -81,7 +81,7 @@ const TaskModalSidebar = React.memo(({
                 border: '1px dashed var(--color-border-strong)',
             };
         }
-        return { backgroundColor: option.color || '#6366f1' };
+        return { backgroundColor: option.color + '20' };
     };
 
     const getCategoryOptionStyle = (option) => {
@@ -92,7 +92,7 @@ const TaskModalSidebar = React.memo(({
                 border: '1px dashed var(--color-border-strong)',
             };
         }
-        return { backgroundColor: option.color || '#6366f1' };
+        return { backgroundColor: option.color + '20' };
     };
 
     const getStatusOptionStyle = (option) => {
@@ -101,7 +101,7 @@ const TaskModalSidebar = React.memo(({
             IN_PROGRESS: '#3b82f6',
             DONE: '#10b981',
         };
-        return { backgroundColor: colors[option.value] || '#6366f1' };
+        return { backgroundColor: colors[option.value] + '20' };
     };
 
     const getPriorityOptionStyle = (option) => {
@@ -158,9 +158,9 @@ const TaskModalSidebar = React.memo(({
                         />
                     ) : (
                         <span className="task-modal-property-value">
-                            <span className={`tm-status-dot tm-status-dot--${statusInfo.className.replace('status-', '')}`}>
+                            <Badge type="status" variant={statusInfo.className} color={statusInfo.color}>
                                 {statusInfo.label}
-                            </span>
+                            </Badge>
                         </span>
                     )}
                 </div>
@@ -185,13 +185,9 @@ const TaskModalSidebar = React.memo(({
                         />
                     ) : (
                         <span className="task-modal-property-value">
-                            <span className={`tm-priority tm-priority--${priorityInfo.className.replace('priority-', '')}`}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-                                    <line x1="4" y1="22" x2="4" y2="15" stroke="currentColor" strokeWidth="2"></line>
-                                </svg>
+                            <Badge type="priority" variant={priorityInfo.className}>
                                 {priorityInfo.label}
-                            </span>
+                            </Badge>
                         </span>
                     )}
                 </div>
@@ -216,17 +212,14 @@ const TaskModalSidebar = React.memo(({
                     ) : (
                         <span className="task-modal-property-value">
                             {fullTask?.project ? (
-                                <span className="tm-project">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                                    </svg>
-                                    {fullTask?.project_name || fullTask?.project}
-                                </span>
+                                <Badge
+                                    type="project"
+                                    color={fullTask.project_color}
+                                >
+                                    📁 {fullTask?.project_name || fullTask?.project}
+                                </Badge>
                             ) : (
-                                <span className="tm-project tm-project--empty">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                                    </svg>
+                                <span className="badge-select-value">
                                     No Project
                                 </span>
                             )}
@@ -257,15 +250,12 @@ const TaskModalSidebar = React.memo(({
                     ) : (
                         <span className="task-modal-property-value">
                             {fullTask?.category ? (
-                                <span className="tm-category">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <line x1="4" y1="9" x2="20" y2="9"></line>
-                                        <line x1="4" y1="15" x2="20" y2="15"></line>
-                                        <line x1="10" y1="3" x2="8" y2="21"></line>
-                                        <line x1="16" y1="3" x2="14" y2="21"></line>
-                                    </svg>
+                                <Badge
+                                    type="category"
+                                    color={fullTask.category_color}
+                                >
                                     {fullTask?.category_name || fullTask?.category}
-                                </span>
+                                </Badge>
                             ) : (
                                 <span className="tm-category tm-category--empty">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -318,7 +308,7 @@ const TaskModalSidebar = React.memo(({
                     ) : (
                         <span className="task-modal-property-value">
                             {fullTask?.due_date ? (
-                                <span className={`tm-due-date ${dueDateStatus === 'overdue' ? 'tm-due-date--overdue' : dueDateStatus === 'due-soon' ? 'tm-due-date--due-soon' : ''}`}>
+                                <Badge className={`tm-due-date ${dueDateStatus === 'overdue' ? 'tm-due-date--overdue' : dueDateStatus === 'due-soon' ? 'tm-due-date--due-soon' : ''}`} variant={fullTask.HIGH}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                         <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -326,7 +316,7 @@ const TaskModalSidebar = React.memo(({
                                         <line x1="3" y1="10" x2="21" y2="10"></line>
                                     </svg>
                                     {formatDate(fullTask?.due_date)}
-                                </span>
+                                </Badge>
                             ) : (
                                 <span className="task-no-value">No due date</span>
                             )}
