@@ -74,62 +74,8 @@
     max-width: 230px;
 }
 
-/* Status badges */
-.status-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: var(--radius-full);
-    font-size: 11px;
-    font-weight: 600;
-}
 
-.status-badge.status-todo {
-    background: var(--color-priority-medium-bg);
-    color: var(--color-priority-medium-on-bg);
-}
 
-.status-badge.status-in-progress {
-    background: rgba(4, 113, 254, 0.1);
-    color: rgba(4, 113, 254, 1);
-}
-
-.status-badge.status-done {
-    background: var(--color-success-bg);
-    color: var(--color-success);
-}
-
-/* Priority badges - reuse from TaskCard */
-.tasks-table .priority-badge {
-    font-size: 10px;
-    padding: 3px 8px;
-}
-
-.tasks-table .priority-urgent {
-    background: var(--color-priority-urgent-bg);
-    color: var(--color-priority-urgent-on-bg);
-}
-
-.tasks-table .priority-high {
-    background: var(--color-priority-high-bg);
-    color: var(--color-priority-high-on-bg);
-}
-
-.tasks-table .priority-medium {
-    background: var(--color-priority-medium-bg);
-    color: var(--color-priority-medium-on-bg);
-}
-
-.tasks-table .priority-low {
-    background: var(--color-priority-low-bg);
-    color: var(--color-priority-low-on-bg);
-}
-
-/* Category and Project tags */
-.tasks-table .category-tag,
-.tasks-table .project-tag {
-    font-size: 10px;
-    padding: 3px 8px;
-}
 
 .date-cell {
     color: var(--color-text-tertiary);
