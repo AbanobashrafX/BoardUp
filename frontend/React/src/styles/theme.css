@@ -91,9 +91,6 @@
     --color-border-strong: #cbd5e1;
     --color-border-focus: #6366f1;
 
-    /* Divider - lighter than border-light for subtle separators */
-    --color-divider: #f1f5f9;
-
     /* ============================================
        STATUS COLORS - Semantic
        ============================================ */
@@ -305,9 +302,6 @@
     --color-border-strong: #4b5060;
     --color-border-focus: #61afef;
 
-    /* Divider */
-    --color-divider: rgba(255, 255, 255, 0.06);
-
     /* Status - One Dark Pro syntax colors */
     --color-success: #98c379;
     --color-success-light: #b0d191;
@@ -414,24 +408,9 @@
     transition:
         background-color 0.3s ease,
         border-color 0.3s ease,
-        color 0.2s ease,
-        /* box-shadow 0.3s ease; */
+        color 0.2s ease;
 }
 
-
-/* ============================================
-   ACCESSIBILITY - REDUCED MOTION
-   ============================================ */
-
-@media (prefers-reduced-motion: reduce) {
-
-    :root,
-    [data-theme="light"],
-    [data-theme="dark"] {
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-    }
-}
 
 /* ============================================
    ACCESSIBILITY - REDUCED MOTION

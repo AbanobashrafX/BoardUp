@@ -3,9 +3,6 @@
  * Import theme system first
  */
 
-/* Google Fonts - Modern Sans-Serif */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-
 /* Theme System - Import order matters! */
 @import './styles/theme.css';
 /* CSS variables */
