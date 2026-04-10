@@ -20,7 +20,7 @@
     gap: 12px;
     padding: 12px 16px;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--color-text);
     background: var(--color-surface-elevated);
@@ -81,7 +81,7 @@
     display: inline-flex;
     align-items: center;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 600;
     padding: 5px 10px;
     border-radius: var(--radius-full);
@@ -235,148 +235,6 @@
    BADGE SELECT (Edit Mode - ghost style)
    ============================================ */
 
-.badge-select-container {
-    position: relative;
-    width: 100%;
-}
-
-.badge-select-trigger {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 4px 8px;
-    height: 32px;
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--color-text);
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.badge-select-trigger:hover {
-    background: var(--color-hover-bg);
-    border-color: var(--color-border-strong);
-}
-
-.badge-select-trigger:focus-visible {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-focus-ring);
-}
-
-.badge-select-trigger.open {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-focus-ring);
-    background: var(--color-hover-bg);
-}
-
-
-
-
-.badge-select-placeholder {
-    color: var(--color-text-tertiary);
-    font-size: 13px;
-}
-
-.badge-select-arrow {
-    flex-shrink: 0;
-    color: var(--color-text-tertiary);
-    transition: transform var(--transition-base);
-    width: 12px;
-    height: 12px;
-}
-
-.badge-select-arrow.open {
-    transform: rotate(180deg);
-}
-
-.badge-select-dropdown {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    background: var(--color-surface-elevated) !important;
-    border: 1px solid var(--color-border) !important;
-    border-radius: 8px;
-    box-shadow: var(--shadow-xl) !important;
-    z-index: var(--z-dropdown);
-    overflow: hidden;
-    animation: tm-dropdownFadeIn 0.15s ease;
-    max-height: 280px;
-    overflow-y: auto;
-}
-
-@keyframes tm-dropdownFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-6px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.badge-select-option {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    height: 36px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    text-align: left;
-    color: var(--color-text);
-    font-size: 13px;
-}
-
-.badge-select-option:hover {
-    background: var(--color-hover-bg);
-}
-
-.badge-select-option:focus-visible {
-    outline: none;
-    background: var(--color-primary-surface);
-}
-
-.badge-select-option.selected {
-    background: var(--color-primary-surface);
-}
-
-.badge-select-option-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px 8px;
-    border-radius: 9999px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--color-text) !important;
-}
-
-/* ============================================
-   DROPDOWN ARROW
-   ============================================ */
-
-.badge-select-arrow {
-    flex-shrink: 0;
-    color: var(--color-text-tertiary);
-    transition: transform var(--transition-base);
-    width: 12px;
-    height: 12px;
-}
-
-.badge-select-arrow.open {
-    transform: rotate(180deg);
-    color: var(--color-text-secondary);
-}
 
 /* ============================================
    DROPDOWN PANEL
@@ -543,4 +401,27 @@
     .badge-select-dropdown {
         max-height: 200px;
     }
+}
+
+
+/* Due Date */
+.task-due-date {
+    gap: 5px;
+}
+
+.task-due-date.overdue {
+    color: var(--color-error);
+    background-color: var(--color-error-bg);
+}
+
+.task-due-date.due-soon {
+    color: var(--color-warning);
+    background-color: var(--color-warning-bg);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.task-due-date.normal {
+    color: var(--color-text-secondary);
+    background-color: var(--color-hover-bg);
+    border: 1px solid var(--color-border-light);
 }
