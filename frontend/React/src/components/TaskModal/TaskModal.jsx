@@ -370,14 +370,13 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
     };
 
     const getPriorityOptionStyle = (option) => {
-        const colors = {
-            LOW: '#22c55e',
-            MEDIUM: '#f59e0b',
-            HIGH: '#ef4444',
-            URGENT: '#ec4899',
+        const priorityClasses = {
+            LOW: 'priority-low',
+            MEDIUM: 'priority-medium',
+            HIGH: 'priority-high',
+            URGENT: 'priority-urgent',
         };
-        const color = colors[option.value] || '#f59e0b';
-        return { backgroundColor: color, color: 'white' };
+        return { className: `priority-badge ${priorityClasses[option.value] || 'priority-medium'}` };
     };
 
     const dueDateStatus = getDueDateStatus(isEditing || isCreateMode ? formData.due_date : fullTask?.due_date);

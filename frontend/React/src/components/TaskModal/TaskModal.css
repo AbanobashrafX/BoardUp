@@ -342,9 +342,47 @@
 }
 
 /* ============================================
-   PRIORITY (muted signal style)
+   PRIORITY BADGE (TaskCard-consistent)
    ============================================ */
 
+.priority-badge {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.priority-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.priority-low {
+    background: var(--color-priority-low-bg);
+    color: var(--color-priority-low-on-bg);
+}
+
+.priority-medium {
+    background: var(--color-priority-medium-bg);
+    color: var(--color-priority-medium-on-bg);
+}
+
+.priority-high {
+    background: var(--color-priority-high-bg);
+    color: var(--color-priority-high-on-bg);
+}
+
+.priority-urgent {
+    background: var(--color-priority-urgent-bg);
+    color: var(--color-priority-urgent-on-bg);
+}
+
+/* View mode priority display */
 .tm-priority {
     display: inline-flex;
     align-items: center;
