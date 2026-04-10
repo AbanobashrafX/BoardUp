@@ -99,9 +99,11 @@ function KanbanBoard({
         const { destination, source, draggableId } = result;
         if (!destination) return;
         if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+
         const sourceColumn = source.droppableId;
         const destColumn = destination.droppableId;
         const destIndex = destination.index;
+
         // Move the task
         const newTasks = {
             ...tasks,
@@ -111,6 +113,19 @@ function KanbanBoard({
 
         const [movedTask] = newTasks[sourceColumn].splice(source.index, 1);
         newTasks[destColumn].splice(destIndex, 0, movedTask);
+
+        // Update position values locally for immediate consistency
+        newTasks[destColumn].forEach((task, idx) => {
+            task.position = idx;
+        });
+
+        // If moving across columns, also update positions in source column
+        if (sourceColumn !== destColumn) {
+            newTasks[sourceColumn].forEach((task, idx) => {
+                task.position = idx;
+            });
+        }
+
         setTasks(newTasks);
 
         try {
@@ -140,36 +155,66 @@ function KanbanBoard({
         setShowTaskModal(true);
     };
 
-    const handleCloseModal = () => {
+    const handleCloseModal = (newTask = null) => {
         setShowTaskModal(false);
         setSelectedTask(null);
-        fetchData();
+
+        if (newTask && newTask.status) {
+            // Optimistically add new task immediately to correct column
+            setTasks(prevTasks => {
+                const updatedTasks = { ...prevTasks };
+                // Ensure the status column exists
+                if (updatedTasks[newTask.status]) {
+                    updatedTasks[newTask.status] = [
+                        ...updatedTasks[newTask.status],
+                        newTask
+                    ];
+                }
+                return updatedTasks;
+            });
+            // Still refetch in background to get correct ordering and sync with server
+            fetchData();
+        } else {
+            // No new task, do full refetch
+            fetchData();
+        }
+
         onProjectsRefresh?.();
     };
 
     // Sort function
     const sortTasks = (tasksArray) => {
-        if (!sortBy) return tasksArray;
+        // Always sort by position first as base ordering, then apply user sort
+        const positionSorted = [...tasksArray].sort((a, b) => {
+            // Use position if available, fallback to id for backwards compatibility
+            const posA = a.position !== undefined ? a.position : (a.id || 0);
+            const posB = b.position !== undefined ? b.position : (b.id || 0);
+            return posA - posB;
+        });
+
+        if (!sortBy) return positionSorted;
+
         const priorityOrder = { 'URGENT': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3 };
 
         switch (sortBy) {
             case 'oldest':
-                return [...tasksArray].sort((a, b) => (a.id || 0) - (b.id || 0));
+                return [...positionSorted].sort((a, b) => (a.id || 0) - (b.id || 0));
             case 'priority-high':
-                return [...tasksArray].sort((a, b) =>
+                return [...positionSorted].sort((a, b) =>
                     (priorityOrder[a.priority] ?? 4) - (priorityOrder[b.priority] ?? 4)
                 );
             case 'priority-low':
-                return [...tasksArray].sort((a, b) =>
+                return [...positionSorted].sort((a, b) =>
                     (priorityOrder[b.priority] ?? 4) - (priorityOrder[a.priority] ?? 4)
                 );
             case 'alphabetical':
-                return [...tasksArray].sort((a, b) =>
+                return [...positionSorted].sort((a, b) =>
                     (a.title || '').localeCompare(b.title || '')
                 );
             case 'newest':
+                return [...positionSorted].sort((a, b) => (b.id || 0) - (a.id || 0));
             default:
-                return [...tasksArray].sort((a, b) => (b.id || 0) - (a.id || 0));
+                return positionSorted;
         }
     };
 
@@ -238,7 +283,7 @@ function KanbanBoard({
             </DragDropContext>
 
             <Suspense fallback={<div className="loading">Loading...</div>}>
-                {showTaskModal && <TaskModal mode="create" categories={propCategories} projects={propProjects} preselectedProject={selectedProject} preselectedStatus={preselectedStatus} onClose={handleCloseModal} />}
+                {showTaskModal && !selectedTask && <TaskModal mode="create" categories={propCategories} projects={propProjects} preselectedProject={selectedProject} preselectedStatus={preselectedStatus} onClose={handleCloseModal} />}
                 {selectedTask && <TaskModal task={selectedTask} categories={propCategories} projects={propProjects} onClose={handleCloseModal} onDelete={(id) => { handleDeleteTask(id); handleCloseModal(); }} />}
             </Suspense>
         </div>
