@@ -471,31 +471,65 @@ img {
 }
 
 /* ============================================
-   MUI COMPONENT DARK MODE OVERRIDES
-   MUI DatePicker/Calendar renders in a portal,
-   so we need global CSS to force dark mode
-   ============================================ */
+    MUI COMPONENT PORTAL THEMING
+    MUI components (DatePicker, Select, etc.) render in portals
+    so they don't inherit React theme context. Use data-theme attribute.
+    ============================================ */
 
-[data-theme="dark"] .MuiPickersPopper-root .MuiPaper-root {
-    background-color: var(--color-background) !important;
-    color: #e2e8f0 !important;
+/* Light theme (default) - ensure proper styling */
+[data-theme="light"] .MuiPickersPopper-root .MuiPaper-root,
+[data-theme="light"] .MuiPopover-root .MuiPaper-root,
+[data-theme="light"] .MuiMenu-paper {
+    background-color: var(--color-surface-elevated) !important;
+    color: var(--color-text) !important;
+    border: 1px solid var(--color-border) !important;
 }
 
-[data-theme="dark"] .MuiPickersPopper-root .MuiPickersCalendarHeader-root {
-    color: #e2e8f0 !important;
+[data-theme="light"] .MuiPickersPopper-root .MuiPickersCalendarHeader-root,
+[data-theme="light"] .MuiPickersPopper-root .MuiPickersDay-root,
+[data-theme="light"] .MuiMenuItem-root,
+[data-theme="light"] .MuiButton-root {
+    color: var(--color-text) !important;
 }
 
-[data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root {
-    color: #e2e8f0 !important;
+[data-theme="light"] .MuiPickersPopper-root .MuiPickersDay-root.Mui-selected,
+[data-theme="light"] .MuiMenuItem-root.Mui-selected {
+    background-color: var(--color-primary-surface) !important;
+    color: var(--color-primary) !important;
 }
 
-[data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root.Mui-selected {
+[data-theme="light"] .MuiPickersPopper-root .MuiPickersDay-root:not(.Mui-selected):hover,
+[data-theme="light"] .MuiMenuItem-root:hover,
+[data-theme="light"] .MuiButton-root:hover {
     background-color: var(--color-hover-bg) !important;
-    color: white !important;
 }
 
-[data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root:not(.Mui-selected):hover {
-    background-color: var(--color-primary) !important;
+/* Dark theme overrides */
+[data-theme="dark"] .MuiPickersPopper-root .MuiPaper-root,
+[data-theme="dark"] .MuiPopover-root .MuiPaper-root,
+[data-theme="dark"] .MuiMenu-paper {
+    background-color: var(--color-surface-elevated) !important;
+    color: var(--color-text) !important;
+    border: 1px solid var(--color-border) !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersCalendarHeader-root,
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root,
+[data-theme="dark"] .MuiMenuItem-root,
+[data-theme="dark"] .MuiButton-root {
+    color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root.Mui-selected,
+[data-theme="dark"] .MuiMenuItem-root.Mui-selected {
+    background-color: var(--color-primary-surface) !important;
+    color: var(--color-on-primary) !important;
+}
+
+[data-theme="dark"] .MuiPickersPopper-root .MuiPickersDay-root:not(.Mui-selected):hover,
+[data-theme="dark"] .MuiMenuItem-root:hover,
+[data-theme="dark"] .MuiButton-root:hover {
+    background-color: var(--color-hover-bg) !important;
 }
 
 [data-theme="dark"] .MuiPickersPopper-root .MuiDayCalendar-weekDayLabel {
