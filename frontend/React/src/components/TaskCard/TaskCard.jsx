@@ -1,4 +1,5 @@
 import React from 'react';
+import { Badge } from '../BadgeSelect/BadgeSelect';
 import './TaskCard.css';
 
 const TaskCard = React.memo(({ task, columnColor, isDragging = false, onEdit, onDelete, onView }) => {
@@ -46,7 +47,7 @@ const TaskCard = React.memo(({ task, columnColor, isDragging = false, onEdit, on
             }}
         >
             <div className="task-card-header">
-                <span className={priorityClass}>{priority}</span>
+                <Badge type="priority" variant={`priority-${priority.toLowerCase()}`}>{priority}</Badge>
                 <div className="task-actions">
                     <button
                         className="task-action-btn task-delete-btn"
@@ -94,13 +95,15 @@ const TaskCard = React.memo(({ task, columnColor, isDragging = false, onEdit, on
 
             <div className="task-card-footer">
                 {task.category && (
-                    <span
-                        className="category-tag"
-                        style={{ backgroundColor: task.category_color || '#6366f1' }}
+                    <Badge
+                        type="category"
+                        style={{ backgroundColor: task.category_color + '20' }}
+                    // color={task.category_color + '90'}
                     >
                         {task.category_name || task.category}
-                    </span>
+                    </Badge>
                 )}
+
 
                 {task.created_at && (
                     <span className="task-date">{formatDate(task.created_at)}</span>
@@ -108,20 +111,25 @@ const TaskCard = React.memo(({ task, columnColor, isDragging = false, onEdit, on
             </div>
             <div className="task-additional-feature-container">
                 {task.project && (
-                    <span
-                        className="project-tag"
-                        style={{ backgroundColor: task.project_color || '#8b5cf6' }}
+                    <Badge
+                        type="project"
+                        style={{ backgroundColor: task.project_color + '20' }}
+                    // color={task.project_color + '20'}
                     >
                         📁 {task.project_name || task.project}
-                    </span>
+                    </Badge>
                 )}
                 {task.due_date && (
-                    <span className={`task-due-date ${dueDateStatus}`}>
+                    <Badge
+                        type="date"
+                        variant={dueDateStatus}
+                        color={dueDateStatus === 'overdue' ? '#ef4444' : dueDateStatus === 'due-soon' ? '#f59e0b' : '#6b7280'}
+                    >
                         {dueDateStatus === 'overdue' && '⚠️ '}
                         {dueDateStatus === 'due-soon' && '⏰ '}
                         {dueDateStatus === 'normal' && '🟢 '}
                         {formatDate(task.due_date)}
-                    </span>
+                    </Badge>
                 )}
                 {/* Subtask progress removed - now shown as ProgressBar above */}
             </div>

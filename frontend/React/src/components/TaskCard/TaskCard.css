@@ -240,41 +240,7 @@
     flex-wrap: wrap;
 }
 
-/* Category Tag */
-.category-tag {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 5px 10px;
-    border-radius: var(--radius-full);
-    color: white;
-    letter-spacing: 0.02em;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 
-.category-tag:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Project Tag */
-.project-tag {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 5px 10px;
-    border-radius: var(--radius-full);
-    color: white;
-    letter-spacing: 0.02em;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.project-tag:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
 
 /* Date */
 .task-date {
@@ -284,21 +250,14 @@
 
 /* Due Date */
 .task-due-date {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    /* All base styling inherited from shared BadgeSelect base */
     font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
     gap: 5px;
-    padding: 6px 10px;
-    border-radius: var(--radius-full);
-    backdrop-filter: blur(4px);
 }
 
 .task-due-date.overdue {
     color: var(--color-error);
     background-color: var(--color-error-bg);
-    border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .task-due-date.due-soon {
@@ -313,45 +272,6 @@
     border: 1px solid var(--color-border-light);
 }
 
-
-/* Priority Badge */
-.priority-badge {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 10px;
-    padding: 4px 10px;
-    border-radius: var(--radius-full);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.priority-badge:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Priority badges - theme aware */
-.priority-low {
-    background: var(--color-priority-low-bg);
-    color: var(--color-priority-low-on-bg);
-}
-
-.priority-medium {
-    background: var(--color-priority-medium-bg);
-    color: var(--color-priority-medium-on-bg);
-}
-
-.priority-high {
-    background: var(--color-priority-high-bg);
-    color: var(--color-priority-high-on-bg);
-}
-
-.priority-urgent {
-    background: var(--color-priority-urgent-bg);
-    color: var(--color-priority-urgent-on-bg);
-}
 
 /* Responsive */
 @media (max-width: 768px) {
