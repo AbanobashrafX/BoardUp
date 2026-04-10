@@ -4,7 +4,6 @@ import './TaskCard.css';
 
 const TaskCard = React.memo(({ task, columnColor, isDragging = false, onEdit, onDelete, onView }) => {
     const priority = task.priority || 'MEDIUM';
-    const priorityClass = `priority-badge priority-${priority.toLowerCase()}`;
 
     const formatDate = (dateString) => {
         if (!dateString) return '';
@@ -42,8 +41,7 @@ const TaskCard = React.memo(({ task, columnColor, isDragging = false, onEdit, on
             data-priority={priority}
             onClick={handleCardClick}
             style={{
-                ...(columnColor ? { '--column-color': columnColor } : {}),
-                ...(isDragging ? { transform: 'rotate(-30deg) scale(1.02)', 'transform-origin': 'center' } : {})
+                ...(columnColor ? { '--column-color': columnColor } : {})
             }}
         >
             <div className="task-card-header">
@@ -92,29 +90,19 @@ const TaskCard = React.memo(({ task, columnColor, isDragging = false, onEdit, on
                     </div>
                 </div>
             )}
-
-            <div className="task-card-footer">
+            <div className="task-additional-feature-container">
                 {task.category && (
                     <Badge
                         type="category"
                         style={{ backgroundColor: task.category_color + '20' }}
-                    // color={task.category_color + '90'}
                     >
                         {task.category_name || task.category}
                     </Badge>
                 )}
-
-
-                {task.created_at && (
-                    <span className="task-date">{formatDate(task.created_at)}</span>
-                )}
-            </div>
-            <div className="task-additional-feature-container">
                 {task.project && (
                     <Badge
                         type="project"
                         style={{ backgroundColor: task.project_color + '20' }}
-                    // color={task.project_color + '20'}
                     >
                         📁 {task.project_name || task.project}
                     </Badge>
@@ -123,15 +111,21 @@ const TaskCard = React.memo(({ task, columnColor, isDragging = false, onEdit, on
                     <Badge
                         type="date"
                         variant={dueDateStatus}
-                        color={dueDateStatus === 'overdue' ? '#ef4444' : dueDateStatus === 'due-soon' ? '#f59e0b' : '#6b7280'}
+                        color={dueDateStatus === 'overdue' ? '#ef4444' : dueDateStatus === 'due-soon' ? '#f59e0b' : '#ffffffbe'}
                     >
-                        {dueDateStatus === 'overdue' && '⚠️ '}
-                        {dueDateStatus === 'due-soon' && '⏰ '}
-                        {dueDateStatus === 'normal' && '🟢 '}
+                        {dueDateStatus === 'overdue' && '🎯 '}
+                        {dueDateStatus === 'due-soon' && '⚠️ '}
+                        {dueDateStatus === 'normal' && '📆 '}
                         {formatDate(task.due_date)}
                     </Badge>
                 )}
                 {/* Subtask progress removed - now shown as ProgressBar above */}
+            </div>
+
+            <div className="task-card-footer">
+                {task.created_at && (
+                    <span className="task-date">{formatDate(task.created_at)}</span>
+                )}
             </div>
         </div>
     );
