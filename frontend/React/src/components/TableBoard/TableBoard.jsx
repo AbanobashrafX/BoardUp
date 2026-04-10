@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { taskAPI } from '../../services/api';
 import TaskModal from '../TaskModal/TaskModal';
+import { Badge } from '../BadgeSelect/BadgeSelect';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import './TableBoard.css';
 
@@ -252,33 +253,33 @@ function TableBoard({
                                         )}
                                     </td>
                                     <td>
-                                        <span className={getStatusClass(task.status)}>
+                                        <Badge type="status" variant={`status-${(task.status || 'TODO').replace('_', '-').toLowerCase()}`}>
                                             {getStatusLabel(task.status)}
-                                        </span>
+                                        </Badge>
                                     </td>
                                     <td>
-                                        <span className={getPriorityClass(task.priority)}>
+                                        <Badge type="priority" variant={`priority-${(task.priority || 'MEDIUM').toLowerCase()}`}>
                                             {task.priority || 'MEDIUM'}
-                                        </span>
+                                        </Badge>
                                     </td>
                                     <td>
                                         {task.category && (
-                                            <span
-                                                className="category-tag"
-                                                style={{ backgroundColor: task.category_color || '#6366f1' }}
+                                            <Badge
+                                                type="category"
+                                                color={task.category_color || '#6366f1'}
                                             >
                                                 {task.category_name || task.category}
-                                            </span>
+                                            </Badge>
                                         )}
                                     </td>
                                     <td>
                                         {task.project && (
-                                            <span
-                                                className="project-tag"
-                                                style={{ backgroundColor: task.project_color || '#8b5cf6' }}
+                                            <Badge
+                                                type="project"
+                                                color={task.project_color || '#8b5cf6'}
                                             >
                                                 {task.project_name || task.project}
-                                            </span>
+                                            </Badge>
                                         )}
                                     </td>
                                     <td className="subtasks-cell">
@@ -299,7 +300,21 @@ function TableBoard({
                                         )}
                                     </td>
                                     <td className="date-cell">
-                                        {task.due_date ? formatDate(task.due_date) : '-'}
+                                        {task.due_date ? (
+                                            <Badge
+                                                type="date"
+                                                color={(() => {
+                                                    const today = new Date();
+                                                    today.setHours(0, 0, 0, 0);
+                                                    const due = new Date(task.due_date);
+                                                    due.setHours(0, 0, 0, 0);
+                                                    const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+                                                    return diffDays < 0 ? '#ef4444' : diffDays <= 2 ? '#f59e0b' : '#6b7280';
+                                                })()}
+                                            >
+                                                {formatDate(task.due_date)}
+                                            </Badge>
+                                        ) : '-'}
                                     </td>
                                     <td className="date-cell">
                                         {task.created_at ? formatDate(task.created_at) : '-'}
