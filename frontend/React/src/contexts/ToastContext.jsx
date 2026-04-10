@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
 
 const ToastContext = createContext(null);
 
@@ -12,6 +12,15 @@ export function useToast() {
 
 export function ToastProvider({ children }) {
     const [toasts, setToasts] = useState([]);
+    const timeoutIds = useRef(new Set());
+
+    // Cleanup timeouts on unmount
+    useEffect(() => {
+        return () => {
+            timeoutIds.current.forEach(id => clearTimeout(id));
+            timeoutIds.current.clear();
+        };
+    }, []);
 
     const removeToast = useCallback((id) => {
         setToasts(prev => prev.filter(toast => toast.id !== id));
@@ -24,9 +33,11 @@ export function ToastProvider({ children }) {
         setToasts(prev => [...prev, toast]);
 
         if (duration > 0) {
-            setTimeout(() => {
+            const timeoutId = setTimeout(() => {
                 removeToast(id);
+                timeoutIds.current.delete(timeoutId);
             }, duration);
+            timeoutIds.current.add(timeoutId);
         }
 
         return id;

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { categoryAPI, projectAPI } from '../services/api';
 
 const DataContext = createContext(null);
@@ -48,26 +48,27 @@ export function DataProvider({ children }) {
         fetchData();
     }, []);
 
-    // Refresh methods for when data needs to be updated
-    const refreshCategories = async () => {
+    // Refresh methods for when data needs to be updated - memoized
+    const refreshCategories = useCallback(async () => {
         try {
             const data = await categoryAPI.getAll();
             setCategories(data || []);
         } catch (err) {
             console.error('Error refreshing categories:', err);
         }
-    };
+    }, []);
 
-    const refreshProjects = async () => {
+    const refreshProjects = useCallback(async () => {
         try {
             const data = await projectAPI.getAll();
             setProjects(data || []);
         } catch (err) {
             console.error('Error refreshing projects:', err);
         }
-    };
+    }, []);
 
-    const value = {
+    // Memoized value object to prevent unnecessary re-renders
+    const value = useMemo(() => ({
         categories,
         projects,
         isLoading,
@@ -76,7 +77,7 @@ export function DataProvider({ children }) {
         refreshProjects,
         viewMode,
         setViewMode
-    };
+    }), [categories, projects, isLoading, error, refreshCategories, refreshProjects, viewMode]);
 
     return (
         <DataContext.Provider value={value}>
