@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
-import { DndContext, DragOverlay, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { taskAPI } from '../../services/api';
 import TaskCard from '../TaskCard/TaskCard';
 import './KanbanBoard.css';
@@ -34,15 +33,6 @@ function KanbanBoard({
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [preselectedStatus, setPreselectedStatus] = useState('TODO');
     const [selectedTask, setSelectedTask] = useState(null);
-    const [activeId, setActiveId] = useState(null);
-    const [activeTask, setActiveTask] = useState(null);
-
-    const sensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
-    );
 
     // Track initialization to avoid duplicate fetches on mount
     const isInitialized = useRef(false);
@@ -105,56 +95,13 @@ function KanbanBoard({
         }
     };
 
-    const handleDragStart = (event) => {
-        const { active } = event;
-        setActiveId(active.id);
-        // Find the active task
-        const allTasks = [...tasks.TODO, ...tasks.IN_PROGRESS, ...tasks.DONE];
-        const task = allTasks.find(t => t.id === active.id);
-        setActiveTask(task);
-    };
-
-    const handleDragEnd = async (event) => {
-        const { active, over } = event;
-        setActiveId(null);
-        setActiveTask(null);
-
-        if (!over) return;
-
-        const activeId = active.id;
-        const overId = over.id;
-
-        // Find source and destination
-        let sourceColumn = null;
-        let destColumn = null;
-        let sourceIndex = -1;
-        let destIndex = -1;
-
-        // Find source
-        for (const column of COLUMNS) {
-            const index = tasks[column.id].findIndex(task => task.id === activeId);
-            if (index !== -1) {
-                sourceColumn = column.id;
-                sourceIndex = index;
-                break;
-            }
-        }
-
-        // Find destination
-        for (const column of COLUMNS) {
-            const index = tasks[column.id].findIndex(task => task.id === overId);
-            if (index !== -1) {
-                destColumn = column.id;
-                destIndex = index;
-                break;
-            }
-        }
-
-        if (!sourceColumn || !destColumn) return;
-
-        // If same position, do nothing
-        if (sourceColumn === destColumn && sourceIndex === destIndex) return;
-
+    const handleDragEnd = async (result) => {
+        const { destination, source, draggableId } = result;
+        if (!destination) return;
+        if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+        const sourceColumn = source.droppableId;
+        const destColumn = destination.droppableId;
+        const destIndex = destination.index;
         // Move the task
         const newTasks = {
             ...tasks,
@@ -162,12 +109,12 @@ function KanbanBoard({
             [destColumn]: [...tasks[destColumn]],
         };
 
-        const [movedTask] = newTasks[sourceColumn].splice(sourceIndex, 1);
+        const [movedTask] = newTasks[sourceColumn].splice(source.index, 1);
         newTasks[destColumn].splice(destIndex, 0, movedTask);
         setTasks(newTasks);
 
         try {
-            await taskAPI.move(activeId, destColumn, destIndex);
+            await taskAPI.move(draggableId, destColumn, destIndex);
             onProjectsRefresh?.();
         } catch (error) {
             console.error('Error moving task:', error);
@@ -247,12 +194,7 @@ function KanbanBoard({
     // Render only the columns - no header
     return (
         <div className="kanban-board">
-            <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-            >
+            <DragDropContext onDragEnd={handleDragEnd}>
                 <div className="kanban-columns">
                     {COLUMNS.map((column) => (
                         <div key={column.id} className="kanban-column">
@@ -271,26 +213,29 @@ function KanbanBoard({
                                 </button>
                             </div>
 
-                            <SortableContext items={filteredTasks(column.id).map(t => t.id)} strategy={verticalListSortingStrategy}>
-                                <div className="column-content">
-                                    {filteredTasks(column.id).map((task, index) => (
-                                        <TaskCard key={task.id} task={task} columnColor={column.color} onEdit={() => handleTaskClick(task)} onDelete={handleDeleteTask} onView={handleTaskClick} />
-                                    ))}
-                                    {filteredTasks(column.id).length === 0 && (
-                                        <div className="empty-column"><p>No tasks</p></div>
-                                    )}
-                                </div>
-                            </SortableContext>
+                            <Droppable droppableId={column.id}>
+                                {(provided, snapshot) => (
+                                    <div className={`column-content ${snapshot.isDraggingOver ? 'dragging-over' : ''}`} ref={provided.innerRef} {...provided.droppableProps}>
+                                        {filteredTasks(column.id).map((task, index) => (
+                                            <Draggable key={task.id} draggableId={String(task.id)} index={index}>
+                                                {(provided, snapshot) => (
+                                                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={{ ...provided.draggableProps.style, opacity: snapshot.isDragging ? 0.8 : 1 }}>
+                                                        <TaskCard task={task} columnColor={column.color} isDragging={snapshot.isDragging} onEdit={() => handleTaskClick(task)} onDelete={handleDeleteTask} onView={handleTaskClick} />
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                        {filteredTasks(column.id).length === 0 && (
+                                            <div className="empty-column"><p>No tasks</p></div>
+                                        )}
+                                    </div>
+                                )}
+                            </Droppable>
                         </div>
                     ))}
                 </div>
-
-                <DragOverlay>
-                    {activeId && activeTask ? (
-                        <TaskCard task={activeTask} columnColor={COLUMNS.find(c => c.id === activeTask.status)?.color} isDragging={true} />
-                    ) : null}
-                </DragOverlay>
-            </DndContext>
+            </DragDropContext>
 
             <Suspense fallback={<div className="loading">Loading...</div>}>
                 {showTaskModal && <TaskModal mode="create" categories={propCategories} projects={propProjects} preselectedProject={selectedProject} preselectedStatus={preselectedStatus} onClose={handleCloseModal} />}
