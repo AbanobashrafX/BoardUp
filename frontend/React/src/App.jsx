@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { ThemeProvider as CustomThemeProvider } from './contexts/ThemeContext';
+import { MUIThemeProvider } from './contexts/MUIThemeProvider';
 import { DataProvider } from './contexts/DataContext';
 import { ToastProvider } from './contexts/ToastContext';
 import BoardContainer from './components/BoardContainer/BoardContainer';
@@ -7,6 +8,7 @@ import ProjectSidebar from './components/ProjectSidebar/ProjectSidebar';
 import ThemeToggle from './components/ThemeToggle/ThemeToggle';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal/KeyboardShortcutsModal';
 import ToastContainer from './components/Toast/Toast';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 function AppContent() {
@@ -79,15 +81,17 @@ function AppContent() {
                 </div>
             </header>
 
-            <div className="app-layout">
-                <ProjectSidebar
-                    selectedProject={selectedProject}
-                    onSelectProject={setSelectedProject}
-                />
-                <main className="main-content">
-                    <BoardContainer selectedProject={selectedProject} />
-                </main>
-            </div>
+            <ErrorBoundary>
+                <div className="app-layout">
+                    <ProjectSidebar
+                        selectedProject={selectedProject}
+                        onSelectProject={setSelectedProject}
+                    />
+                    <main className="main-content">
+                        <BoardContainer selectedProject={selectedProject} />
+                    </main>
+                </div>
+            </ErrorBoundary>
             <KeyboardShortcutsModal
                 isOpen={showShortcutsModal}
                 onClose={() => setShowShortcutsModal(false)}
@@ -100,11 +104,13 @@ function AppContent() {
 function App() {
     return (
         <CustomThemeProvider>
-            <ToastProvider>
-                <DataProvider>
-                    <AppContent />
-                </DataProvider>
-            </ToastProvider>
+            <MUIThemeProvider>
+                <ToastProvider>
+                    <DataProvider>
+                        <AppContent />
+                    </DataProvider>
+                </ToastProvider>
+            </MUIThemeProvider>
         </CustomThemeProvider>
     );
 }
