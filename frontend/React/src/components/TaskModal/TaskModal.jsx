@@ -83,9 +83,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
         // Skip fetching for create mode
         if (!task) {
             // Create mode - use default form data with preselected project and status
-            const preselectedStatus = window.__preselectedStatus || propPreselectedStatus || 'TODO';
-            // Clear the global after use
-            delete window.__preselectedStatus;
+            const preselectedStatus = propPreselectedStatus || 'TODO';
 
             const defaultData = {
                 title: '',
@@ -542,7 +540,7 @@ function TaskModal({ task, onClose, onDelete, categories: propCategories, projec
                                                 placeholder="Add an item..."
                                                 value={newSubtaskTitle}
                                                 onChange={(e) => setNewSubtaskTitle(e.target.value)}
-                                                onKeyPress={(e) => e.key === 'Enter' && handleAddSubtask()}
+                                                onKeyDown={(e) => e.key === 'Enter' && handleAddSubtask()}
                                             />
                                             <button
                                                 className="subtask-add-btn"

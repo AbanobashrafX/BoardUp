@@ -8,9 +8,6 @@ import { useData } from '../../contexts/DataContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import './BoardContainer.css';
 
-const SAMPLE_CATEGORIES = [];
-const SAMPLE_PROJECTS = [];
-
 function BoardContainer({
   selectedProject = null,
   projectName: propProjectName = 'All Tasks'

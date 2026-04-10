@@ -79,7 +79,7 @@ function TaskCard({ task, columnColor, onEdit, onDelete, onView }) {
                     </div>
                     <div className="progress">
                         <div
-                            className={`progress-bar ${task.completed_subtasks_count === task.subtasks_count ? 'complete' : ''}`}
+                            className={`progress-bar ${task.completed_subtasks_count === task.subtasks_count ? 'success' : ''}`}
                             style={{
                                 width: `${(task.completed_subtasks_count / task.subtasks_count) * 100}%`
                             }}
