@@ -19,7 +19,7 @@ function ProjectSidebar({ selectedProject, onSelectProject }) {
     // Local state for UI
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(null); // Track which project is being deleted
-    const [isCollapsed, setIsCollapsed] = useState(false); // Track sidebar collapsed state
+    const [isCollapsed, setIsCollapsed] = useState(true); // Track sidebar collapsed state
 
     /**
      * Calculate total tasks across all projects for "All Tasks" display
