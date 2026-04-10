@@ -67,19 +67,45 @@
    SELECTED VALUE / PLACEHOLDER
    ============================================ */
 
-.badge-select-value {
+/* ============================================
+   BASE BADGE STYLE - ALL BADGES INHERIT FROM THIS
+   Single source of truth for consistent pastel styling
+   ============================================ */
+.badge-select-value,
+.badge-select-option-badge,
+.category-tag,
+.project-tag,
+.priority-badge,
+.status-badge,
+.task-due-date {
     display: inline-flex;
     align-items: center;
-    padding: 4px 12px;
-    border-radius: 9999px;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
-    color: white;
+    padding: 5px 10px;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(8px);
+    opacity: 0.92;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+}
+
+/* Shared hover state for ALL badges */
+.badge-select-value:hover,
+.badge-select-option-badge:hover,
+.category-tag:hover,
+.project-tag:hover,
+.priority-badge:hover,
+.status-badge:hover,
+.task-due-date:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .badge-select-placeholder {
@@ -88,6 +114,252 @@
     font-weight: 400;
 }
 
+
+/* Status badges */
+
+.status-badge.status-todo {
+    background: var(--color-priority-medium-bg);
+    color: var(--color-priority-medium-on-bg);
+}
+
+.status-badge.status-in-progress {
+    background: var(--color-primary-bg);
+    color: var(--color-primary);
+}
+
+.status-badge.status-done {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+}
+
+/* Priority badges - reuse from TaskCard */
+.tasks-table .priority-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+}
+
+.tasks-table .priority-urgent {
+    background: var(--color-priority-urgent-bg);
+    color: var(--color-priority-urgent-on-bg);
+}
+
+.tasks-table .priority-high {
+    background: var(--color-priority-high-bg);
+    color: var(--color-priority-high-on-bg);
+}
+
+.tasks-table .priority-medium {
+    background: var(--color-priority-medium-bg);
+    color: var(--color-priority-medium-on-bg);
+}
+
+.tasks-table .priority-low {
+    background: var(--color-priority-low-bg);
+    color: var(--color-priority-low-on-bg);
+}
+
+
+/* Category & Project Tags inherit from BadgeSelect */
+.category-tag,
+.project-tag {
+    /* All base styling inherited from shared BadgeSelect base */
+    backdrop-filter: saturate(180%) blur(12px);
+}
+
+
+/* ============================================
+   PRIORITY BADGE (TaskCard-consistent)
+   ============================================ */
+
+.priority-badge {
+    /* All base styling inherited from shared BadgeSelect base */
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.priority-low {
+    background: var(--color-priority-low-bg);
+    color: var(--color-priority-low-on-bg);
+}
+
+.priority-medium {
+    background: var(--color-priority-medium-bg);
+    color: var(--color-priority-medium-on-bg);
+}
+
+.priority-high {
+    background: var(--color-priority-high-bg);
+    color: var(--color-priority-high-on-bg);
+}
+
+.priority-urgent {
+    background: var(--color-priority-urgent-bg);
+    color: var(--color-priority-urgent-on-bg);
+}
+
+/* View mode priority display */
+.tm-priority {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.tm-priority--low {
+    color: #4ade80;
+}
+
+.tm-priority--medium {
+    color: #d97706;
+}
+
+.tm-priority--high {
+    color: #dc2626;
+}
+
+.tm-priority--urgent {
+    color: #db2777;
+}
+
+.tm-priority svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+
+/* ============================================
+   BADGE SELECT (Edit Mode - ghost style)
+   ============================================ */
+
+.badge-select-container {
+    position: relative;
+    width: 100%;
+}
+
+.badge-select-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 4px 8px;
+    height: 32px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-text);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.badge-select-trigger:hover {
+    background: var(--color-hover-bg);
+    border-color: var(--color-border-strong);
+}
+
+.badge-select-trigger:focus-visible {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+
+.badge-select-trigger.open {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-focus-ring);
+    background: var(--color-hover-bg);
+}
+
+
+
+
+.badge-select-placeholder {
+    color: var(--color-text-tertiary);
+    font-size: 13px;
+}
+
+.badge-select-arrow {
+    flex-shrink: 0;
+    color: var(--color-text-tertiary);
+    transition: transform var(--transition-base);
+    width: 12px;
+    height: 12px;
+}
+
+.badge-select-arrow.open {
+    transform: rotate(180deg);
+}
+
+.badge-select-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--color-surface-elevated) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 8px;
+    box-shadow: var(--shadow-xl) !important;
+    z-index: var(--z-dropdown);
+    overflow: hidden;
+    animation: tm-dropdownFadeIn 0.15s ease;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+@keyframes tm-dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.badge-select-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    height: 36px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: left;
+    color: var(--color-text);
+    font-size: 13px;
+}
+
+.badge-select-option:hover {
+    background: var(--color-hover-bg);
+}
+
+.badge-select-option:focus-visible {
+    outline: none;
+    background: var(--color-primary-surface);
+}
+
+.badge-select-option.selected {
+    background: var(--color-primary-surface);
+}
+
+.badge-select-option-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text) !important;
+}
 
 /* ============================================
    DROPDOWN ARROW
@@ -184,15 +456,7 @@
    ============================================ */
 
 .badge-select-option-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 12px;
-    border-radius: 9999px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: white;
-    transition: all var(--transition-fast);
+    /* All base styling inherited from shared badge base */
 }
 
 .badge-select-option:hover .badge-select-option-badge {
@@ -210,19 +474,10 @@
 
 .badge-select-value.priority-badge,
 .badge-select-option-badge.priority-badge {
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-size: 10px !important;
-    padding: 4px 10px !important;
-    border-radius: var(--radius-full) !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    transition: all 0.2s ease !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-    color: inherit !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    white-space: nowrap !important;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .badge-select-value.priority-badge:hover,
@@ -257,26 +512,26 @@
 }
 
 /* ============================================
-   DARK MODE OVERRIDES
-   ============================================ */
+    DARK MODE OVERRIDES
+    ============================================ */
 
-[data-theme="dark"] .badge-select-trigger {
+.badge-select-container.dark .badge-select-trigger {
     background: var(--color-surface-base);
 }
 
-[data-theme="dark"] .badge-select-trigger:hover {
+.badge-select-container.dark .badge-select-trigger:hover {
     background: var(--color-hover-bg);
 }
 
-[data-theme="dark"] .badge-select-trigger.open {
+.badge-select-container.dark .badge-select-trigger.open {
     background: var(--color-surface);
 }
 
-[data-theme="dark"] .badge-select-dropdown {
+.badge-select-container.dark .badge-select-dropdown {
     background: var(--color-surface-elevated);
 }
 
-[data-theme="dark"] .badge-select-option.selected {
+.badge-select-container.dark .badge-select-option.selected {
     background: var(--color-primary-surface);
 }
 

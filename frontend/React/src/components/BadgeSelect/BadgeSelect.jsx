@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
 import './BadgeSelect.css';
 
 function BadgeSelect({
@@ -9,6 +10,7 @@ function BadgeSelect({
     getOptionStyle,
     placeholder = 'Select...'
 }) {
+    const { isDark } = useTheme();
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef(null);
 
@@ -31,7 +33,7 @@ function BadgeSelect({
     };
 
     return (
-        <div className="badge-select-container" ref={containerRef}>
+        <div className={`badge-select-container ${isDark ? 'dark' : 'light'}`} ref={containerRef}>
             <button
                 type="button"
                 className={`badge-select-trigger ${isOpen ? 'open' : ''} ${selectedOption ? 'has-value' : ''}`}
@@ -96,4 +98,7 @@ function BadgeSelect({
     );
 }
 
+import Badge from './Badge';
+
+export { Badge };
 export default BadgeSelect;
