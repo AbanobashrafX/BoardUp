@@ -27,12 +27,12 @@ const getSystemTheme = () => {
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    // Check localStorage first, then system preference
+    // Check localStorage first, then default to light
     const stored = getStoredTheme();
     if (stored) return stored;
 
-    // Check system preference
-    return getSystemTheme();
+    // Default to light theme
+    return 'light';
   });
 
   // Apply theme to document
