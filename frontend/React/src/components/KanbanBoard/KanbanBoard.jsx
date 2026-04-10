@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { taskAPI } from '../../services/api';
 import TaskCard from '../TaskCard/TaskCard';
-import TaskModal from '../TaskModal/TaskModal';
 import './KanbanBoard.css';
+
+// Lazy load TaskModal for better bundle splitting
+const TaskModal = lazy(() => import('../TaskModal/TaskModal'));
 
 const COLUMNS = [
     { id: 'TODO', title: 'To Do', color: '#f59e0b' },
@@ -172,7 +174,14 @@ function KanbanBoard({
         }
     };
 
-    const filteredTasks = (columnId) => sortTasks(tasks[columnId] || []);
+    // Memoize sorted tasks per column to prevent recalculation on every render
+    const sortedTasks = useMemo(() => ({
+        TODO: sortTasks(tasks.TODO || []),
+        IN_PROGRESS: sortTasks(tasks.IN_PROGRESS || []),
+        DONE: sortTasks(tasks.DONE || []),
+    }), [tasks, sortBy]);
+
+    const filteredTasks = (columnId) => sortedTasks[columnId];
 
     // Show loading
     if (isLoading) {
@@ -212,7 +221,7 @@ function KanbanBoard({
                                             <Draggable key={task.id} draggableId={String(task.id)} index={index}>
                                                 {(provided, snapshot) => (
                                                     <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={{ ...provided.draggableProps.style, opacity: snapshot.isDragging ? 0.8 : 1 }}>
-                                                        <TaskCard task={task} columnColor={column.color} onEdit={handleTaskClick} onDelete={handleDeleteTask} onView={handleTaskClick} />
+                                                        <TaskCard task={task} columnColor={column.color} isDragging={snapshot.isDragging} onEdit={() => handleTaskClick(task)} onDelete={handleDeleteTask} onView={handleTaskClick} />
                                                     </div>
                                                 )}
                                             </Draggable>
@@ -229,8 +238,10 @@ function KanbanBoard({
                 </div>
             </DragDropContext>
 
-            {showTaskModal && <TaskModal mode="create" categories={propCategories} projects={propProjects} preselectedProject={selectedProject} preselectedStatus={preselectedStatus} onClose={handleCloseModal} />}
-            {selectedTask && <TaskModal task={selectedTask} categories={propCategories} projects={propProjects} onClose={handleCloseModal} onDelete={(id) => { handleDeleteTask(id); handleCloseModal(); }} />}
+            <Suspense fallback={<div className="loading">Loading...</div>}>
+                {showTaskModal && <TaskModal mode="create" categories={propCategories} projects={propProjects} preselectedProject={selectedProject} preselectedStatus={preselectedStatus} onClose={handleCloseModal} />}
+                {selectedTask && <TaskModal task={selectedTask} categories={propCategories} projects={propProjects} onClose={handleCloseModal} onDelete={(id) => { handleDeleteTask(id); handleCloseModal(); }} />}
+            </Suspense>
         </div>
     );
 }

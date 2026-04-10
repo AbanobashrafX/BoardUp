@@ -75,6 +75,14 @@
     outline-offset: 2px;
 }
 
+/* Dragging state - rotate slightly for visual feedback */
+.dragging {
+    border: 3px dashed var(--color-primary-surface);
+    transform: rotate(-30deg) scale(1.02);
+    transform-origin: center;
+    cursor: grabbing;
+}
+
 /* Task Header */
 .task-card-header {
     display: flex;

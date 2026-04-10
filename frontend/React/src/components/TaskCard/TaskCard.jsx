@@ -1,7 +1,7 @@
 import React from 'react';
 import './TaskCard.css';
 
-function TaskCard({ task, columnColor, onEdit, onDelete, onView }) {
+const TaskCard = React.memo(({ task, columnColor, isDragging = false, onEdit, onDelete, onView }) => {
     const priority = task.priority || 'MEDIUM';
     const priorityClass = `priority-badge priority-${priority.toLowerCase()}`;
 
@@ -37,10 +37,13 @@ function TaskCard({ task, columnColor, onEdit, onDelete, onView }) {
 
     return (
         <div
-            className="task-card clickable"
+            className={`task-card ${isDragging ? 'dragging' : ''}`}
             data-priority={priority}
             onClick={handleCardClick}
-            style={columnColor ? { '--column-color': columnColor } : undefined}
+            style={{
+                ...(columnColor ? { '--column-color': columnColor } : {}),
+                ...(isDragging ? { transform: 'rotate(-30deg) scale(1.02)', 'transform-origin': 'center' } : {})
+            }}
         >
             <div className="task-card-header">
                 <span className={priorityClass}>{priority}</span>
@@ -52,6 +55,7 @@ function TaskCard({ task, columnColor, onEdit, onDelete, onView }) {
                             onDelete(task.id);
                         }}
                         title="Delete"
+                        aria-label="Delete task"
                     >
                         🗑️
                     </button>
@@ -123,6 +127,8 @@ function TaskCard({ task, columnColor, onEdit, onDelete, onView }) {
             </div>
         </div>
     );
-}
+});
+
+TaskCard.displayName = 'TaskCard';
 
 export default TaskCard;
